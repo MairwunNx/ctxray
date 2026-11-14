@@ -1,0 +1,10 @@
+# Every text file is LF in the repository and on checkout, Windows included.
+* text=auto eol=lf
+
+*.png binary
+*.gif binary
+*.webp binary
+*.zip binary
+
+# AGENTS.md is a symlink to CLAUDE.md. On Windows clone with `git clone -c core.symlinks=true`
+# (Developer Mode or an elevated shell), or Git writes a plain file holding the text “CLAUDE.md”.

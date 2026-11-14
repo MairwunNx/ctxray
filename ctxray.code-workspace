@@ -1,0 +1,15 @@
+{
+  "folders": [{ "name": "ctxray", "path": "." }],
+  "settings": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "extensions": {
+    "recommendations": [
+      "biomejs.biome",
+      "oven.bun-vscode",
+      "github.vscode-github-actions",
+      "redhat.vscode-yaml",
+      "editorconfig.editorconfig"
+    ]
+  }
+}

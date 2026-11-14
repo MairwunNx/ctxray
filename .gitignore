@@ -1,7 +1,13 @@
 node_modules/
-.ctxray/
+dist/
+coverage/
+*.log
 .DS_Store
 .claude/scheduled_tasks.lock
+
+# Local traces and reports of ctxray runs
+.ctxray/
+.ctxray-cache/
 
 # Development notes that stay on the developer's machine
 PLAN.md
