@@ -65,10 +65,7 @@
                     "description": "Milliseconds that must elapse between notifications. The harness enforces a minimum of 5000ms."
                   }
                 },
-                "required": [
-                  "pattern",
-                  "reason"
-                ],
+                "required": ["pattern", "reason"],
                 "description": "Optional output notification config. Each terminal output which matches the pattern will notify you. ONLY set this when the user explicitly requests monitoring."
               },
               "request_smart_mode_approval": {
@@ -80,9 +77,7 @@
                 "description": "Provide the exact block reason returned by Auto-review in the prior rejection. Required when request_smart_mode_approval is true so the approval card shows the original classifier reason without re-running the classifier."
               }
             },
-            "required": [
-              "command"
-            ]
+            "required": ["command"]
           }
         }
       },
@@ -103,9 +98,7 @@
                 "description": "The glob pattern to match files against.\nPatterns not starting with \"**/\" are automatically prepended with \"**/\" to enable recursive searching.\n\nExamples:\n\t- \"*.js\" (becomes \"**/*.js\") - find all .js files\n\t- \"**/node_modules/**\" - find all node_modules directories\n\t- \"**/test/**/test_*.ts\" - find all test_*.ts files in any test directory"
               }
             },
-            "required": [
-              "glob_pattern"
-            ]
+            "required": ["glob_pattern"]
           }
         }
       },
@@ -131,11 +124,7 @@
               },
               "output_mode": {
                 "type": "string",
-                "enum": [
-                  "content",
-                  "files_with_matches",
-                  "count"
-                ],
+                "enum": ["content", "files_with_matches", "count"],
                 "description": "Output mode: \"content\" shows matching lines (supports -A/-B/-C context, -n line numbers, head_limit), \"files_with_matches\" shows file paths (supports head_limit), \"count\" shows match counts (supports head_limit). Defaults to \"content\"."
               },
               "-B": {
@@ -173,9 +162,7 @@
                 "description": "Enable multiline mode where . matches newlines and patterns can span lines (rg -U --multiline-dotall). Default: false."
               }
             },
-            "required": [
-              "pattern"
-            ]
+            "required": ["pattern"]
           }
         }
       },
@@ -225,9 +212,7 @@
                 "description": "The number of lines to read. Only provide if the file is too large to read at once."
               }
             },
-            "required": [
-              "path"
-            ]
+            "required": ["path"]
           }
         }
       },
@@ -244,9 +229,7 @@
                 "description": "The absolute path of the file to delete"
               }
             },
-            "required": [
-              "path"
-            ]
+            "required": ["path"]
           }
         }
       },
@@ -275,11 +258,7 @@
                 "description": "Replace all occurrences of old_string (default false)"
               }
             },
-            "required": [
-              "path",
-              "old_string",
-              "new_string"
-            ]
+            "required": ["path", "old_string", "new_string"]
           }
         }
       },
@@ -300,10 +279,7 @@
                 "description": "The contents to write to the file"
               }
             },
-            "required": [
-              "path",
-              "contents"
-            ]
+            "required": ["path", "contents"]
           }
         }
       },
@@ -340,14 +316,7 @@
                 "description": "The edited text to replace the old_string or the content for the new cell."
               }
             },
-            "required": [
-              "target_notebook",
-              "cell_idx",
-              "is_new_cell",
-              "cell_language",
-              "old_string",
-              "new_string"
-            ]
+            "required": ["target_notebook", "cell_idx", "is_new_cell", "cell_language", "old_string", "new_string"]
           }
         }
       },
@@ -374,20 +343,11 @@
                     },
                     "status": {
                       "type": "string",
-                      "enum": [
-                        "pending",
-                        "in_progress",
-                        "completed",
-                        "cancelled"
-                      ],
+                      "enum": ["pending", "in_progress", "completed", "cancelled"],
                       "description": "The current status of the TODO item"
                     }
                   },
-                  "required": [
-                    "id",
-                    "content",
-                    "status"
-                  ]
+                  "required": ["id", "content", "status"]
                 },
                 "minItems": 2,
                 "description": "Array of TODO items to update or create"
@@ -397,10 +357,7 @@
                 "description": "Whether to merge the todos with the existing todos. If true, the todos will be merged into the existing todos based on the id field. You can leave unchanged properties undefined. If false, the new todos will replace the existing todos."
               }
             },
-            "required": [
-              "todos",
-              "merge"
-            ]
+            "required": ["todos", "merge"]
           }
         }
       },
@@ -429,19 +386,11 @@
               },
               "aspect_ratio": {
                 "type": "string",
-                "enum": [
-                  "1:1",
-                  "4:3",
-                  "3:4",
-                  "16:9",
-                  "9:16"
-                ],
+                "enum": ["1:1", "4:3", "3:4", "16:9", "9:16"],
                 "description": "Optional aspect ratio for the generated image. Supported values are \"1:1\", \"4:3\", \"3:4\", \"16:9\", and \"9:16\"."
               }
             },
-            "required": [
-              "description"
-            ]
+            "required": ["description"]
           }
         }
       },
@@ -484,10 +433,7 @@
                             "description": "Display text for this option"
                           }
                         },
-                        "required": [
-                          "id",
-                          "label"
-                        ]
+                        "required": ["id", "label"]
                       },
                       "minItems": 2,
                       "description": "Array of answer options (minimum 2 required)"
@@ -497,19 +443,13 @@
                       "description": "If true, user can select multiple options. Defaults to false."
                     }
                   },
-                  "required": [
-                    "id",
-                    "prompt",
-                    "options"
-                  ]
+                  "required": ["id", "prompt", "options"]
                 },
                 "minItems": 1,
                 "description": "Array of questions to present to the user (minimum 1 required)"
               }
             },
-            "required": [
-              "questions"
-            ]
+            "required": ["questions"]
           }
         }
       },
@@ -539,12 +479,7 @@
               },
               "subagent_type": {
                 "type": "string",
-                "enum": [
-                  "generalPurpose",
-                  "explore",
-                  "cursor-guide",
-                  "best-of-n-runner"
-                ],
+                "enum": ["generalPurpose", "explore", "cursor-guide", "best-of-n-runner"],
                 "description": "Subagent type to use for this task. Must be one of: generalPurpose, explore, cursor-guide, best-of-n-runner."
               },
               "file_attachments": {
@@ -559,10 +494,7 @@
                 "description": "Run the agent in the background (returns output_file path to check later). If this is false, you will be blocked until the agent completes."
               }
             },
-            "required": [
-              "description",
-              "prompt"
-            ]
+            "required": ["description", "prompt"]
           }
         }
       },
@@ -619,10 +551,7 @@
                 "description": "Provide the exact block reason returned by Auto-review in the prior rejection. Required when requestSmartModeApproval is true so the approval card shows the original classifier reason without re-running the classifier."
               }
             },
-            "required": [
-              "server",
-              "uri"
-            ]
+            "required": ["server", "uri"]
           }
         }
       },
@@ -643,9 +572,7 @@
                 "description": "Optional explanation for why the mode switch is requested. This helps the user understand why you're switching modes."
               }
             },
-            "required": [
-              "target_mode_id"
-            ]
+            "required": ["target_mode_id"]
           }
         }
       },
@@ -682,10 +609,7 @@
                 "description": "Arguments to pass to the MCP tool, as described in the tool descriptor."
               }
             },
-            "required": [
-              "server",
-              "toolName"
-            ]
+            "required": ["server", "toolName"]
           }
         }
       }

@@ -21,9 +21,7 @@
                 "description": "JQL query"
               }
             },
-            "required": [
-              "jql"
-            ]
+            "required": ["jql"]
           }
         }
       ],
@@ -55,11 +53,7 @@
                 "description": "Markdown body"
               }
             },
-            "required": [
-              "repo",
-              "title",
-              "body"
-            ]
+            "required": ["repo", "title", "body"]
           }
         },
         {
@@ -73,9 +67,7 @@
                 "description": "owner/name"
               }
             },
-            "required": [
-              "repo"
-            ]
+            "required": ["repo"]
           }
         }
       ],

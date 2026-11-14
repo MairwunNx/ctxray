@@ -87,7 +87,8 @@ export const createCapture = ({ config, env, self, binaries }: CaptureDeps) => {
     const binary =
       (await binaries(scope.harness)) ??
       fail("capture.notInstalled", { harness: scope.harness, binary: adapter.binary });
-    const server = (proxy ??= startProxy());
+    proxy ??= startProxy();
+    const server = proxy;
     const guard = await startEgressGuard();
     egress ??= await egressOf(network);
     caFile ??= await caFileOf();
