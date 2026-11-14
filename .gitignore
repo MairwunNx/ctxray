@@ -1,0 +1,9 @@
+node_modules/
+.ctxray/
+.DS_Store
+.claude/scheduled_tasks.lock
+
+# Development notes that stay on the developer's machine
+PLAN.md
+docs/adr/
+spikes/
