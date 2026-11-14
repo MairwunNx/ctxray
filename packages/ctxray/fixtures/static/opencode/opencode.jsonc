@@ -1,0 +1,11 @@
+{
+  // OpenCode reads JSON with comments too.
+  "instructions": ["docs/*.md", "https://example.com/rules.md"],
+  "mcp": {
+    "probe": { "type": "local", "command": ["bun", "mcp.ts"] },
+    "docs": { "type": "remote", "url": "https://docs.example.com/mcp" },
+    "off": { "type": "local", "command": ["off"], "enabled": false },
+    "broken": { "type": "local" }
+  },
+  "command": { "hello": { "template": "Say hello to the team.", "description": "Greets" } }
+}

@@ -117,6 +117,45 @@
           "integrity": "sha512-eq7AWY+YCijNGKVwyiRjN+GuOdXU/djuOZhX18p+HDmNyUqFdqH7C5V6vDJLl1uffhRPhGijePV+YvY8lymrbQ=="
         }
       }
+    },
+    "opencode": {
+      "source": "registry",
+      "range": "1.19.5",
+      "version": "1.19.5",
+      "platforms": {
+        "darwin-arm64": {
+          "package": "opencode-darwin-arm64@1.19.5",
+          "integrity": "sha512-0MbSbKkmwVHtgP31GJyyECe6QVy4T7W4Wp7s2TsmXHTPPyf01ne3dWSX97X9dkNK28Lc6kt+zMPQUP/9GgDLZg=="
+        },
+        "darwin-x64": {
+          "package": "opencode-darwin-x64@1.19.5",
+          "integrity": "sha512-+DO7IMPTCrX12UJXnL4pL3ckcwR6BR6f6tA9QIlVQ5nZx66T5U7FRMJT4n5rsOnJxLM/pZ2vfX1G8vrnvXO8FA=="
+        },
+        "linux-x64-glibc": {
+          "package": "opencode-linux-x64@1.19.5",
+          "integrity": "sha512-i1qh7VooLGML9xX6ud93y0JA8j/1aPeDYRKjsmYXrJX1TjIWHgBBMkEbEJPZthpWbsJg//XfBgR6Kb7+NPaJiQ=="
+        },
+        "linux-x64-musl": {
+          "package": "opencode-linux-x64-musl@1.19.5",
+          "integrity": "sha512-y6nUbH3ViajN37KaVVy0/KnWv/i48Bx5QPv9Ul9ONJya1ossV7CHVb+ZNFc61M5GqlVtjCvZV7T0eBMqhJG7mg=="
+        },
+        "linux-arm64-glibc": {
+          "package": "opencode-linux-arm64@1.19.5",
+          "integrity": "sha512-u2HFRI6v1nNMVKiV34An8XrGBxJeZ+RCg2tYu3SqlGODKqKsr5RoEbaX1tnsfGb+rETh9AJVX9kS8dSZXPufsA=="
+        },
+        "linux-arm64-musl": {
+          "package": "opencode-linux-arm64-musl@1.19.5",
+          "integrity": "sha512-YxvpVPJ/jeevV93DVRiuOVbhkoJAuwQUadPDHPaw65aZkAKZ6OE7XySwCS+Rjlhzt7fPryisvAOjUtZkwfMBuQ=="
+        },
+        "win32-x64": {
+          "package": "opencode-windows-x64@1.19.5",
+          "integrity": "sha512-xCVbrA8A/qQTAdBIKyhK5tx3/mcq18yF82Mi8phry0MJb2631nnnpxF9m6FFfWAVHyer4qFGrO7hbWXesHQ1Gg=="
+        },
+        "win32-arm64": {
+          "package": "opencode-windows-arm64@1.19.5",
+          "integrity": "sha512-aySF/MDji5KO3I5yl9Ec4g8kW/QIx4Jj5FXwBhh/FrDu0w6L8HAOGH7cyjFb3t8TW7pxRkH3Ei3rfkWAE7cScw=="
+        }
+      }
     }
   }
 }

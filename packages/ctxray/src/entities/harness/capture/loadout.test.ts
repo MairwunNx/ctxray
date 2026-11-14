@@ -35,7 +35,7 @@ const loadoutOf = async (harness: HarnessId, index: number, files: string[] = []
 
 const READ = ["app/src/main/kotlin/payments/Charge.kt"];
 
-// Claude Code and Codex hold MCP schemas back until the model asks, Gemini CLI sends them inline.
+// Claude Code and Codex hold MCP schemas back until the model asks, Gemini CLI and OpenCode send them inline.
 describe.each<[HarnessId, string[], string[], string[]]>([
   [
     "claude-code",
@@ -50,6 +50,12 @@ describe.each<[HarnessId, string[], string[], string[]]>([
   ],
   ["codex", ["AGENTS.md", "app/AGENTS.md"], ["android-build", "payouts", "refunds", "release"], []],
   ["gemini-cli", ["AGENTS.md", "app/AGENTS.md"], ["android-build"], ["app/src/main/kotlin/payments/AGENTS.md"]],
+  [
+    "opencode",
+    ["app/AGENTS.md", "AGENTS.md"],
+    ["android-build", "payouts", "refunds", "release"],
+    ["app/src/main/kotlin/payments/AGENTS.md"],
+  ],
 ])("%s", (harness, rules, skills, later) => {
   test("the first request: rules, project skills, MCP servers, tokens", async () => {
     const loadout = await loadoutOf(harness, 0);
@@ -62,7 +68,7 @@ describe.each<[HarnessId, string[], string[], string[]]>([
       { name: "github", version: "1.0.0" },
       { name: "jira", version: "1.0.0" },
     ]);
-    const deferred = harness !== "gemini-cli";
+    const deferred = harness === "claude-code" || harness === "codex";
     expect(loadout.mcp.tools.map((tool) => [tool.name, tool.deferred])).toEqual([
       ["create_issue", deferred],
       ["list_pulls", deferred],

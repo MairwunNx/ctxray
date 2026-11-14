@@ -26,6 +26,7 @@ export type SessionOptions = {
   cwd: string;
   prompt: string;
   model: string;
+  provider?: string | undefined;
   env: Record<string, string>; // isolation, without HOME and TMPDIR: the session adds its own
   mcp: McpRouting; // how to run ctxray itself for the shim, and the server's environment
   port: ModelPort;
@@ -81,6 +82,7 @@ export const startSession = async (options: SessionOptions): Promise<HarnessSess
     cwd: options.cwd,
     prompt: options.prompt,
     model: options.model,
+    provider: options.provider,
     baseUrl: port.baseUrl,
     env,
     shim,
@@ -92,7 +94,8 @@ export const startSession = async (options: SessionOptions): Promise<HarnessSess
   const child = Bun.spawn(command, {
     cwd: join(dirs.work, options.cwd),
     env: launch.env,
-    stdin: "ignore",
+    // OpenCode takes the prompt on stdin: its argv quoting changes the text (ADR 0008).
+    stdin: launch.stdin === undefined ? "ignore" : new Blob([launch.stdin]),
     stdout: "pipe",
     stderr: "pipe",
   });

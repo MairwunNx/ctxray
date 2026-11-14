@@ -53,7 +53,7 @@
   },
   "overrides": [
     {
-      "includes": ["**/.gemini/settings.json"],
+      "includes": ["**/.gemini/settings.json", "**/opencode.jsonc"],
       "json": { "parser": { "allowComments": true } }
     }
   ],

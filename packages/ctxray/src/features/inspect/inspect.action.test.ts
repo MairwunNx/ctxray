@@ -26,7 +26,7 @@ const harness = (result: InspectResult, id: HarnessId) => {
 
 describe("which harnesses", () => {
   test.each<[string, InspectRequest, Partial<Record<HarnessId, object>>, HarnessId[], HarnessId[]]>([
-    ["every readable one without a config", {}, {}, ["claude-code", "codex", "gemini-cli"], []],
+    ["every readable one without a config", {}, {}, ["claude-code", "codex", "gemini-cli", "opencode"], []],
     ["the configured ones", {}, { codex: {} }, ["codex"], []],
     ["the flag over the config", { harnesses: ["claude-code"] }, { codex: {} }, ["claude-code"], []],
     ["unreadable ones as unsupported", { harnesses: ["cursor-ide", "codex"] }, {}, ["codex"], ["cursor-ide"]],

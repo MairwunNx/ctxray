@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { launchClaudeCode } from "../claude-code/launch.ts";
 import { launchCodex } from "../codex/launch.ts";
 import { launchGeminiCli } from "../gemini-cli/launch.ts";
+import { launchOpencode } from "../opencode/launch.ts";
 import type { LaunchContext } from "./model.ts";
 
 const root = mkdtempSync(join(tmpdir(), "ctxray-user-scope-"));
@@ -25,6 +26,11 @@ write(join(home, ".codex/AGENTS.md"), "codex user rules");
 write(join(home, ".codex/config.toml"), 'model_provider = "openai"');
 write(join(home, ".agents/skills/deploy/SKILL.md"), "---\nname: deploy\n---\n");
 write(join(home, ".gemini/GEMINI.md"), "gemini user rules");
+write(join(home, ".config/opencode/AGENTS.md"), "opencode user rules");
+write(
+  join(home, ".config/opencode/opencode.json"),
+  '{"model":"x/y","mcp":{"notes":{"type":"remote","url":"https://n"}}}',
+);
 write(
   join(home, ".gemini/settings.json"),
   '{\n  // comments are fine here\n  "security": {"auth": {"selectedType": "oauth-personal"}},\n' +
@@ -48,6 +54,7 @@ const contextOf = (inherit: boolean): LaunchContext => {
     cwd: "",
     prompt: "hi",
     model: "m",
+    provider: undefined,
     baseUrl: "http://127.0.0.1:1",
     env: {},
     shim: async (_, command) => [...command],
@@ -61,6 +68,7 @@ test("isolated by default: nothing of the user's reaches the run", async () => {
   await launchClaudeCode("claude", context);
   await launchCodex("codex", context);
   await launchGeminiCli("gemini", context);
+  await launchOpencode("opencode", context);
   expect(await Array.fromAsync(new Bun.Glob("**/*.md").scan(context.dirs.home))).toEqual([]);
 });
 
@@ -95,4 +103,16 @@ test("inherit gives Gemini CLI the user's GEMINI.md, MCP servers behind the shim
   expect(settings.security.auth.selectedType).toBe("gemini-api-key");
   expect(settings.mcpServers).toEqual({ fs: { command: "shim", args: ["fs", "npx", "fs"] } });
   expect(settings.hooks).toEqual({ SessionStart: [] });
+});
+
+test("inherit gives OpenCode the user's AGENTS.md and MCP servers in the run's global config, nothing else", async () => {
+  const context = { ...contextOf(true), remote: (name: string) => `http://127.0.0.1/m/${name}` };
+  const { env, stdin } = await launchOpencode("opencode", context);
+  const config = join(context.dirs.home, ".config/opencode");
+  expect(readFileSync(join(config, "AGENTS.md"), "utf8")).toBe("opencode user rules");
+  expect(JSON.parse(readFileSync(join(config, "opencode.json"), "utf8"))).toEqual({
+    mcp: { notes: { type: "remote", url: "http://127.0.0.1/m/notes" } },
+  });
+  expect(JSON.parse(env["OPENCODE_CONFIG_CONTENT"] ?? "{}").model).toBe("ctxray/m");
+  expect(stdin).toBe("hi");
 });

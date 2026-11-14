@@ -10,6 +10,9 @@ import { GEMINI_CLI_CAPTURE } from "./gemini-cli/capture.ts";
 import { discoverGeminiCli } from "./gemini-cli/discover.ts";
 import { resolveGeminiCli } from "./gemini-cli/resolve.ts";
 import type { Inventory } from "./inventory.ts";
+import { OPENCODE_CAPTURE } from "./opencode/capture.ts";
+import { discoverOpencode } from "./opencode/discover.ts";
+import { resolveOpencode } from "./opencode/resolve.ts";
 import type { Project } from "./project.ts";
 import type { Scope, StaticLoadout } from "./static-loadout.ts";
 
@@ -24,6 +27,7 @@ export const STATIC_ADAPTERS: Partial<Record<HarnessId, StaticAdapter>> = {
   "claude-code": { discover: discoverClaudeCode, resolve: resolveClaudeCode },
   codex: { discover: discoverCodex, resolve: resolveCodex },
   "gemini-cli": { discover: discoverGeminiCli, resolve: resolveGeminiCli },
+  opencode: { discover: discoverOpencode, resolve: resolveOpencode },
 };
 
 // L4–L7: launch the harness against ctxray's proxy and read what it sent.
@@ -31,4 +35,5 @@ export const CAPTURE_ADAPTERS: Partial<Record<HarnessId, CaptureAdapter>> = {
   "claude-code": CLAUDE_CODE_CAPTURE,
   codex: CODEX_CAPTURE,
   "gemini-cli": GEMINI_CLI_CAPTURE,
+  opencode: OPENCODE_CAPTURE,
 };

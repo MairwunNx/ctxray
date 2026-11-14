@@ -1,6 +1,6 @@
 {
   "seq": 0,
-  "session": "f20b44ae",
+  "session": "18501609",
   "protocol": "gemini",
   "path": "/v1beta/models/gemini-2.5-flash:streamGenerateContent",
   "position": 0,

@@ -105,8 +105,11 @@ const skillsOf = (input: LoadoutInput) => {
     } else if (isCommand(id)) {
       commands.push({ name: id, path: inventory.commands.find((command) => command.name === id)?.path });
     } else {
-      // A skill the project doesn't hold ships with the harness, like Codex's `.system` ones.
-      const path = skill?.path ?? "";
+      // A skill the project doesn't hold ships with the harness, like Codex's `.system` ones. Two skills of one
+      // name in one folder, like `.claude/skills` and `.agents/skills`: OpenCode takes either, the snapshot L3's.
+      const twin = input.predicted.skills.listed.find((one) => one.name === id);
+      const same = twin && inventory.skills.find((one) => one.path === twin.path)?.dir === skill?.dir;
+      const path = (same ? twin?.path : skill?.path) ?? "";
       const builtin = skill === undefined;
       listed.push({ name: id, path, ...(builtin && { builtin }), tokens: tokensOf(segment) });
     }

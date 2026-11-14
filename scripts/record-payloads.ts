@@ -23,12 +23,17 @@ const READ = "app/src/main/kotlin/payments/Charge.kt";
 
 // The copy's folder differs per run: `<work>` keeps the files stable, `<harness>` hides where the cache
 // lives, like the built-in skills Gemini CLI lists. Headers carry nothing the tests need.
-const stable = (exchange: Exchange, work: string, home: string, binary: string) => {
+const stable = (
+  exchange: Exchange,
+  { work, home, root }: { work: string; home: string; root: string },
+  binary: string,
+) => {
   const install = binary.includes("/package/") ? binary.slice(0, binary.indexOf("/package/")) : binary;
   return JSON.parse(
     JSON.stringify({ ...exchange, headers: {} })
       .replaceAll(work, "<work>")
       .replaceAll(home, "<home>")
+      .replaceAll(root, "<run>")
       .replaceAll(install, "<harness>"),
   );
 };
@@ -72,7 +77,7 @@ for (const harness of wanted as HarnessId[]) {
     port: { ...conversation, baseUrl: prefix.baseUrl, close: prefix.close },
     timeout: 60_000,
   });
-  const { work, home } = session.dirs;
+  const { dirs } = session;
   const first = await session.request(0);
   await session.say(0, { tool: "Read", input: { path: READ } });
   const second = await session.request(1);
@@ -81,8 +86,8 @@ for (const harness of wanted as HarnessId[]) {
   await rm(dirname(copy.work), { recursive: true, force: true });
   const record = { version: session.version, model: adapter.defaultModel, read: READ, servers };
   await Bun.write(join(OUT, `${harness}.json`), `${JSON.stringify(record, null, 2)}\n`);
-  await Bun.write(join(OUT, `${harness}-0.json`), `${JSON.stringify(stable(first, work, home, binary), null, 2)}\n`);
-  await Bun.write(join(OUT, `${harness}-1.json`), `${JSON.stringify(stable(second, work, home, binary), null, 2)}\n`);
+  await Bun.write(join(OUT, `${harness}-0.json`), `${JSON.stringify(stable(first, dirs, binary), null, 2)}\n`);
+  await Bun.write(join(OUT, `${harness}-1.json`), `${JSON.stringify(stable(second, dirs, binary), null, 2)}\n`);
   console.log(`${harness} ${session.version}: ${OUT}/${harness}-{0,1}.json`);
 }
 await proxy.stop();

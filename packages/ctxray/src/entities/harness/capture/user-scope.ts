@@ -34,6 +34,20 @@ export const codexUserScope = ({ home, env }: UserScope, codexHome: string, runH
   ];
 };
 
+// OpenCode: AGENTS.md, skills, commands, and agents of its config folder, plus the skills in ~/.claude and
+// ~/.agents it reads too. opencode.json stays out: ctxray passes its own config and the user's MCP servers.
+export const opencodeUserScope = ({ home, env }: UserScope, runHome: string) => {
+  const own = join(env["XDG_CONFIG_HOME"] || join(home, ".config"), "opencode");
+  const config = join(runHome, ".config", "opencode");
+  const names = ["AGENTS.md", "skills", "skill", "commands", "command", "agents", "agent"];
+  return [
+    ...names.map((name) => [join(own, name), join(config, name)] as const),
+    [join(home, ".claude", "CLAUDE.md"), join(runHome, ".claude", "CLAUDE.md")] as const,
+    [join(home, ".claude", "skills"), join(runHome, ".claude", "skills")] as const,
+    [join(home, ".agents", "skills"), join(runHome, ".agents", "skills")] as const,
+  ];
+};
+
 // Gemini CLI: GEMINI.md, the skills, commands, and subagents of its folder, plus the skills in ~/.agents.
 // settings.json stays out: ctxray writes its own and adds the user's MCP servers and hooks to it.
 // Extensions stay out too: they bring MCP servers of their own that would reach the network past ctxray.

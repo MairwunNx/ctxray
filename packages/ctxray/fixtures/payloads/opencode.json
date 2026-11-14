@@ -1,0 +1,77 @@
+{
+  "version": "1.19.5",
+  "model": "claude-sonnet-5-5",
+  "read": "app/src/main/kotlin/payments/Charge.kt",
+  "servers": {
+    "jira": {
+      "info": {
+        "name": "jira",
+        "version": "1.0.0"
+      },
+      "instructions": "Use the jira tools to look up tickets of the PAY project.",
+      "tools": [
+        {
+          "name": "search_issues",
+          "description": "Search Jira issues with JQL.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "jql": {
+                "type": "string",
+                "description": "JQL query"
+              }
+            },
+            "required": ["jql"]
+          }
+        }
+      ],
+      "calls": []
+    },
+    "github": {
+      "info": {
+        "name": "github",
+        "version": "1.0.0"
+      },
+      "instructions": "Use the github tools for issues and pull requests of the payments repositories.",
+      "tools": [
+        {
+          "name": "create_issue",
+          "description": "Open an issue in a repository.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "repo": {
+                "type": "string",
+                "description": "owner/name"
+              },
+              "title": {
+                "type": "string",
+                "description": "Issue title"
+              },
+              "body": {
+                "type": "string",
+                "description": "Markdown body"
+              }
+            },
+            "required": ["repo", "title", "body"]
+          }
+        },
+        {
+          "name": "list_pulls",
+          "description": "List open pull requests of a repository.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "repo": {
+                "type": "string",
+                "description": "owner/name"
+              }
+            },
+            "required": ["repo"]
+          }
+        }
+      ],
+      "calls": []
+    }
+  }
+}

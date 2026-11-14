@@ -117,6 +117,7 @@ describe("the launchers", () => {
       cwd: "",
       prompt: "",
       model: "m",
+      provider: undefined,
       baseUrl: "",
       env: {},
       ...routing,

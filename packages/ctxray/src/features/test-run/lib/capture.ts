@@ -93,7 +93,8 @@ export const createCapture = ({ config, env, self, binaries }: CaptureDeps) => {
     const writer = createTraceWriter(trace, redactor);
     const conversation = createConversation(writer.write);
     const prefix = proxy.open(conversation.handler);
-    const model = config.harnesses[scope.harness]?.model ?? adapter.defaultModel;
+    const settings = config.harnesses[scope.harness];
+    const model = settings?.model ?? adapter.defaultModel;
     const seen = guard.attempts().length;
     const harness = await startSession({
       adapter,
@@ -103,6 +104,7 @@ export const createCapture = ({ config, env, self, binaries }: CaptureDeps) => {
       cwd,
       prompt,
       model,
+      provider: settings?.provider,
       env: {
         PATH: env["PATH"] ?? "/usr/bin:/bin",
         TERM: "dumb",
@@ -122,7 +124,9 @@ export const createCapture = ({ config, env, self, binaries }: CaptureDeps) => {
           ? { home: env["HOME"] ?? "", env, project: scope.workspace.root }
           : undefined,
     });
-    return { harness, adapter, model, trace, egress: () => guard.attempts().slice(seen) };
+    // The provider changes the payload too, so it joins the model in the snapshot key: `anthropic/claude-…`.
+    const label = settings?.provider ? `${settings.provider}/${model}` : model;
+    return { harness, adapter, model: label, trace, egress: () => guard.attempts().slice(seen) };
   };
 
   const stop = async (keepTraces: boolean) => {

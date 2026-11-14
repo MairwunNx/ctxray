@@ -9,6 +9,7 @@ export type LaunchContext = {
   cwd: string; // relative to the project root
   prompt: string;
   model: string;
+  provider: string | undefined; // the provider a harness with several talks to, as the config names it
   baseUrl: string; // the proxy session
   env: Record<string, string>; // isolation: PATH, HOME, TMPDIR, the egress guard
   // The command line that runs an MCP server behind ctxray's shim, which logs it as `name`.
@@ -18,7 +19,7 @@ export type LaunchContext = {
   user: UserScope | undefined; // set with `userScope: "inherit"`: the user's own rules and skills join the run
 };
 
-export type Launch = { command: string[]; env: Record<string, string> };
+export type Launch = { command: string[]; env: Record<string, string>; stdin?: string };
 
 // The model's side of a turn, as a test names it: `Read` a file, or any tool by the harness's own name.
 export type Intent = { tool: string; input: Record<string, unknown> };
