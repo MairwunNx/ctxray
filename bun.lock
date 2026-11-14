@@ -17,6 +17,7 @@
         "ctxray": "./src/app/main.ts",
       },
       "dependencies": {
+        "gpt-tokenizer": "4.1.2",
         "ink": "8.0.0",
         "react": "19.3.1",
         "typed-inject": "5.0.0",
@@ -131,6 +132,8 @@
     "escape-string-regexp": ["escape-string-regexp@2.0.0", "", {}, "sha512-UpzcLCXolUWcNu5HtVMHYdXJjArjsF9C0aNnquZYY4uW/Vu0miy5YoWvbV345HauVvcAUnpRuhMMcqTcGOY2+w=="],
 
     "get-east-asian-width": ["get-east-asian-width@1.7.0", "", {}, "sha512-XjH1AECxf0giL2V1aU8vKyRR2ppRUb5c0EvT7zuJTokQ74bNo52zOtghqdWIqrhUD79fo3x0WfKZdOqxF6LG1Q=="],
+
+    "gpt-tokenizer": ["gpt-tokenizer@4.1.2", "", {}, "sha512-5GwcLcZd6IqCdrGTTPcoKqbJk8cCWHHsoTHR/uQGZKT29CFcnJEg69qisGbKesQpzxRq9yQO4lBgsaZ8SawcGQ=="],
 
     "indent-string": ["indent-string@5.0.0", "", {}, "sha512-m6FAo/spmsW2Ab2fU35JTYwtOKa2yAwXSwgjSv1TJzh4Mh7mC3lzAOVLBprb72XsTrgkEIsl7YrFNAiDiRhIGg=="],
 
