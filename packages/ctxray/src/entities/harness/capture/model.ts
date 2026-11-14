@@ -32,6 +32,7 @@ export type Segment = {
 export type CaptureAdapter = {
   binary: string; // the executable on PATH
   defaultModel: string; // pinned: the model changes the payload (ADR 0013)
+  sandboxesItself?: boolean; // runs the agent's commands in a sandbox of its own
   version: (binary: string, env: Record<string, string>) => Promise<string>;
   launch: (binary: string, context: LaunchContext, inventory: Inventory) => Promise<Launch>;
   call: (intent: Intent, work: string, request: Exchange) => ToolCall;

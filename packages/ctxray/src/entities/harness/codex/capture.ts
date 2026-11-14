@@ -21,6 +21,7 @@ const shell = (cmd: string, request: Exchange): ToolCall =>
 export const CODEX_CAPTURE: CaptureAdapter = {
   binary: "codex",
   defaultModel: "gpt-5.5",
+  sandboxesItself: true,
   version: codexVersion,
   launch: launchCodex,
   call: ({ tool, input }, work, request) => {

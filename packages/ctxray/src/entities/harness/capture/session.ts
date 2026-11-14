@@ -7,6 +7,7 @@ import type { Project } from "../project.ts";
 import type { RunDirs } from "./isolate.ts";
 import { isolate } from "./isolate.ts";
 import type { CaptureAdapter, Intent } from "./model.ts";
+import { sandboxed } from "./sandbox.ts";
 
 // The mock model a session talks to, as the proxy provides it.
 export type ModelPort = {
@@ -81,7 +82,8 @@ export const startSession = async (options: SessionOptions): Promise<HarnessSess
     shim,
   };
   const launch = await adapter.launch(options.binary, context, options.inventory);
-  const child = Bun.spawn(launch.command, {
+  const command = adapter.sandboxesItself ? launch.command : sandboxed(launch.command, dirs.root);
+  const child = Bun.spawn(command, {
     cwd: join(dirs.work, options.cwd),
     env: launch.env,
     stdin: "ignore",
