@@ -1,5 +1,6 @@
 import { expect, test } from "bun:test";
-import { attempt } from "./attempt.ts";
+import { $ } from "bun";
+import { attempt, toFailure } from "./attempt.ts";
 import { CheckFailure, Inconclusive } from "./failure.ts";
 
 // A body that fails its first `failures` runs, then passes.
@@ -39,4 +40,9 @@ test("a check failure keeps its key, an error its message", async () => {
   expect(check.failure).toEqual({ kind: "check", key: "test.timeout", params: { ms: 5 }, lines: [] });
   const thrown = await attempt(failingFirst(1, () => "a string"));
   expect(thrown.failure).toEqual({ kind: "error", message: "a string", where: undefined });
+});
+
+test("a shell error shows what the command said", async () => {
+  const error = await $`sh -c "echo nope >&2; exit 3"`.quiet().catch((caught) => caught);
+  expect(toFailure(error)).toMatchObject({ kind: "error", message: "Failed with exit code 3: nope" });
 });

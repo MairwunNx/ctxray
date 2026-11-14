@@ -19,9 +19,16 @@ const whereOf = (error: Error) =>
     ?.replace(/^file:\/\//, "")
     .replace(/\?[^:]*/, "");
 
+// Bun's shell errors say only “Failed with exit code 1”: the command's own complaint is in its stderr.
+const messageOf = (error: Error) => {
+  const stderr = (error as { stderr?: unknown }).stderr;
+  const said = stderr instanceof Uint8Array ? new TextDecoder().decode(stderr).trim().split("\n").at(-1) : undefined;
+  return said ? `${error.message}: ${said}` : error.message;
+};
+
 export const toFailure = (error: unknown): Failure => {
   if (error instanceof CheckFailure) return { kind: "check", key: error.key, params: error.params, lines: error.lines };
-  if (error instanceof Error) return { kind: "error", message: error.message, where: whereOf(error) };
+  if (error instanceof Error) return { kind: "error", message: messageOf(error), where: whereOf(error) };
   return { kind: "error", message: String(error), where: undefined };
 };
 
