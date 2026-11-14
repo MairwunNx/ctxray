@@ -3,6 +3,7 @@ import type { Command, Instruction, Inventory, McpDeclaration, Problem, Skill } 
 import { problem } from "../inventory.ts";
 import { type Project, readMatching } from "../project.ts";
 import { readSkillFiles } from "../skill-file.ts";
+import { cursorFrontmatter } from "./frontmatter.ts";
 
 const RULE = /^(?:(.*)\/)?\.cursor\/rules\/(?:.+\/)?[^/]+\.mdc$/;
 const CONTEXT = /^(?:(.*)\/)?(AGENTS\.md|CLAUDE\.md|CLAUDE\.local\.md)$/;
@@ -11,16 +12,13 @@ const COMMAND = /^(?:(.*)\/)?\.cursor\/commands\/(.+)\.md$/;
 const MCP = /^(?:(.*)\/)?\.cursor\/mcp\.json$/;
 
 // Cursor picks a rule by a fixed order (ADR 0009): `alwaysApply` first, then `globs`, then a `description`
-// the model fetches it by, and a rule with none of them waits for the user to attach it.
-const ruleOf = (path: string, dir: string, text: string, problems: Problem[]): Instruction => {
-  const { data, body, error, loose } = splitFrontmatter(text);
-  if (error !== undefined) {
-    problems.push(problem(loose ? "lint.looseFrontmatter" : "lint.frontmatter", "warning", path, { message: error }));
-  }
+// the model fetches it by, and a rule with none of them waits for the user to attach it. Only a real `true`
+// counts: `alwaysApply: yes` stays a string to Cursor.
+const ruleOf = (path: string, dir: string, text: string): Instruction => {
+  const { data, body } = cursorFrontmatter(text);
   const globs = listOf(data["globs"])?.filter((glob) => glob !== "");
   const description = textOf(data["description"]);
   const base = { path, dir, kind: "rule" as const, imports: [], text: body };
-  // Cursor takes only a real `true`: `alwaysApply: yes` is a string to it.
   if (data["alwaysApply"] === true) return { ...base, activation: "always" };
   if (globs && globs.length > 0) return { ...base, activation: "path", globs };
   if (description !== undefined) return { ...base, activation: "intent", description };
@@ -84,7 +82,7 @@ export const discoverCursor = async (project: Project, harness: "cursor-cli" | "
       const kind = kinds[match[2] as keyof typeof kinds];
       return { path, dir: match[1] ?? "", kind, imports: [], text };
     }),
-    ...rules.map(({ path, match, text }) => ruleOf(path, match[1] ?? "", text, problems)),
+    ...rules.map(({ path, match, text }) => ruleOf(path, match[1] ?? "", text)),
     // The legacy .cursorrules at the root always applies.
     ...(legacy === undefined
       ? []
