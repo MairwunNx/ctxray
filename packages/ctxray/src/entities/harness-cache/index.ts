@@ -11,6 +11,14 @@ export {
 export { type CachedBuild, listCache, type PruneOptions, pruneCache } from "./inventory.ts";
 export { DEFAULT_REGISTRY, type RegistrySetup, readRegistrySetup } from "./npmrc.ts";
 export { archiveSource, packHarnesses, registrySource } from "./pack.ts";
+export {
+  type Located,
+  type LocateOptions,
+  locateHarness,
+  openProvisioning,
+  type Provisioning,
+  type ProvisioningOptions,
+} from "./provisioning.ts";
 export { RECIPES } from "./recipes.ts";
 export { createRegistry, type Registry } from "./registry.ts";
 export { maxSatisfying, resolveHarness } from "./resolve.ts";

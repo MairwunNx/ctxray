@@ -1,7 +1,7 @@
 import { afterAll, describe, expect, test } from "bun:test";
+import { claudeBuilds, codexBuilds, startFakeRegistry } from "#fixtures/registry/fake-registry.ts";
 import { DIRECT } from "#shared/infra/index.ts";
 import { readRegistrySetup } from "./npmrc.ts";
-import { claudeBuilds, codexBuilds, startFakeRegistry } from "./registry.fixture.ts";
 import { createRegistry } from "./registry.ts";
 import { maxSatisfying, resolveHarness } from "./resolve.ts";
 

@@ -49,6 +49,7 @@ test("no lockfile reads as none", async () => {
 test("the lockfile sits next to the project's config", () => {
   expect(lockfilePath(["/org/base.ts", "/repo/ctxray.config.ts"], "/repo/app")).toBe("/repo/ctxray.lock");
   expect(lockfilePath([], "/repo/app")).toBe("/repo/app/ctxray.lock");
+  expect(lockfilePath(["ctxray.config.ts"], "/repo")).toBe("/repo/ctxray.lock");
 });
 
 test.each<[string, Partial<Record<string, HarnessSettings>>, string[]]>([

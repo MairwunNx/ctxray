@@ -1,4 +1,4 @@
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import {
   type HarnessId,
   type HarnessSettings,
@@ -10,11 +10,13 @@ import {
 import type { MessageKey, Params } from "#shared/i18n/index.ts";
 import { PLATFORMS, platformKey } from "#shared/infra/index.ts";
 
-export const EMPTY_LOCKFILE: Lockfile = { lockfileVersion: LOCKFILE_VERSION, harnesses: {} };
+// A new object each time: commands fill it in.
+export const emptyLockfile = (): Lockfile => ({ lockfileVersion: LOCKFILE_VERSION, harnesses: {} });
 
-// ctxray.lock sits next to the project's config, like bun.lock next to package.json.
+// ctxray.lock sits next to the project's config, like bun.lock next to package.json. The config names its files
+// relative to where ctxray runs.
 export const lockfilePath = (configFiles: readonly string[], cwd: string) =>
-  join(configFiles.length > 0 ? dirname(configFiles.at(-1) as string) : cwd, LOCKFILE_NAME);
+  join(configFiles.length > 0 ? resolve(cwd, dirname(configFiles.at(-1) as string)) : cwd, LOCKFILE_NAME);
 
 export type LockProblem = { key: MessageKey; params: Params };
 

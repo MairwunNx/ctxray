@@ -20,9 +20,10 @@ export type Registry = {
 const encode = (name: string) => name.replace("/", "%2f");
 
 // The registry protocol ctxray needs, over the user's proxy, CA certificates, and credentials.
-export const createRegistry = (setup: RegistrySetup, egress: Egress): Registry => {
+export const createRegistry = (setup: RegistrySetup, egress: Egress, offline = false): Registry => {
   const through: Egress = { ...egress, ca: [...egress.ca, ...setup.ca] };
   const get = async (url: string, accept: string, optional = false) => {
+    if (offline) fail("provision.offline", { url: new URL(url).origin });
     const auth = setup.authOf(url);
     const headers = { accept, ...(auth !== undefined && { authorization: auth }) };
     const response = await fetchThrough(new URL(url), { headers }, through).catch((error: Error) =>

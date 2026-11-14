@@ -1,4 +1,4 @@
-import type { Env } from "#shared/infra/index.ts";
+import type { Egress, Env } from "#shared/infra/index.ts";
 import type { Config } from "./config.ts";
 
 export type NetworkSettings = {
@@ -34,3 +34,10 @@ export const resolveNetwork = (config: Config, env: Env): NetworkSettings => {
     offline: config.offline,
   };
 };
+
+// How ctxray's own requests go out: the proxy for HTTPS, NO_PROXY, and the text of every extra CA file.
+export const egressOf = async (network: NetworkSettings): Promise<Egress> => ({
+  proxy: network.httpsProxy ?? network.httpProxy,
+  noProxy: network.noProxy,
+  ca: await Promise.all(network.caFiles.map((file) => Bun.file(file).text())),
+});

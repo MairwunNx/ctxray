@@ -37,21 +37,28 @@ export const runCli = async (args: readonly string[], io: Io, container: Contain
     createTranslator(lang, CATALOGS, isOn(io.env["CTXRAY_DEBUG"]) ? onMissing : undefined);
   let settings = resolveSettings(sources);
   let t = translator(settings.lang);
-  const usageError = (text: string) => {
+  const usageError = (text: string, help = "ctxray --help") => {
     say(text);
-    io.stderr.write(`${t("error.hint", { command: "ctxray --help" })}\n`);
+    io.stderr.write(`${t("error.hint", { command: help })}\n`);
     return ExitCode.usage;
   };
 
   if (settings.unsupportedLang) say(t("lang.unsupported", { lang: settings.unsupportedLang }));
   if (!probe.ok) return usageError(parseErrorText(t, probe.error));
 
-  const [name, extra] = probe.positionals;
+  const [name, ...rest] = probe.positionals;
   const command = COMMANDS.find((candidate) => candidate.spec.name === name);
   if (name !== undefined && !command) return usageError(t("error.unknownCommand", { name }));
   const parsed = parseFlags(args, { ...GLOBAL_OPTIONS, ...command?.spec.options });
   if (!parsed.ok) return usageError(parseErrorText(t, parsed.error));
-  if (extra !== undefined) return usageError(t("error.unexpectedArgument", { value: extra }));
+  const subcommands = command?.spec.subcommands;
+  const [sub] = rest;
+  if (!subcommands && sub !== undefined) return usageError(t("error.unexpectedArgument", { value: sub }));
+  if (subcommands && values["help"] !== true) {
+    if (sub === undefined) return usageError(t("error.noSubcommand", { command: command.spec.name }));
+    if (!(sub in subcommands))
+      return usageError(t("error.unknownSubcommand", { name: sub, command: command.spec.name }));
+  }
   if (values["version"] === true) {
     io.stdout.write(`ctxray ${VERSION}\n`);
     return ExitCode.ok;
@@ -87,7 +94,7 @@ export const runCli = async (args: readonly string[], io: Io, container: Contain
       renderer.print(helpView(t, specs, GLOBAL_OPTIONS, command?.spec));
       return ExitCode.ok;
     }
-    return await command.handler(run)(parsed.values);
+    return await command.handler(run)(parsed.values, rest);
   } catch (error) {
     say(t("error.internal", { message: error instanceof Error ? (error.stack ?? error.message) : String(error) }));
     say(t("error.report", { url: ISSUES_URL }));

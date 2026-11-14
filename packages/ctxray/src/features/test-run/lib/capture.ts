@@ -11,7 +11,7 @@ import {
   startSession,
 } from "#entities/harness/index.ts";
 import { createConversation, createTraceWriter, startEgressGuard, startProxy } from "#entities/proxy/index.ts";
-import { type Config, resolveNetwork } from "#entities/user-config/index.ts";
+import { type Config, egressOf, resolveNetwork } from "#entities/user-config/index.ts";
 import type { HarnessId } from "#shared/contract/index.ts";
 import type { Egress, Env } from "#shared/infra/index.ts";
 import { createRedactor } from "#shared/redact/index.ts";
@@ -42,11 +42,6 @@ export const createCapture = ({ config, env, self }: CaptureDeps) => {
   let resources: Promise<{ proxy: ReturnType<typeof startProxy>; guard: Awaited<ReturnType<typeof startEgressGuard>> }>;
   let count = 0;
   // Remote MCP servers go out the way the user's own tools do: their proxy and their CA certificates.
-  const egressOf = async (): Promise<Egress> => ({
-    proxy: network.httpsProxy ?? network.httpProxy,
-    noProxy: network.noProxy,
-    ca: await Promise.all(network.caFiles.map((file) => Bun.file(file).text())),
-  });
   let egress: Egress;
   // One committed copy per project for the whole run, with canaries for every harness ctxray can launch.
   const copies = new Map<string, Promise<ProjectCopy>>();
@@ -82,7 +77,7 @@ export const createCapture = ({ config, env, self }: CaptureDeps) => {
       fail("capture.notInstalled", { harness: scope.harness, binary: adapter.binary });
     resources ??= (async () => ({ proxy: startProxy(), guard: await startEgressGuard() }))();
     const { proxy, guard } = await resources;
-    egress ??= await egressOf();
+    egress ??= await egressOf(network);
     const trace = join(traceDir, `${scope.harness}-${++count}.jsonl`);
     const writer = createTraceWriter(trace, redactor);
     const conversation = createConversation(writer.write);

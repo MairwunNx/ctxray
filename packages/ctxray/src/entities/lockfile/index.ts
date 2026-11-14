@@ -1,5 +1,5 @@
 export {
-  EMPTY_LOCKFILE,
+  emptyLockfile,
   formatLockfile,
   LockfileFailure,
   type LockProblem,

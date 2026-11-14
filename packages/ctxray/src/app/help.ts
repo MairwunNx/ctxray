@@ -25,9 +25,20 @@ export const helpView = (
   globalOptions: OptionSpecs,
   command?: CommandSpec,
 ): View => {
-  const usage = `ctxray ${command?.name ?? t("help.command")} ${t("help.options")}`;
+  const sub = command?.subcommands ? ` ${t("help.subcommand")}` : "";
+  const usage = `ctxray ${command?.name ?? t("help.command")}${sub} ${t("help.options")}`;
+  const subcommands: View = command?.subcommands
+    ? [
+        title(t("help.subcommandsTitle")),
+        ...columns(
+          Object.entries(command.subcommands).map(([name, summary]) => [span(name, "accent"), span(t(summary))]),
+          { indent: 3 },
+        ),
+        [],
+      ]
+    : [];
   const overview: View = command
-    ? [[span(" "), span(t(command.summary))], []]
+    ? [[span(" "), span(t(command.summary))], [], ...subcommands]
     : [
         title(t("help.commandsTitle")),
         ...columns(

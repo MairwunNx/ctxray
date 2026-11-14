@@ -3,12 +3,12 @@ import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { $ } from "bun";
+import { claudeBuilds, codexBuilds, startFakeRegistry } from "#fixtures/registry/fake-registry.ts";
 import { DIRECT, type Platform } from "#shared/infra/index.ts";
 import { createHarnessCache, type Progress } from "./install.ts";
 import { listCache, pruneCache } from "./inventory.ts";
 import { readRegistrySetup } from "./npmrc.ts";
 import { archiveSource, packHarnesses, registrySource } from "./pack.ts";
-import { claudeBuilds, codexBuilds, startFakeRegistry } from "./registry.fixture.ts";
 import { createRegistry } from "./registry.ts";
 import { resolveHarness } from "./resolve.ts";
 

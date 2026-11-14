@@ -1,5 +1,11 @@
 import { createInjector } from "typed-inject";
 import { type Config, createConfigLoader } from "#entities/user-config/index.ts";
+import {
+  createHarnessAddAction,
+  createHarnessInstallAction,
+  createHarnessListAction,
+  createHarnessPackAction,
+} from "#features/harness-install/index.ts";
 import { createInitAction } from "#features/init/index.ts";
 import { createInspectAction } from "#features/inspect/index.ts";
 import { createShowConfigAction } from "#features/show-config/index.ts";
@@ -36,5 +42,9 @@ export const createRunInjector = (
     .provideValue("config", config)
     .provideFactory("showConfigAction", createShowConfigAction)
     .provideFactory("inspectAction", createInspectAction)
-    .provideFactory("testRunAction", createTestRunAction);
+    .provideFactory("testRunAction", createTestRunAction)
+    .provideFactory("harnessAddAction", createHarnessAddAction)
+    .provideFactory("harnessInstallAction", createHarnessInstallAction)
+    .provideFactory("harnessListAction", createHarnessListAction)
+    .provideFactory("harnessPackAction", createHarnessPackAction);
 export type RunInjector = ReturnType<typeof createRunInjector>;
