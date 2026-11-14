@@ -17,6 +17,7 @@ export type CommandSpec = {
   readonly usesConfig?: boolean; // the CLI loads the config before the command runs, and stops on its errors
   // `ctxray harness add codex`: the first argument names one of these, the rest go to the handler.
   readonly subcommands?: Readonly<Record<string, MessageKey>>;
+  readonly defaultSubcommand?: string; // runs when none is named: `ctxray spectate` is `ctxray spectate show`
 };
 
 export type Handler = (values: Values, args: readonly string[]) => Promise<ExitCode>;

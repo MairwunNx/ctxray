@@ -55,8 +55,9 @@ export const runCli = async (args: readonly string[], io: Io, container: Contain
   const [sub] = rest;
   if (!subcommands && sub !== undefined) return usageError(t("error.unexpectedArgument", { value: sub }));
   if (subcommands && values["help"] !== true) {
-    if (sub === undefined) return usageError(t("error.noSubcommand", { command: command.spec.name }));
-    if (!(sub in subcommands))
+    if (sub === undefined && command.spec.defaultSubcommand === undefined)
+      return usageError(t("error.noSubcommand", { command: command.spec.name }));
+    if (sub !== undefined && !(sub in subcommands))
       return usageError(t("error.unknownSubcommand", { name: sub, command: command.spec.name }));
   }
   if (values["version"] === true) {

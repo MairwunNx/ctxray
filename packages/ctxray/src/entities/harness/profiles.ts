@@ -13,7 +13,7 @@ export const PROFILES: Record<HarnessId, HarnessProfile> = {
   codex: {
     id: "codex",
     title: "Codex",
-    modes: ["static", "capture", "observe"],
+    modes: ["static", "capture"],
     experimentalModes: [],
     // The AGENTS.md chain is fixed at session start: nothing loads when the agent reads a file.
     capabilities: ["skills", "mcp", "hooks", "headless", "proxyable"],

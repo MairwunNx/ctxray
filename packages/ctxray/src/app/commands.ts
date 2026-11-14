@@ -4,6 +4,7 @@ import { createHarnessCommand, harnessSpec } from "#features/harness-install/ind
 import { createInitCommand, initSpec } from "#features/init/index.ts";
 import { createInspectCommand, inspectSpec } from "#features/inspect/index.ts";
 import { createShowConfigCommand, showConfigSpec } from "#features/show-config/index.ts";
+import { createSpectateCommand, spectateSpec } from "#features/spectate/index.ts";
 import { createTestCommand, testSpec } from "#features/test-run/index.ts";
 import type { CommandSpec, Handler } from "#shared/cli/index.ts";
 import type { RunInjector } from "./container.ts";
@@ -17,6 +18,7 @@ export const COMMANDS: readonly Command[] = [
   { spec: inspectSpec, handler: (injector) => injector.injectFunction(createInspectCommand) },
   { spec: testSpec, handler: (injector) => injector.injectFunction(createTestCommand) },
   { spec: harnessSpec, handler: (injector) => injector.injectFunction(createHarnessCommand) },
+  { spec: spectateSpec, handler: (injector) => injector.injectFunction(createSpectateCommand) },
   { spec: cacheSpec, handler: (injector) => injector.injectFunction(createCacheCommand) },
   { spec: doctorSpec, handler: (injector) => injector.injectFunction(createDoctorCommand) },
   { spec: initSpec, handler: (injector) => injector.injectFunction(createInitCommand) },
