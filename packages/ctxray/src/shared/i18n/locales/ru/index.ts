@@ -161,6 +161,8 @@ export const ru: Catalog = {
     other: "≈ {count} токена",
   },
   "test.notInstalled": "в PATH нет {binary}",
+  "context.sentTwice": "{path} попадает к модели дважды уже в первом запросе",
+  "context.sameText": "В {path} тот же текст, что в {other}, и модель читает оба",
   "test.lint": "файлы проекта",
   "test.unsupported": "нужно {missing}",
   "test.filtered": "отфильтрован",

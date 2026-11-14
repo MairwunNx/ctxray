@@ -25,6 +25,7 @@ export type CapturedLoadout = {
   skills: { listed: EntryList<SkillEntry>; loaded: EntryList<SkillEntry> };
   mcp: { servers: EntryList<McpServer>; tools: EntryList<McpTool> };
   commands: EntryList<CommandEntry>;
+  duplicates: readonly { path: string; sameAs?: string | undefined }[];
   tokens: {
     total: number;
     byComponent: Partial<Record<Component, number>>;
@@ -91,6 +92,7 @@ export const toCaptured = (loadout: LoadoutSnapshot): CapturedLoadout => {
       ),
     },
     commands: entryList(loadout.commands, "commands"),
+    duplicates: loadout.duplicates ?? [],
     tokens: {
       total: loadout.tokens.total,
       byComponent: loadout.tokens.byComponent,

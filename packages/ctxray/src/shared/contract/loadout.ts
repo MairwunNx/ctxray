@@ -76,5 +76,9 @@ export const LoadoutSnapshot = z.object({
   commands: z.array(CommandEntry),
   tokens: TokenSummary,
   provenance: z.record(z.string(), Provenance).describe("Chunk id (`system:<id>`, `rule:<path>`, …) to its source"),
+  duplicates: z
+    .array(z.object({ path: z.string(), sameAs: z.string().optional() }))
+    .optional()
+    .describe("Files that reach the model twice: sent again, or the same text as `sameAs`"),
 });
 export type LoadoutSnapshot = z.infer<typeof LoadoutSnapshot>;

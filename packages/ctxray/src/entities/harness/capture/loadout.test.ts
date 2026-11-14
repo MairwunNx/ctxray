@@ -89,3 +89,26 @@ test("Codex ties each AGENTS.md chunk to its file by canary", async () => {
   const loadout = await loadoutOf("codex", 0);
   expect(Object.values(loadout.provenance).map((entry) => entry.evidence)).toEqual(["canary", "canary"]);
 });
+
+test("a file sent twice, or two files with one text, show up as duplicates", async () => {
+  const inventory = await STATIC_ADAPTERS["claude-code"]?.discover(project);
+  const resolve = STATIC_ADAPTERS["claude-code"]?.resolve;
+  if (!inventory || !resolve) throw new Error("claude-code");
+  const rule = (id: string, text: string) => ({ component: "rules" as const, id, text, evidence: "marker" as const });
+  const loadout = buildLoadout({
+    harness: { name: "claude-code", version: "2.1.311" },
+    segments: [
+      rule("CLAUDE.md", "Contents of <work>/CLAUDE.md:\n\n@AGENTS.md\nUse Gradle."),
+      rule("AGENTS.md", "Contents of <work>/AGENTS.md:\n\nUse   Gradle."),
+      rule("CLAUDE.md", "Contents of <work>/CLAUDE.md:\n\nUse Gradle."),
+      rule("app/CLAUDE.md", "Contents of <work>/app/CLAUDE.md:\n\n@AGENTS.md"),
+      rule("lib/CLAUDE.md", "Contents of <work>/lib/CLAUDE.md:\n\n@AGENTS.md"),
+    ],
+    inventory,
+    predicted: resolve(inventory, { cwd: "", files: [] }),
+    servers: {},
+    work: "<work>",
+    first: true,
+  });
+  expect(loadout.duplicates).toEqual([{ path: "AGENTS.md", sameAs: "CLAUDE.md" }, { path: "CLAUDE.md" }]);
+});

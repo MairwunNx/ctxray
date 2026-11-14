@@ -144,6 +144,8 @@ export const en = {
   "test.context": "starting context",
   "test.tokens": { one: "≈ {count} token", other: "≈ {count} tokens" },
   "test.notInstalled": "no {binary} on PATH",
+  "context.sentTwice": "{path} reaches the model twice in the first request",
+  "context.sameText": "{path} has the same text as {other}, and the model reads both",
   "test.lint": "project files",
   "test.unsupported": "needs {missing}",
   "test.filtered": "filtered",

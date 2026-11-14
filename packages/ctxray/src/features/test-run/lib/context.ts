@@ -68,6 +68,14 @@ const checkOne = async (
     const { loadout } = await session.firstRequest();
     await session.end();
     const { errors, warnings } = overBudget(loadout, policies, harness);
+    // The same instructions twice cost tokens twice and pull the model two ways after the next edit.
+    for (const { path, sameAs } of loadout.duplicates) {
+      warnings.push(
+        sameAs === undefined
+          ? { key: "context.sentTwice", params: { path } }
+          : { key: "context.sameText", params: { path, other: sameAs } },
+      );
+    }
     const found = [...errors, ...warnings];
     return {
       ...base(harness),

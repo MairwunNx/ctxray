@@ -56,12 +56,24 @@ const fingerprinted = (segment: Segment, inventory: Inventory): Segment[] => {
   return [...whole, ...cut].map((file) => ({ ...segment, id: file.path, evidence: "fingerprint" }));
 };
 
-const rulesOf = (input: LoadoutInput, provenance: Record<string, Provenance>): RuleEntry[] => {
+type Duplicate = { path: string; sameAs?: string };
+
+// A file reaches the model twice when the harness sends it twice, or sends two files with the same text.
+const rulesOf = (input: LoadoutInput, provenance: Record<string, Provenance>, duplicates: Duplicate[]): RuleEntry[] => {
   const rules: RuleEntry[] = [];
+  const texts = new Map<string, string>();
   const segments = input.segments.filter((segment) => segment.component === "rules");
   for (const found of segments.flatMap((one) => (one.id === "" ? fingerprinted(one, input.inventory) : [one]))) {
     const segment = found.evidence === "canary" ? { ...found, id: pathOf(found, input) } : found;
-    if (rules.some((rule) => rule.path === segment.id)) continue;
+    if (rules.some((rule) => rule.path === segment.id)) {
+      duplicates.push({ path: segment.id });
+      continue;
+    }
+    // The text the file adds: without the harness's header and without `@imports`, which load files of their own.
+    const text = normalise(segment.text.replace(/^Contents of .*\n/, "").replace(/^@\S+\s*$/gm, ""));
+    const twin = texts.get(text);
+    if (twin !== undefined && text !== "") duplicates.push({ path: segment.id, sameAs: twin });
+    texts.set(text, segment.id);
     const predicted = input.predicted.rules.find((rule) => rule.path === segment.id);
     const activation = predicted?.activation ?? (input.first ? "always" : "path");
     const reason = predicted?.reason ?? "observed";
@@ -147,7 +159,8 @@ const systemOf = (segments: readonly Segment[]): SystemSection[] => {
 // What the harness really sent, as a Loadout: the segments of one request, tied to the project's files.
 export const buildLoadout = (input: LoadoutInput): LoadoutSnapshot => {
   const provenance: Record<string, Provenance> = {};
-  const rules = rulesOf(input, provenance);
+  const duplicates: Duplicate[] = [];
+  const rules = rulesOf(input, provenance, duplicates);
   const { listed, loaded, commands } = skillsOf(input);
   const mcp = mcpOf(input);
   const byComponent: Partial<Record<Component, number>> = {};
@@ -169,5 +182,6 @@ export const buildLoadout = (input: LoadoutInput): LoadoutSnapshot => {
     commands,
     tokens: { total, byComponent, byMcpServer: mcp.byMcpServer, exact: false, method: LOCAL_METHOD },
     provenance,
+    ...(duplicates.length > 0 && { duplicates }),
   };
 };
