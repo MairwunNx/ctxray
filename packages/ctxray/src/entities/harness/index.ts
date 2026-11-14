@@ -1,3 +1,10 @@
+export { STATIC_ADAPTERS, type StaticAdapter } from "./adapters.ts";
 export { CAPABILITIES, type Capability } from "./capability.ts";
+export type { Command, Instruction, Inventory, McpDeclaration, Problem, Severity, Skill } from "./inventory.ts";
+export { findDeadRules } from "./layers/dead-rules.ts";
+export { lint } from "./layers/lint.ts";
+export { checkPolicies, type Finding, type PolicyOutcome } from "./layers/policy.ts";
 export { checkSupport, type HarnessProfile, type Requirement, type Support } from "./profile.ts";
 export { PROFILES } from "./profiles.ts";
+export { openProject, type Project } from "./project.ts";
+export type { Scope, StaticLoadout } from "./static-loadout.ts";

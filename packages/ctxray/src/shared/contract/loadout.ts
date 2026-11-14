@@ -21,13 +21,18 @@ export const RuleEntry = z.object({
   reason: z.string().describe("Why it loaded, like `glob:**/payments/**/*.kt` or `cwd:app`"),
   tokens,
 });
+export type RuleEntry = z.infer<typeof RuleEntry>;
 
 export const SkillEntry = z.object({ name: z.string(), path: z.string(), tokens });
+export type SkillEntry = z.infer<typeof SkillEntry>;
 
 export const McpServer = z.object({ name: z.string(), version: z.string().optional() });
+export type McpServer = z.infer<typeof McpServer>;
 export const McpTool = z.object({ server: z.string(), name: z.string(), tokens });
+export type McpTool = z.infer<typeof McpTool>;
 
 export const CommandEntry = z.object({ name: z.string(), path: z.string().optional() });
+export type CommandEntry = z.infer<typeof CommandEntry>;
 
 export const TokenSummary = z.object({
   total: tokens,

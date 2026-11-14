@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "github": { "command": "github-mcp" },
+    "jira": { "type": "http", "url": "https://jira.example.test/mcp" },
+    "legacy": { "command": "legacy-mcp" }
+  }
+}

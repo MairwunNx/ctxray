@@ -14,9 +14,12 @@ export { ExitCode } from "./exit-code.ts";
 export { CaptureMode, HarnessId, HarnessInfo } from "./harness.ts";
 export { CONFIG_SCHEMA_URL, jsonSchemas } from "./json-schema.ts";
 export {
+  CommandEntry,
   Component,
   LOADOUT_SCHEMA_VERSION,
   LoadoutSnapshot,
+  McpServer,
+  McpTool,
   RuleEntry,
   SkillEntry,
   SystemSection,

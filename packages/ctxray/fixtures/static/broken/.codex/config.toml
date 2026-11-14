@@ -1,0 +1,4 @@
+project_doc_max_bytes = 40
+
+[mcp_servers.ghost]
+args = []

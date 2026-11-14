@@ -1,0 +1,9 @@
+[mcp_servers.github]
+command = "github-mcp"
+
+[mcp_servers.jira]
+url = "https://jira.example.test/mcp"
+
+[mcp_servers.sentry]
+command = "sentry-mcp"
+enabled = false
