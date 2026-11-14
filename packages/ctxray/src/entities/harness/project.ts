@@ -42,7 +42,17 @@ const behindLinks = async (root: string, links: readonly string[]) => {
 const gitFiles = async (root: string): Promise<string[] | undefined> => {
   const git = await $`git ls-files -z --cached --others --exclude-standard`.cwd(root).quiet().nothrow();
   if (git.exitCode !== 0) return undefined;
-  const files = nulSeparated(git.stdout.toString());
+  // git lists what the index holds: a file deleted from the working tree, or hidden by skip-worktree, isn't
+  // there for any harness to read.
+  const deleted = new Set(nulSeparated(await $`git ls-files -z --deleted`.cwd(root).quiet().text()));
+  const flagged = nulSeparated(await $`git ls-files -v -z`.cwd(root).quiet().text())
+    .filter((entry) => entry.startsWith("S "))
+    .map((entry) => entry.slice(2));
+  const hidden = await inParallel(flagged, async (path) =>
+    (await Bun.file(join(root, path)).exists()) ? undefined : path,
+  );
+  for (const path of hidden) if (path !== undefined) deleted.add(path);
+  const files = nulSeparated(git.stdout.toString()).filter((path) => !deleted.has(path));
   // Tracked links carry mode 120000. Untracked ones git knows nothing about, so lstat tells.
   const staged = nulSeparated(await $`git ls-files -s -z`.cwd(root).quiet().text());
   const untracked = nulSeparated(await $`git ls-files -z --others --exclude-standard`.cwd(root).quiet().text());
