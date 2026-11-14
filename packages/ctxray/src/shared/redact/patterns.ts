@@ -26,6 +26,8 @@ export const BUILTIN_PATTERNS: readonly Pattern[] = [
   { id: "slack-token", regex: /\bxox[abposr]-[A-Za-z0-9-]{10,}/g },
   { id: "telegram-bot-token", regex: /\b\d{8,10}:[\w-]{35}\b/g },
   { id: "bearer", regex: /\bBearer\s+[\w.~+/=-]{16,}/g },
+  // `user:password@` in a proxy or registry URL. It runs before email, which would take only the password.
+  { id: "url-credentials", regex: /(?<=\b[a-z][\w+.-]*:\/\/)[^\s/@:]+:[^\s/@]+(?=@)/gi },
   { id: "email", regex: /\b[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g },
   // Only with a country code or Russia's 8 (XXX), so versions, ids, and timestamps never match.
   { id: "phone", regex: /(?<![\w.+])\+\d{1,3}[\s-]?\(?\d{2,4}\)?(?:[\s-]?\d{2,4}){2,3}(?![\w.])/g },

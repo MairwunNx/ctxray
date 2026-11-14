@@ -38,6 +38,19 @@ describe("built-in patterns redact", () => {
   });
 });
 
+describe("URL credentials", () => {
+  test.each([
+    ["http://ivan:s3cr3t@proxy.corp.test:3128", `http://${marker("url-credentials")}@proxy.corp.test:3128`],
+    ["https://bot:tok%2Fen@registry.corp.test/", `https://${marker("url-credentials")}@registry.corp.test/`],
+  ])("%s keeps the host", (url, expected) => {
+    expect(redactor.text(url)).toBe(expected);
+  });
+
+  test("a URL without credentials stays", () => {
+    expect(redactor.text("http://proxy.corp.test:3128/path?a=b:c")).toBe("http://proxy.corp.test:3128/path?a=b:c");
+  });
+});
+
 describe("leaves alone", () => {
   test.each([
     ["a version", "claude-code 2.1.325, bun 1.4.4"],
