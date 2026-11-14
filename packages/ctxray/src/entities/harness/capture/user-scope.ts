@@ -48,12 +48,12 @@ export const opencodeUserScope = ({ home, env }: UserScope, runHome: string) => 
   ];
 };
 
-// Cursor CLI: the skills, rules, commands, and hooks of ~/.cursor, and the skill folders of the other harnesses it
-// reads too. mcp.json stays out: ctxray writes its own with the user's servers behind ctxray.
+// Cursor CLI: the skills, commands, and hooks of ~/.cursor, and the skill folders of the other harnesses it reads
+// too. Cursor keeps a user's rules in the account, not in files (ADR 0010). mcp.json stays out: ctxray writes its
+// own with the user's servers behind ctxray.
 export const cursorUserScope = ({ home }: UserScope, runHome: string) => {
   const names = [
     ".cursor/skills",
-    ".cursor/rules",
     ".cursor/commands",
     ".cursor/hooks.json",
     ".agents/skills",

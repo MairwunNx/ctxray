@@ -144,3 +144,11 @@ describe("L3 resolve on the payments fixture", () => {
     expect(loadout.rules[1]?.tokens).toBeLessThan(10);
   });
 });
+
+test("Claude Code Desktop reads what Claude Code reads, under its own name", async () => {
+  const files = ["app/src/main/kotlin/payments/Charge.kt"];
+  const cli = (await resolveIn("payments", "claude-code", { cwd: "app", files })).loadout;
+  const desktop = (await resolveIn("payments", "claude-code-desktop", { cwd: "app", files })).loadout;
+  expect(desktop.harness).toBe("claude-code-desktop");
+  expect({ ...desktop, harness: "claude-code" }).toEqual(cli);
+});
