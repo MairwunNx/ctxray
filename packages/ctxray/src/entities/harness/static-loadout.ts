@@ -22,7 +22,13 @@ export type StaticLoadout = {
   skills: { listed: SkillEntry[]; loaded: SkillEntry[] };
   mcp: { servers: McpServer[]; tools: McpTool[] };
   commands: CommandEntry[];
-  tokens: { byComponent: Partial<Record<Component, number>>; exact: false; method: string };
+  tokens: {
+    byComponent: Partial<Record<Component, number>>;
+    exact: false;
+    method: string;
+    // Claude has its own tokenizer, and ctxray has no measured factor from o200k to it yet (ADR 0012).
+    calibration?: "none";
+  };
 };
 
 // The listing line both harnesses show the model for a skill or a command.
@@ -40,9 +46,16 @@ type Parts = Omit<StaticLoadout, "tokens">;
 
 const sum = (entries: readonly { tokens: number }[]) => entries.reduce((total, entry) => total + entry.tokens, 0);
 
-export const withTokens = (parts: Parts, commandLines: readonly string[]): StaticLoadout => ({
+type Calibration = Pick<StaticLoadout["tokens"], "calibration">;
+
+export const withTokens = (
+  parts: Parts,
+  commandLines: readonly string[],
+  calibration: Calibration = {},
+): StaticLoadout => ({
   ...parts,
   tokens: {
+    ...calibration,
     byComponent: {
       rules: sum(parts.rules),
       skills: sum(parts.skills.listed),

@@ -65,5 +65,6 @@ export const resolveClaudeCode = (inventory: Inventory, { cwd, files }: Scope): 
       commands: commands.map(({ name, path }) => ({ name, path })),
     },
     commands.map((command) => listingLine(command.name, command.description)),
+    { calibration: "none" },
   );
 };

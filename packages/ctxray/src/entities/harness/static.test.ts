@@ -138,7 +138,7 @@ describe("L3 resolve on the payments fixture", () => {
 
   test("tokens are local estimates and never claim to be exact", async () => {
     const { loadout } = await resolveIn("payments", "claude-code");
-    expect(loadout.tokens).toMatchObject({ exact: false, method: "local:o200k_base" });
+    expect(loadout.tokens).toMatchObject({ exact: false, method: "local:o200k_base", calibration: "none" });
     const rules = loadout.rules.reduce((sum, rule) => sum + rule.tokens, 0);
     expect(loadout.tokens.byComponent.rules).toBe(rules);
     expect(rules).toBeGreaterThan(0);
