@@ -10,7 +10,12 @@ const LISTING_LIMIT = 1536;
 
 export const findSkills = async (project: Project, problems: Problem[]): Promise<Skill[]> =>
   (await readSkillFiles(project, SKILL, problems)).map(({ path, dir, folder, frontmatter: { data, body } }) => {
-    const name = textOf(data["name"]) ?? folder;
+    // Claude Code 2.1 names a skill by its folder and shows a different `name` after it: `- folder (name):`.
+    const name = folder;
+    const declared = textOf(data["name"]);
+    if (declared !== undefined && declared !== folder) {
+      problems.push(problem("lint.skillFolderName", "warning", path, { name: declared, folder }));
+    }
     const when = textOf(data["when_to_use"]);
     const own = textOf(data["description"]) ?? firstLine(body);
     if (own === undefined) problems.push(problem("lint.noDescription", "warning", path, { name }));

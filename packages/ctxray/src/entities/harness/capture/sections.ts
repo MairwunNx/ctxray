@@ -46,5 +46,6 @@ export const slug = (title: string) =>
 export const listing = (text: string) =>
   text.split("\n").flatMap((line) => {
     const match = /^- ([^:\s][^:]*?): /.exec(line);
-    return match ? [{ name: match[1] as string, line }] : [];
+    // Claude Code adds a skill's own `name` in brackets when it differs from the folder: `- folder (name):`.
+    return match ? [{ name: (match[1] as string).replace(/ \([^)]*\)$/, ""), line }] : [];
   });

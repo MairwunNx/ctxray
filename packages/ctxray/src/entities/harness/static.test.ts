@@ -25,6 +25,7 @@ describe("L1 lint and dead rules on fixtures", () => {
         "warning lint.ruleField .claude/rules/cursor.md",
         "warning lint.ruleField .claude/rules/cursor.md",
         "warning lint.shadowedCommand .claude/commands/deploy.md",
+        "warning lint.skillFolderName .claude/skills/Bad_Name/SKILL.md",
         "warning lint.skillName .claude/skills/Bad_Name/SKILL.md",
       ],
     ],
