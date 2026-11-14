@@ -1,4 +1,5 @@
 import { join, posix } from "node:path";
+import { $ } from "bun";
 import { gitignoreGlob } from "#shared/glob/index.ts";
 
 // The repository under test, read-only. Paths are relative to the root, with `/`, and "" is the root itself.
@@ -13,19 +14,14 @@ export type Project = {
 
 const SKIPPED = /(^|\/)(\.git|node_modules)\//;
 
+// Outside a repository, or without git installed, the exit code is not 0 and the walk takes over.
 const gitFiles = async (root: string): Promise<string[] | undefined> => {
-  try {
-    const git = Bun.spawn(["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard"], {
-      cwd: root,
-      stdout: "pipe",
-      stderr: "ignore",
-    });
-    const output = await new Response(git.stdout).text();
-    if ((await git.exited) !== 0) return undefined;
-    return output.split("\0").filter((path) => path !== "");
-  } catch {
-    return undefined;
-  }
+  const git = await $`git ls-files -z --cached --others --exclude-standard`.cwd(root).quiet().nothrow();
+  if (git.exitCode !== 0) return undefined;
+  return git.stdout
+    .toString()
+    .split("\0")
+    .filter((path) => path !== "");
 };
 
 const walkFiles = async (root: string): Promise<string[]> => {
