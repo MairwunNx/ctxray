@@ -1,0 +1,68 @@
+import { type OptionSpecs, type ParseError, parseFlags } from "../shared/cli/index.ts";
+import { ExitCode } from "../shared/contract/index.ts";
+import { createTranslator, type Translate } from "../shared/i18n/index.ts";
+import type { Env } from "../shared/infra/index.ts";
+import { createRenderer } from "../shared/render/index.ts";
+import { COMMANDS } from "./commands.ts";
+import { type Container, createRunInjector } from "./container.ts";
+import { helpView } from "./help.ts";
+import { GLOBAL_OPTIONS } from "./options.ts";
+import { ISSUES_URL, VERSION } from "./package-info.ts";
+import { resolveSettings } from "./settings.ts";
+
+export type Io = {
+  env: Env;
+  stdout: NodeJS.WriteStream;
+  stderr: { write: (text: string) => unknown };
+  intlLocale?: string | undefined;
+};
+
+// Flags of every command, so a command's flag before its name (`ctxray --force init`) still parses.
+const ANY_OPTIONS: OptionSpecs = Object.assign({}, GLOBAL_OPTIONS, ...COMMANDS.map((command) => command.spec.options));
+
+const parseErrorText = (t: Translate, error: ParseError) => t(`error.${error.kind}`, { name: error.option });
+
+export const runCli = async (args: readonly string[], io: Io, container: Container): Promise<ExitCode> => {
+  const probe = parseFlags(args, ANY_OPTIONS);
+  const values = probe.ok ? probe.values : {};
+  const settings = resolveSettings({ values, env: io.env, tty: io.stdout.isTTY === true, intlLocale: io.intlLocale });
+  const t = createTranslator(settings.lang);
+  const say = (text: string) => io.stderr.write(`ctxray: ${text}\n`);
+  const usageError = (text: string) => {
+    say(text);
+    io.stderr.write(`${t("error.hint", { command: "ctxray --help" })}\n`);
+    return ExitCode.usage;
+  };
+
+  if (settings.unsupportedLang) say(t("lang.unsupported", { lang: settings.unsupportedLang }));
+  if (!probe.ok) return usageError(parseErrorText(t, probe.error));
+
+  const [name, extra] = probe.positionals;
+  const command = COMMANDS.find((candidate) => candidate.spec.name === name);
+  if (name !== undefined && !command) return usageError(t("error.unknownCommand", { name }));
+  const parsed = parseFlags(args, { ...GLOBAL_OPTIONS, ...command?.spec.options });
+  if (!parsed.ok) return usageError(parseErrorText(t, parsed.error));
+  if (extra !== undefined) return usageError(t("error.unexpectedArgument", { value: extra }));
+  if (values["version"] === true) {
+    io.stdout.write(`ctxray ${VERSION}\n`);
+    return ExitCode.ok;
+  }
+
+  const specs = COMMANDS.map((candidate) => candidate.spec);
+  const renderer = await createRenderer(settings.renderer, io.stdout);
+  const run = createRunInjector(container, settings, t, renderer);
+  try {
+    if (!command || values["help"] === true) {
+      renderer.print(helpView(t, specs, GLOBAL_OPTIONS, command?.spec));
+      return ExitCode.ok;
+    }
+    return await command.handler(run)(parsed.values);
+  } catch (error) {
+    say(t("error.internal", { message: error instanceof Error ? (error.stack ?? error.message) : String(error) }));
+    say(t("error.report", { url: ISSUES_URL }));
+    return ExitCode.internal;
+  } finally {
+    await run.dispose();
+    await renderer.close();
+  }
+};

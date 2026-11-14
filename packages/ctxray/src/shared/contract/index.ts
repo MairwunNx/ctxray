@@ -1,4 +1,5 @@
 export { Activation } from "./activation.ts";
+export { ExitCode } from "./exit-code.ts";
 export { CaptureMode, HarnessId, HarnessInfo } from "./harness.ts";
 export { jsonSchemas } from "./json-schema.ts";
 export {
