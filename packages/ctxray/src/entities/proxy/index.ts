@@ -1,4 +1,5 @@
 export { type Conversation, createConversation } from "./conversation.ts";
+export { CREDENTIAL_HEADERS, credentialsFor } from "./credentials.ts";
 export { type EgressGuard, startEgressGuard } from "./egress.ts";
 export { createForward, type ForwardOptions, PROVIDERS } from "./forward.ts";
 export type { McpMessage } from "./mcp-forward.ts";

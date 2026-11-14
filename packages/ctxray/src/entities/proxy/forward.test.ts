@@ -51,6 +51,19 @@ describe("forward", () => {
     session.close();
   });
 
+  test("the dummy key never leaves: with no real one the upstream gets none", async () => {
+    const session = proxy.open(
+      createForward({ upstream: `${upstream.url.origin}/gateway`, egress: NO_EGRESS, headers: () => ({}) }),
+    );
+    const response = await fetch(`${session.baseUrl}/v1/messages`, {
+      method: "POST",
+      headers: { "x-api-key": "dummy", authorization: "Bearer dummy" },
+      body: JSON.stringify({ messages: [] }),
+    });
+    expect(((await response.json()) as { key: string | null }).key).toBeNull();
+    session.close();
+  });
+
   test("answers a protocol error when the upstream is down", async () => {
     const session = proxy.open(createForward({ upstream: "http://127.0.0.1:9", egress: NO_EGRESS }));
     const response = await fetch(`${session.baseUrl}/v1/responses`, { method: "POST", body: "{}" });

@@ -1,4 +1,5 @@
 import { type Egress, fetchThrough } from "#shared/infra/index.ts";
+import { CREDENTIAL_HEADERS } from "./credentials.ts";
 import type { Exchange, Handler, Protocol } from "./model.ts";
 import { KITS } from "./protocols/index.ts";
 
@@ -15,7 +16,8 @@ const HOP_BY_HOP = ["host", "connection", "content-length", "accept-encoding", "
 export type ForwardOptions = {
   upstream: string | undefined; // a gateway in front of every provider, or each provider's own API
   egress: Egress;
-  headers?: Record<string, string>; // replaces what the harness sent, like the real key for a dummy one
+  // The real key, in place of the dummy one the harness holds: credentialsFor() with the user's environment.
+  headers?: Record<string, string> | ((protocol: Protocol) => Record<string, string>);
   onExchange?: (exchange: Exchange) => void;
 };
 
@@ -39,8 +41,9 @@ export const createForward = ({ upstream, egress, headers = {}, onExchange = () 
     const target = new URL(`${(upstream ?? PROVIDERS[incoming.protocol]).replace(/\/$/, "")}${incoming.path}`);
     target.search = incoming.search;
     const sent = new Headers(incoming.headers);
-    for (const name of HOP_BY_HOP) sent.delete(name);
-    for (const [name, value] of Object.entries(headers)) sent.set(name, value);
+    for (const name of [...HOP_BY_HOP, ...CREDENTIAL_HEADERS]) sent.delete(name);
+    const own = typeof headers === "function" ? headers(incoming.protocol) : headers;
+    for (const [name, value] of Object.entries(own)) sent.set(name, value);
     try {
       const response = await fetchThrough(
         target,
