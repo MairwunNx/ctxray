@@ -62,6 +62,13 @@ const changesOf = async (root: string) => {
     if (code.startsWith("R") || code.startsWith("C")) remove.push(entries[++index] ?? "");
     (code.includes("D") ? remove : copy).push(path);
   }
+  // git status says nothing about files flagged skip-worktree (S) or assume-unchanged (lower case): their
+  // working tree state is whatever the user made it, so it comes from there.
+  const flagged = (await $`git ls-files -v -z`.cwd(root).quiet().text())
+    .split("\0")
+    .filter((entry) => /^(S|[a-z]) /.test(entry))
+    .map((entry) => entry.slice(2));
+  for (const path of flagged) ((await Bun.file(join(root, path)).exists()) ? copy : remove).push(path);
   return { copy, remove };
 };
 

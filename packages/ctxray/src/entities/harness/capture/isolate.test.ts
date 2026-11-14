@@ -39,3 +39,33 @@ test("symlinks stay symlinks, and the real file gets one canary for all its path
   expect(readFileSync(join(outside, "shared.md"), "utf8")).toBe("Shared rules.\n");
   expect(readFileSync(join(root, "CLAUDE.md"), "utf8")).toBe("Use bun.\n");
 });
+
+test("a repository copy is the working tree: uncommitted changes and files hidden from git status", async () => {
+  const root = realpathSync(mkdtempSync(join(tmpdir(), "ctxray-isolate-")));
+  roots.push(root);
+  const git = (...args: string[]) =>
+    Bun.spawnSync(["git", "-c", "user.name=t", "-c", "user.email=t@t", ...args], { cwd: root });
+  writeFileSync(join(root, "AGENTS.md"), "Root.\n");
+  writeFileSync(join(root, "CLAUDE.md"), "Committed.\n");
+  git("init", "-q");
+  git("add", "-A");
+  git("commit", "-qm", "init");
+  git("update-index", "--skip-worktree", "AGENTS.md");
+  rmSync(join(root, "AGENTS.md"));
+  writeFileSync(join(root, "CLAUDE.md"), "Edited.\n");
+  writeFileSync(join(root, "new.md"), "Untracked.\n");
+  const copy = await createCopy(await openProject(root), new Set());
+  roots.push(dirname(copy.work));
+  expect(lstatExists(join(copy.work, "AGENTS.md"))).toBe(false);
+  expect(readFileSync(join(copy.work, "CLAUDE.md"), "utf8")).toBe("Edited.\n");
+  expect(readFileSync(join(copy.work, "new.md"), "utf8")).toBe("Untracked.\n");
+});
+
+const lstatExists = (path: string) => {
+  try {
+    lstatSync(path);
+    return true;
+  } catch {
+    return false;
+  }
+};
