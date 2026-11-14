@@ -45,7 +45,7 @@ describe.each([
   });
 
   test("lines option summaries up in one column", async () => {
-    const { stdout } = await run(["--help", "--lang", lang]);
+    const { stdout } = await run(["init", "--help", "--lang", lang]);
     const starts = stdout
       .split("\n")
       .filter((line) => line.startsWith("   ") && line.includes("--"))
@@ -60,7 +60,7 @@ test.each([
   [["--frobnicate"], "Unknown option --frobnicate"],
   [["--lang"], "Option --lang needs a value"],
   [["--ci=yes"], "Option --ci takes no value"],
-  [["--help", "extra"], "Unknown command “extra”"],
+  [["init", "extra"], "Unexpected argument “extra”"],
   [["--version", "--force"], "Unknown option --force"],
 ])("%p is a usage error", async (args, message) => {
   const { code, stderr } = await run(args);
@@ -77,4 +77,13 @@ test("--lang with a language ctxray lacks warns and goes on in English", async (
   const { code, stderr, stdout } = await run(["--lang", "de", "--version"]);
   expect([code, stdout]).toEqual([0, `ctxray ${VERSION}\n`]);
   expect(stderr).toContain("“de”");
+});
+
+test("init writes the scaffold, then skips it", async () => {
+  const first = await run(["init"]);
+  expect(first.code).toBe(0);
+  expect(first.stdout).toMatch(/✓ {2}created {2}ctxray\.config\.ts\s/);
+  expect(await Bun.file(join(cwd, "ctxray.config.ts")).exists()).toBe(true);
+  const second = await run(["init", "--lang=ru"]);
+  expect(second.stdout).toMatch(/· {2}пропущен {2}ctxray\.config\.ts\s+уже есть, --force перезапишет/);
 });

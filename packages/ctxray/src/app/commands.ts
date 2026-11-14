@@ -1,3 +1,4 @@
+import { createInitCommand, initSpec } from "../features/init/index.ts";
 import type { CommandSpec, Handler } from "../shared/cli/index.ts";
 import type { RunInjector } from "./container.ts";
 
@@ -6,4 +7,6 @@ export type Command = {
   readonly handler: (injector: RunInjector) => Handler;
 };
 
-export const COMMANDS: readonly Command[] = [];
+export const COMMANDS: readonly Command[] = [
+  { spec: initSpec, handler: (injector) => injector.injectFunction(createInitCommand) },
+];
