@@ -1,55 +1,59 @@
+import { Lexer, marked, type Token } from "marked";
+
 export type Reference = { target: string; line: number };
 
-const FENCE = /^ {0,3}(`{3,}|~{3,})/;
-const CODE_SPAN = /(`+).*?\1/g;
+// What one top-level block holds, with its code blanked out: imports and links in code are examples.
+type Block = { start: number; text: string; links: { href: string; raw: string }[] };
 
-// Code spans and fenced blocks hold examples, not references, so they turn blank. Lines keep their numbers.
-export const withoutCode = (text: string): string[] => {
-  let fence: string | undefined;
-  return text.split("\n").map((line) => {
-    const open = FENCE.exec(line)?.[1];
-    if (fence !== undefined) {
-      if (open !== undefined && open[0] === fence[0] && open.length >= fence.length) fence = undefined;
-      return "";
-    }
-    if (open !== undefined) {
-      fence = open;
-      return "";
-    }
-    return line.replace(CODE_SPAN, (span) => " ".repeat(span.length));
+const blank = (text: string, raw: string): string => {
+  const at = text.indexOf(raw);
+  return at < 0 ? text : text.slice(0, at) + raw.replace(/[^\n]/g, " ") + text.slice(at + raw.length);
+};
+
+// marked's block tokens add up to the source, so each block knows where it starts and every line keeps its number.
+const blocks = (source: string): Block[] => {
+  let start = 0;
+  return new Lexer({ gfm: true }).lex(source).flatMap((token: Token) => {
+    const block = { start, text: token.raw, links: [] as Block["links"] };
+    start += token.raw.length;
+    if (token.type === "code") return [];
+    marked.walkTokens([token], (inner) => {
+      if (inner.type === "codespan" || inner.type === "code") block.text = blank(block.text, inner.raw);
+      if (inner.type === "link" || inner.type === "image") block.links.push({ href: inner.href, raw: inner.raw });
+    });
+    return [block];
   });
 };
 
-const collect = (text: string, pattern: RegExp, pick: (match: RegExpExecArray) => string | undefined) =>
-  withoutCode(text).flatMap((line, index) =>
-    [...line.matchAll(pattern)].flatMap((match) => {
-      const target = pick(match);
-      return target === undefined ? [] : [{ target, line: index + 1 }];
-    }),
-  );
+const lineAt = (source: string, offset: number) => source.slice(0, offset).split("\n").length;
 
 // `@path` after a line start or a blank. A backslash keeps a space in the path, trailing punctuation ends it.
 const IMPORT = /(?<=^|\s)@((?:\\ |[^\s])+)/g;
 
-export const findImports = (text: string): Reference[] =>
-  collect(text, IMPORT, (match) => {
-    const target = (match[1] ?? "").replace(/[.,;:!?)\]]+$/, "").replaceAll("\\ ", " ");
-    return target === "" ? undefined : target;
-  });
+export const findImports = (source: string): Reference[] =>
+  blocks(source).flatMap(({ start, text }) =>
+    [...text.matchAll(IMPORT)].flatMap((match) => {
+      const target = (match[1] ?? "").replace(/[.,;:!?)\]]+$/, "").replaceAll("\\ ", " ");
+      return target === "" ? [] : [{ target, line: lineAt(source, start + match.index) }];
+    }),
+  );
 
-const LINK = /!?\[[^\]]*\]\(\s*(?:<([^>\n]+)>|([^)\s]+))(?:\s+["'][^"']*["'])?\s*\)/g;
 const SCHEME = /^[a-z][\w+.-]*:/i;
 
-// Relative Markdown links only: a URL, an anchor, or a root-relative path says nothing about the repository.
-export const findLinks = (text: string): Reference[] =>
-  collect(text, LINK, (match) => {
-    const raw = match[1] ?? match[2] ?? "";
-    if (SCHEME.test(raw) || /^[#/~]/.test(raw)) return undefined;
-    const path = raw.replace(/[#?].*$/, "");
-    if (path === "") return undefined;
-    try {
-      return decodeURI(path);
-    } catch {
-      return path;
-    }
-  });
+const decoded = (path: string) => {
+  try {
+    return decodeURI(path);
+  } catch {
+    return path;
+  }
+};
+
+// Relative links only, inline or by reference: a URL, an anchor, or a root-relative path says nothing about the repo.
+export const findLinks = (source: string): Reference[] =>
+  blocks(source).flatMap(({ start, text, links }) =>
+    links.flatMap(({ href, raw }) => {
+      const path = href.replace(/[#?].*$/, "");
+      if (SCHEME.test(href) || /^[#/~]/.test(href) || path === "") return [];
+      return [{ target: decoded(path), line: lineAt(source, start + Math.max(text.indexOf(raw), 0)) }];
+    }),
+  );

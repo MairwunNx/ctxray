@@ -61,12 +61,25 @@ describe("findImports", () => {
     ["a code span", "Write `@README` to keep it literal", []],
     ["a fenced block", "```\n@docs/a.md\n```\n@docs/b.md", ["docs/b.md"]],
     ["a longer fence holds a shorter one", "````\n```\n@x.md\n```\n````", []],
+    ["an indented code block", "Text\n\n    @docs/a.md\n", []],
+    ["an underscore in the name", "Read @docs/my_file.md first", ["docs/my_file.md"]],
   ])("%s", (_, text, targets) => {
     expect(findImports(text).map((reference) => reference.target)).toEqual(targets);
   });
 
   test("counts lines from 1, code blocks included", () => {
     expect(findImports("```\nx\n```\n@a.md")).toEqual([{ target: "a.md", line: 4 }]);
+  });
+});
+
+describe("line numbers", () => {
+  test("follow the source through lists and blocks", () => {
+    const text = "# Title\n\n- one\n- two [x](x.md) @y.md\n\n```\n@z.md\n```\n> [q](q.md)\n";
+    expect(findLinks(text)).toEqual([
+      { target: "x.md", line: 4 },
+      { target: "q.md", line: 9 },
+    ]);
+    expect(findImports(text)).toEqual([{ target: "y.md", line: 4 }]);
   });
 });
 
@@ -78,6 +91,9 @@ describe("findLinks", () => {
     ["URLs, anchors, and root paths stay out", "[a](https://x.test) [b](#top) [c](/abs) [d](mailto:x@y)", []],
     ["percent-encoding", "[a](My%20Docs/a.md)", ["My Docs/a.md"]],
     ["a space inside angle brackets", "[a](<docs/a b.md>)", ["docs/a b.md"]],
+    ["a reference-style link", "See [the guide][g].\n\n[g]: docs/guide.md", ["docs/guide.md"]],
+    ["a bare email is no link", "Mail me@example.test", []],
+    ["a link inside a code span", "Write `[a](b.md)` like this", []],
   ])("%s", (_, text, targets) => {
     expect(findLinks(text).map((reference) => reference.target)).toEqual(targets);
   });
