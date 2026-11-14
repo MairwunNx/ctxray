@@ -1,0 +1,65 @@
+name: Autopilot · Biome
+
+# Called by CI when Biome fails. Claude fixes what Biome reports and commits to the same branch.
+# One attempt only: the job stops when the branch's last commit is already the autopilot's.
+on:
+  workflow_call:
+    inputs:
+      branch:
+        required: true
+        type: string
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      BRANCH: ${{ inputs.branch }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.branch }}
+      - name: Stop on the autopilot's own commit
+        id: guard
+        run: |
+          if git log -1 --format=%s | grep -qF '[autopilot]'; then
+            echo "::notice::The last commit is the autopilot's, so it doesn't try again"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: oven-sh/setup-bun@v2
+        if: steps.guard.outputs.skip != 'true'
+      - run: bun install --frozen-lockfile
+        if: steps.guard.outputs.skip != 'true'
+      - uses: anthropics/claude-code-action@v1
+        if: steps.guard.outputs.skip != 'true'
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ github.token }}
+          claude_args: >-
+            --model claude-sonnet-5-5
+            --max-turns 40
+            --allowedTools "Read,Edit,Glob,Grep,Bash(bunx biome:*)"
+          prompt: |
+            You are this project's Biome autopilot. You run unattended in GitHub Actions; nobody will answer questions.
+
+            `bunx biome ci .` fails on this branch. Make it pass:
+            1. Run `bunx biome check --write .` for the safe fixes.
+            2. Run `bunx biome ci .` and fix every remaining diagnostic by hand, following CLAUDE.md.
+            3. Repeat until `bunx biome ci .` passes.
+
+            Change only what Biome reports. Don't touch logic beyond what a diagnostic needs, don't suppress a rule with an ignore comment unless the rule is wrong for that line, and don't edit biome.json. Don't commit: the workflow does.
+      - name: Check the fix
+        if: steps.guard.outputs.skip != 'true'
+        run: bunx biome ci .
+      - name: Commit and push
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          if git diff --quiet; then echo "::notice::Nothing to commit"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -qam "style: fix biome issues [autopilot]"
+          git push origin "HEAD:$BRANCH"
+          # A push with GITHUB_TOKEN starts no workflow, so start CI on the fix by hand.
+          gh workflow run ci.yml --ref "$BRANCH"
+        env:
+          GH_TOKEN: ${{ github.token }}
