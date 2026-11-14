@@ -12,6 +12,13 @@ export {
 } from "./config.ts";
 export { ExitCode } from "./exit-code.ts";
 export { CaptureMode, HarnessId, HarnessInfo } from "./harness.ts";
+export {
+  HarnessInspection,
+  INSPECTION_SCHEMA_VERSION,
+  InspectedProblem,
+  Inspection,
+  StaticTokens,
+} from "./inspection.ts";
 export { CONFIG_SCHEMA_URL, jsonSchemas } from "./json-schema.ts";
 export {
   CommandEntry,
@@ -20,6 +27,7 @@ export {
   LoadoutSnapshot,
   McpServer,
   McpTool,
+  Provenance,
   RuleEntry,
   SkillEntry,
   SystemSection,

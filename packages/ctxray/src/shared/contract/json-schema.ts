@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { RegExpValue, UserConfig } from "./config.ts";
+import { Inspection } from "./inspection.ts";
 import { LoadoutSnapshot } from "./loadout.ts";
 import { Session } from "./session.ts";
 
@@ -11,6 +12,7 @@ const documents = {
   config: { schema: UserConfig, io: "input" },
   loadout: { schema: LoadoutSnapshot, io: "output" },
   session: { schema: Session, io: "output" },
+  inspection: { schema: Inspection, io: "output" },
 } as const;
 
 export type JsonSchemaDocument = { $id: string; $schema?: string; [key: string]: unknown };

@@ -47,6 +47,7 @@ export const Provenance = z.object({
   reason: z.string(),
   evidence: z.enum(["static", "marker", "fingerprint", "canary"]).describe("How ctxray tied the chunk to its file"),
 });
+export type Provenance = z.infer<typeof Provenance>;
 
 export const LoadoutSnapshot = z.object({
   schemaVersion: z.literal(LOADOUT_SCHEMA_VERSION),
