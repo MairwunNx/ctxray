@@ -30,16 +30,20 @@ jobs:
         if: steps.guard.outputs.skip != 'true'
       - run: bun install --frozen-lockfile
         if: steps.guard.outputs.skip != 'true'
-      - uses: anthropics/claude-code-action@v1
+      # The CLI, not claude-code-action: the action doesn't run on push events.
+      - name: Install Claude Code
         if: steps.guard.outputs.skip != 'true'
-        with:
-          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          github_token: ${{ github.token }}
-          claude_args: >-
-            --model claude-sonnet-5-5
-            --max-turns 40
-            --allowedTools "Read,Edit,Glob,Grep,Bash(bunx biome:*)"
-          prompt: |
+        run: npm install --global @anthropic-ai/claude-code
+      - name: Fix with Claude
+        if: steps.guard.outputs.skip != 'true'
+        run: >-
+          claude -p "$PROMPT"
+          --model claude-sonnet-5-5
+          --max-turns 40
+          --allowedTools "Read,Edit,Glob,Grep,Bash(bunx biome:*)"
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          PROMPT: |
             You are this project's Biome autopilot. You run unattended in GitHub Actions; nobody will answer questions.
 
             `bunx biome ci .` fails on this branch. Make it pass:
