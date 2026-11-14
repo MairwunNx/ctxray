@@ -26,7 +26,7 @@
 ## What you get
 
 - 🔍 **See what the agent loaded.** `ctxray inspect` lists the rules, skills, MCP servers and their tools, commands, and the system prompt your agent works with in this repository.
-- 🪙 **Tokens for every piece.** Each rule, skill, and MCP server shows its token count, so you know what fills the context. Counts are exact where the tokenizer is public and marked ≈ where it isn't.
+- 🪙 **Tokens for every piece.** Each rule, skill, and MCP server shows its token count, so you know what fills the context. Estimates are marked ≈, and counts are exact when the model provider counts them.
 - ❓ **Why it's there.** Every piece says why it loaded: it's always on, a file path matched, or the model asked for it.
 - ✅ **Tests for your agent setup.** `*.ctxray.ts` files read like Bun or Vitest tests: “payment rules load for payment code”, “the context stays under 25k tokens”, “this prompt picks the refunds skill”.
 - 🧪 **One test, every agent.** The same test runs against each agent you use. You don't copy it per tool.
