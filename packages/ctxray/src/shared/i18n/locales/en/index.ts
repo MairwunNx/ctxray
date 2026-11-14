@@ -250,4 +250,13 @@ export const en = {
   "provision.notInArchive": "{package} isn't in {archive}",
   "provision.unreachable": "Can't reach {url}: {message}",
   "provision.httpError": "{url} answered {status}",
+  "lock.unreadable": "{file} isn't valid JSON: {message}",
+  "lock.invalid": "{file} is broken at {where}: {message}",
+  "lock.missing": "{harness} isn't in ctxray.lock: run `ctxray harness add {harness}`",
+  "lock.missingSystem":
+    "{harness} from PATH isn't in ctxray.lock: run `ctxray harness add {harness}` to record its version",
+  "lock.sourceChanged":
+    "ctxray.lock installs {harness} from `{locked}`, the config says `{configured}`: run `ctxray harness add {harness}`",
+  "lock.rangeChanged":
+    "ctxray.lock has {harness} {locked}, the config asks for {configured}: run `ctxray harness add {harness}`",
 } as const satisfies Record<string, Message>;

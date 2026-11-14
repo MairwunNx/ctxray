@@ -286,4 +286,13 @@ export const ru: Catalog = {
   "provision.notInArchive": "{package} нет в {archive}",
   "provision.unreachable": "Не удалось достучаться до {url}: {message}",
   "provision.httpError": "{url} ответил {status}",
+  "lock.unreadable": "{file} — не JSON: {message}",
+  "lock.invalid": "{file} сломан в {where}: {message}",
+  "lock.missing": "{harness} нет в ctxray.lock: выполните `ctxray harness add {harness}`",
+  "lock.missingSystem":
+    "{harness} из PATH нет в ctxray.lock: выполните `ctxray harness add {harness}`, чтобы записать его версию",
+  "lock.sourceChanged":
+    "ctxray.lock ставит {harness} из `{locked}`, а в конфиге `{configured}`: выполните `ctxray harness add {harness}`",
+  "lock.rangeChanged":
+    "В ctxray.lock {harness} {locked}, а конфиг просит {configured}: выполните `ctxray harness add {harness}`",
 };
