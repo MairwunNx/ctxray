@@ -35,7 +35,8 @@ const behindLinks = async (root: string, links: readonly string[]) => {
       found.push(`${link}/${path.replaceAll("\\", "/")}`);
     }
   }
-  return { found, folders };
+  // File systems walk a folder in their own order: sorted, the list reads the same on every machine.
+  return { found: found.sort(), folders };
 };
 
 // Outside a repository, or without git installed, the exit code is not 0 and the walk takes over.
