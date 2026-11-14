@@ -26,7 +26,8 @@ export const resolveSettings = ({ values, env, tty, intlLocale, configLang }: Se
   const flag = text(values["lang"]);
   const requested = [flag, env["CTXRAY_LANG"], configLang].map(languageOf).find((lang) => lang !== undefined);
   const ci = values["ci"] === true || isCi(env);
-  const plain = values["plain"] === true || values["no-color"] === true;
+  // JSON is for programs, so it never goes through the live view.
+  const plain = values["plain"] === true || values["no-color"] === true || values["json"] === true;
   return {
     lang: resolveLocale({ flag, env, config: configLang, intlLocale }, supported),
     ci,

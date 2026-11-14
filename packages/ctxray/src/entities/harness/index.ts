@@ -6,5 +6,5 @@ export { lint } from "./layers/lint.ts";
 export { checkPolicies, type Finding, type PolicyOutcome } from "./layers/policy.ts";
 export { checkSupport, type HarnessProfile, type Requirement, type Support } from "./profile.ts";
 export { PROFILES } from "./profiles.ts";
-export { openProject, type Project } from "./project.ts";
+export { findRoot, openProject, type Project } from "./project.ts";
 export type { Scope, StaticLoadout } from "./static-loadout.ts";

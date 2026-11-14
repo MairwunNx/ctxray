@@ -1,4 +1,5 @@
-import { join, posix } from "node:path";
+import { realpath } from "node:fs/promises";
+import { join, posix, resolve } from "node:path";
 import { $ } from "bun";
 import { matchesGitignore } from "#shared/glob/index.ts";
 import { inParallel } from "#shared/infra/index.ts";
@@ -34,6 +35,14 @@ const walkFiles = async (root: string): Promise<string[]> => {
     if (!SKIPPED.test(normal)) files.push(normal);
   }
   return files.sort();
+};
+
+// The repository that holds `dir`, or `dir` itself outside one. Both come back without symlinks, so a path
+// relative to the root never climbs out through /tmp → /private/tmp.
+export const findRoot = async (dir: string): Promise<{ root: string; dir: string }> => {
+  const real = await realpath(dir);
+  const git = await $`git rev-parse --show-toplevel`.cwd(real).quiet().nothrow();
+  return { root: git.exitCode === 0 ? await realpath(resolve(git.stdout.toString().trim())) : real, dir: real };
 };
 
 export const parentDirs = (path: string): string[] => {
