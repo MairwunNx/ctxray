@@ -25,10 +25,6 @@ suite("payments rules", { fixture: "../payments" }, () => {
     expect.on("claude-code", () => expect(l.rules).not.toInclude(always));
   });
 
-  test.wire.each(payments.where({ activation: "path" }))("{rule.path} attaches on read", async ({ rule, session }) => {
-    await session.model.calls("Read", { path: rule.matchingFiles({ sample: 1 })[0] });
-  });
-
   test.activate(
     "payments intents activate payments skills",
     { positive: prompts.positive, negative: prompts.negative, samples: 5 },

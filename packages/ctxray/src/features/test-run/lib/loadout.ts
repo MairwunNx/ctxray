@@ -3,6 +3,7 @@ import { STATIC_ADAPTERS, type StaticLoadout } from "#entities/harness/index.ts"
 import type { CommandEntry, Component, HarnessId, McpServer, RuleEntry, SkillEntry } from "#shared/contract/index.ts";
 import { fail } from "./failure.ts";
 import type { CellScope } from "./scope.ts";
+import { attachSnapshot, snapshotOf } from "./snapshot.ts";
 
 // Both relative to the project root: the suite's fixture, or the repository.
 export type ResolveRequest = { cwd?: string; files?: readonly string[] };
@@ -26,18 +27,12 @@ type Entry = { path?: string | undefined; name?: string };
 
 export const idOf = (entry: Entry): string => entry.path ?? entry.name ?? "";
 
-const entryList = <T extends Entry>(entries: readonly T[], what: string): EntryList<T> =>
+export const entryList = <T extends Entry>(entries: readonly T[], what: string): EntryList<T> =>
   Object.assign([...entries], {
     get: (id: string) =>
       entries.find((entry) => entry.path === id || entry.name === id) ??
       fail("expect.noEntry", { id, what, present: entries.map(idOf).join(", ") || "—" }),
   });
-
-// The loadout a view came from, for snapshots: the view itself carries helper functions.
-const sources = new WeakMap<object, StaticLoadout>();
-
-export const sourceOf = (value: unknown): StaticLoadout | undefined =>
-  typeof value === "object" && value !== null ? sources.get(value) : undefined;
 
 const toView = (loadout: StaticLoadout, files: readonly string[]): ResolvedLoadout => {
   const view = {
@@ -58,8 +53,7 @@ const toView = (loadout: StaticLoadout, files: readonly string[]): ResolvedLoado
       method: loadout.tokens.method,
     },
   };
-  sources.set(view, loadout);
-  return view;
+  return attachSnapshot(view, snapshotOf(loadout), "static");
 };
 
 const normal = (path: string) => {

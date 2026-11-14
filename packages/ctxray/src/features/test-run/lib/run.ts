@@ -1,11 +1,13 @@
 import type { HarnessId, Layer, SkipReason, TestStatus } from "#shared/contract/index.ts";
-import { attempt, type Failure, toFailure } from "./attempt.ts";
+import { attempt, DEFAULT_TIMEOUT, type Failure, toFailure } from "./attempt.ts";
+import type { Capture } from "./capture.ts";
 import { formatName } from "./dsl.ts";
 import { resolveIn } from "./loadout.ts";
 import { KIND_LAYERS, type TestDefinition } from "./model.ts";
 import { selectRules } from "./rules.ts";
 import { type CellScope, inCell } from "./scope.ts";
 import { decide, type Selection } from "./selection.ts";
+import { createSession, type Session, type SessionRequest } from "./session.ts";
 import { type Snapshots, snapshotKey } from "./snapshot.ts";
 import type { Workspaces } from "./workspace.ts";
 
@@ -28,7 +30,42 @@ export type CellResult = {
   duration: number;
 };
 
-export type RunContext = { root: string; workspaces: Workspaces; snapshots: Snapshots };
+export type RunContext = { root: string; workspaces: Workspaces; snapshots: Snapshots; capture: Capture };
+
+// A harness needs a few seconds to start, and a test may run several sessions.
+const CAPTURE_TIMEOUT = 120_000;
+
+// What a test body gets: its item, and the tools of its layer. Every session it opened ends with it, and a
+// session that fails to end (the harness crashed, or reached for the internet) fails the test.
+const runBody = async (definition: TestDefinition, item: Cell["item"], scope: CellScope, capture: Capture) => {
+  const sessions: Session[] = [];
+  const startSession = (request: SessionRequest = {}) => {
+    const session = createSession(capture, scope, {
+      ...(definition.options.cwd && { cwd: definition.options.cwd }),
+      ...request,
+    });
+    sessions.push(session);
+    return session;
+  };
+  const assemble = async (request: SessionRequest = {}) => (await startSession(request).firstRequest()).loadout;
+  const context = { ...item, harness: scope.harness, resolve: resolveIn(scope), assemble, startSession };
+  let error: unknown;
+  try {
+    await inCell(scope, () =>
+      definition.body(definition.kind === "wire" ? { ...context, session: startSession() } : context),
+    );
+  } catch (thrown) {
+    error = thrown;
+  }
+  for (const session of sessions) {
+    try {
+      await session.end();
+    } catch (thrown) {
+      error ??= thrown;
+    }
+  }
+  if (error !== undefined) throw error;
+};
 
 type Cell = { name: string; key: string; item: Readonly<Record<string, unknown>> | undefined };
 
@@ -79,7 +116,7 @@ export const runDefinition = async (
       harness,
       workspace,
       inventory,
-      snapshot: (value) => context.snapshots.check(definition.file, snapshotKey(key, harness), value),
+      snapshot: (value, variant) => context.snapshots.check(definition.file, snapshotKey(key, harness, variant), value),
     });
     return { scopeOf, cells: cellsOf(definition, scopeOf(definition.key)) };
   };
@@ -92,9 +129,9 @@ export const runDefinition = async (
   const results: CellResult[] = [];
   for (const cell of prepared.cells) {
     const scope = prepared.scopeOf(cell.key);
-    const body = { ...cell.item, harness, resolve: resolveIn(scope) };
+    const timeout = definition.options.timeout ?? (base.layer === "L3" ? DEFAULT_TIMEOUT : CAPTURE_TIMEOUT);
     const { value, duration } = await timed(() =>
-      attempt(() => inCell(scope, () => definition.body(body)), definition.options),
+      attempt(() => runBody(definition, cell.item, scope, context.capture), { ...definition.options, timeout }),
     );
     results.push({ ...base, name: cell.name, key: cell.key, ...value, duration });
   }

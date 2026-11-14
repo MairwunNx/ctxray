@@ -1,4 +1,4 @@
-import { checkSupport, PROFILES, STATIC_ADAPTERS } from "#entities/harness/index.ts";
+import { CAPTURE_ADAPTERS, checkSupport, PROFILES, STATIC_ADAPTERS } from "#entities/harness/index.ts";
 import type { Backend, HarnessId, Layer, SkipReason } from "#shared/contract/index.ts";
 import { KIND_LAYERS, type TestDefinition } from "./model.ts";
 
@@ -30,7 +30,8 @@ export const fullName = (definition: Pick<TestDefinition, "suites" | "name">) =>
   [...definition.suites, definition.name].join(" › ");
 
 // Unsupported says the harness can't do what the test needs. Unavailable says this ctxray can't run it yet:
-// it reads files for L3, the runs that L4–L7 need come later.
+// L3 reads files, L4 and L5 launch harnesses against the mock model, and replay, real models, L6, and L7
+// come later.
 export const decide = (definition: TestDefinition, harness: HarnessId, selection: Selection): Decision => {
   const layer = KIND_LAYERS[definition.kind];
   const filter = selection.filter?.toLowerCase();
@@ -44,6 +45,10 @@ export const decide = (definition: TestDefinition, harness: HarnessId, selection
     experimental: false,
   });
   if (!support.supported) return { run: false, reason: "unsupported", missing: support.missing };
-  if (layer !== "L3" || !STATIC_ADAPTERS[harness]) return { run: false, reason: "unavailable" };
-  return { run: true };
+  if (layer === "L3") return STATIC_ADAPTERS[harness] ? { run: true } : { run: false, reason: "unavailable" };
+  const launches = layer === "L4" || layer === "L5";
+  if (launches && CAPTURE_ADAPTERS[harness] && STATIC_ADAPTERS[harness] && selection.backend.kind === "mock") {
+    return { run: true };
+  }
+  return { run: false, reason: "unavailable" };
 };

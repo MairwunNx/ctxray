@@ -1,9 +1,10 @@
 import type { HarnessId } from "#shared/contract/index.ts";
+import { captureMatchers } from "./expect-capture.ts";
 import { CheckFailure, type FailureLine, fail, show } from "./failure.ts";
-import { idOf, sourceOf } from "./loadout.ts";
+import { idOf } from "./loadout.ts";
 import { isRuleSet, selectRules } from "./rules.ts";
 import { currentCell } from "./scope.ts";
-import { snapshotOf } from "./snapshot.ts";
+import { attachedSnapshot } from "./snapshot.ts";
 
 // What `toInclude` compares by: a rule's path, a skill's or server's name, or the string itself.
 const idsOf = (value: unknown): string[] => {
@@ -17,6 +18,9 @@ const matchesId = (entry: unknown, id: string) => {
   const { path, name } = (entry ?? {}) as { path?: unknown; name?: unknown };
   return path === id || name === id;
 };
+
+const isEntryList = (value: unknown): value is unknown[] =>
+  Array.isArray(value) && typeof (value as { get?: unknown }).get === "function";
 
 const number = (value: unknown, call: string): number =>
   typeof value === "number"
@@ -39,7 +43,13 @@ const matchers = (actual: unknown, negated: boolean) => {
 
   return {
     toBe: (expected: unknown) => check(Object.is(actual, expected), "toBe(expected)", versus(expected)),
-    toEqual: (expected: unknown) => check(Bun.deepEquals(actual, expected), "toEqual(expected)", versus(expected)),
+    // An entry list equals a list of strings when it holds those ids in that order: `toEqual(["github", "jira"])`.
+    toEqual: (expected: unknown) => {
+      const byIds =
+        isEntryList(actual) && Array.isArray(expected) && expected.every((item) => typeof item === "string");
+      const received = byIds ? actual.map((entry) => idsOf(entry)[0]) : actual;
+      check(Bun.deepEquals(received, expected), "toEqual(expected)", versus(expected));
+    },
     toBeDefined: () => check(actual !== undefined, "toBeDefined()", versus(undefined)),
     toBeUndefined: () => check(actual === undefined, "toBeUndefined()", versus(undefined)),
     toBeLessThan: (limit: number) => compare("toBeLessThan", limit, (value) => value < limit),
@@ -67,10 +77,11 @@ const matchers = (actual: unknown, negated: boolean) => {
         { label: "expect.received", value: entries.map((entry) => idsOf(entry)[0]).join(", ") || "—" },
       ]);
     },
+    ...captureMatchers(actual, negated, check),
     toMatchLoadoutSnapshot: () => {
-      if (negated) fail("expect.notSnapshot");
-      const loadout = sourceOf(actual) ?? fail("expect.notLoadout", { received: show(actual) });
-      currentCell().snapshot(snapshotOf(loadout));
+      if (negated) fail("expect.noNot", { matcher: "toMatchLoadoutSnapshot()" });
+      const snapshot = attachedSnapshot(actual) ?? fail("expect.notLoadout", { received: show(actual) });
+      currentCell().snapshot(snapshot.value, snapshot.variant);
     },
   };
 };

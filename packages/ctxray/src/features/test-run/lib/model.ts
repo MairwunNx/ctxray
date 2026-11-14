@@ -1,7 +1,9 @@
 import type { Capability } from "#entities/harness/index.ts";
 import type { HarnessId, Layer } from "#shared/contract/index.ts";
+import type { CapturedLoadout } from "./captured.ts";
 import type { ResolvedLoadout, ResolveRequest } from "./loadout.ts";
 import type { RuleSet } from "./rules.ts";
+import type { Session, SessionRequest } from "./session.ts";
 
 // Each test kind checks one layer of the Loadout Stack. L1 and L2 need no tests: ctxray runs them itself.
 export const KIND_LAYERS = {
@@ -16,7 +18,8 @@ export type Kind = keyof typeof KIND_LAYERS;
 export type TestOptions = {
   requires?: readonly Capability[]; // a harness without one of these skips the test as unsupported
   retries?: number; // runs again after a failure, and a later pass marks the test flaky
-  timeout?: number; // milliseconds, 30 s by default
+  timeout?: number; // milliseconds, 30 s by default, 120 s for tests that launch a harness
+  cwd?: string; // L5: where the session's harness starts, relative to the project root
   // L6: what the agent gets asked, and how many times.
   prompt?: string;
   positive?: readonly string[];
@@ -28,7 +31,16 @@ export type SuiteOptions = { fixture?: string }; // a project folder, relative t
 
 export type BaseContext = { harness: HarnessId };
 export type ResolveContext = BaseContext & { resolve: (request?: ResolveRequest) => Promise<ResolvedLoadout> };
-export type ContextOf<K extends Kind> = K extends "resolve" ? ResolveContext : BaseContext;
+// L4: launch the harness, take its first request. L5: drive a session turn by turn.
+export type AssembleContext = BaseContext & { assemble: (request?: SessionRequest) => Promise<CapturedLoadout> };
+export type WireContext = BaseContext & { session: Session; startSession: (request?: SessionRequest) => Session };
+export type ContextOf<K extends Kind> = K extends "resolve"
+  ? ResolveContext
+  : K extends "assemble"
+    ? AssembleContext
+    : K extends "wire"
+      ? WireContext
+      : BaseContext;
 
 // biome-ignore lint/suspicious/noExplicitAny: a body's context differs per kind, the registry holds them all
 export type Body = (context: any) => unknown;

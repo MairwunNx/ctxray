@@ -17,12 +17,7 @@ suite("payments", { fixture: "../payments" }, () => {
     expect(l).toMatchLoadoutSnapshot();
   });
 
-  // Registered now, they run once ctxray launches harnesses.
-  test.assemble("context budget", async ({ assemble }) => {
-    const l = await assemble({ cwd: "app" });
-    expect(l.tokens.total).toBeLessThan(25_000);
-  });
-
+  // L4 and L5 launch harnesses: fixtures/capture holds those examples.
   test.activate(
     "refund prompt → refunds skill",
     { prompt: "Make a partial refund for order 123", samples: 20, requires: ["skills"] },

@@ -1,0 +1,90 @@
+{
+  "payments › context budget › claude-code@2.1.311 claude-sonnet-5-5": {
+    "system": [
+      "billing",
+      "prompt-1",
+      "prompt-2",
+      "harness",
+      "session-specific-guidance",
+      "memory",
+      "environment",
+      "context-management",
+      "instructions",
+      "context",
+      "attribution",
+      "environment#2",
+      "model",
+      "agents",
+      "budget",
+      "date"
+    ],
+    "rules": {
+      "CLAUDE.md": {
+        "activation": "always",
+        "reason": "cwd"
+      },
+      ".claude/rules/style.md": {
+        "activation": "always",
+        "reason": "always"
+      },
+      "app/CLAUDE.md": {
+        "activation": "always",
+        "reason": "cwd"
+      },
+      "app/AGENTS.md": {
+        "activation": "always",
+        "reason": "import:app/CLAUDE.md"
+      }
+    },
+    "skills": {
+      "payouts": ".claude/skills/payouts/SKILL.md",
+      "refunds": ".claude/skills/refunds/SKILL.md",
+      "dataviz": "builtin",
+      "update-config": "builtin",
+      "keybindings-help": "builtin",
+      "code-review": "builtin",
+      "simplify": "builtin",
+      "fewer-permission-prompts": "builtin",
+      "loop": "builtin",
+      "claude-api": "builtin",
+      "workflow-authoring": "builtin",
+      "run": "builtin",
+      "plugin-authoring": "builtin",
+      "init": "builtin",
+      "security-review": "builtin"
+    },
+    "loaded": [],
+    "mcp": {
+      "github": ["create_issue", "list_pulls"],
+      "jira": ["search_issues"]
+    },
+    "commands": ["changelog"]
+  },
+  "payments › context budget › codex@0.169.0 gpt-5.5": {
+    "system": ["prompt", "skills-instructions", "permissions-instructions", "agents-md-header", "environment-context"],
+    "rules": {
+      "AGENTS.md": {
+        "activation": "always",
+        "reason": "cwd"
+      },
+      "app/AGENTS.md": {
+        "activation": "always",
+        "reason": "cwd"
+      }
+    },
+    "skills": {
+      "imagegen": "builtin",
+      "openai-docs": "builtin",
+      "skill-creator": "builtin",
+      "skill-installer": "builtin",
+      "android-build": "app/.agents/skills/android-build/SKILL.md",
+      "refunds": ".agents/skills/refunds/SKILL.md"
+    },
+    "loaded": [],
+    "mcp": {
+      "github": ["create_issue", "list_pulls"],
+      "jira": ["search_issues"]
+    },
+    "commands": []
+  }
+}

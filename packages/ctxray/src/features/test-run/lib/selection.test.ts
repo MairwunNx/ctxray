@@ -65,7 +65,15 @@ describe("decide", () => {
       { run: false, reason: "unsupported", missing: ["pathRules"] },
     ],
     ["L3 without a static adapter", definition("resolve"), "gemini-cli", {}, { run: false, reason: "unavailable" }],
-    ["L4 needs a run", definition("assemble"), "claude-code", {}, { run: false, reason: "unavailable" }],
+    ["L4 launches Claude Code on the mock", definition("assemble"), "claude-code", {}, { run: true }],
+    [
+      "L4 on replay comes later",
+      definition("assemble"),
+      "codex",
+      { backend: { kind: "replay", name: undefined } },
+      { run: false, reason: "unavailable" },
+    ],
+    ["L6 comes later", definition("activate"), "claude-code", {}, { run: false, reason: "unavailable" }],
     [
       "capture Cursor can't do",
       definition("assemble"),

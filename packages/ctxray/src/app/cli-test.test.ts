@@ -28,10 +28,10 @@ const shared = copy();
 const run = (args: string[], root = shared, env: Record<string, string> = {}) => runIn(root, ["test", ...args], env);
 
 describe.each([
-  ["en", ["ctxray checks", "payments rules attach to payment sources", "needs pathRules", "L4 doesn't run here yet"]],
+  ["en", ["ctxray checks", "payments rules attach to payment sources", "needs pathRules", "L6 doesn't run here yet"]],
   [
     "ru",
-    ["проверки ctxray", "payments rules attach to payment sources", "нужно pathRules", "L4 здесь пока не запускается"],
+    ["проверки ctxray", "payments rules attach to payment sources", "нужно pathRules", "L6 здесь пока не запускается"],
   ],
 ])("the examples in %s", (lang, words) => {
   test("pass, with what can't run skipped and said why", async () => {
@@ -44,7 +44,7 @@ describe.each([
 });
 
 test.each<[string, string[], Record<string, string>, RegExp]>([
-  ["a layer and a filter", ["--layer", "L3", "--filter", "always"], {}, /L3 ✓ 2\n.*2 passed · 14 filtered/],
+  ["a layer and a filter", ["--layer", "L3", "--filter", "always"], {}, /L3 ✓ 2\n.*2 passed · 10 filtered/],
   [
     "a harness from the environment",
     ["--layer", "L1-L3"],

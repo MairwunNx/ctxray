@@ -2,7 +2,9 @@ import { realpath } from "node:fs/promises";
 import { relative, sep } from "node:path";
 import { findRoot } from "#entities/harness/index.ts";
 import type { Config } from "#entities/user-config/index.ts";
+import type { Env } from "#shared/infra/index.ts";
 import { type Failure, toFailure } from "./lib/attempt.ts";
+import { createCapture } from "./lib/capture.ts";
 import { runChecks } from "./lib/checks.ts";
 import { collectFile, findTestFiles, installedVersion } from "./lib/collect.ts";
 import { type CellResult, runDefinition } from "./lib/run.ts";
@@ -25,7 +27,7 @@ export type TestRunResult = {
 export type Progress = (done: number, total: number, current: string | undefined) => void;
 
 export const createTestRunAction =
-  (config: Config, cwd: string, version: string) =>
+  (config: Config, cwd: string, version: string, env: Env, self: readonly string[]) =>
   async ({ selection, updateSnapshots }: TestRunRequest, progress: Progress = () => {}): Promise<TestRunResult> => {
     const started = performance.now();
     const here = await realpath(cwd);
@@ -39,7 +41,8 @@ export const createTestRunAction =
     for (const file of files) collected.push(await collectFile(file, run));
     const definitions = collected.flatMap((file) => file.tests);
     const snapshots = createSnapshots(updateSnapshots);
-    const context = { root, workspaces, snapshots };
+    const capture = createCapture({ config, env, self });
+    const context = { root, workspaces, snapshots, capture };
 
     const results = await runChecks(repository, selection.harnesses, config.policies, selection.layers);
     const total = definitions.length * selection.harnesses.length;
@@ -51,6 +54,8 @@ export const createTestRunAction =
       }
     }
     progress(total, total, undefined);
+    // Traces stay on disk when a harness test failed: its failure points at them.
+    await capture.stop(results.some((result) => result.status === "failed" && result.layer !== "L3" && result.file));
     const installed = await installedVersion(here);
     return {
       cwd: here,
@@ -64,5 +69,5 @@ export const createTestRunAction =
       duration: performance.now() - started,
     };
   };
-createTestRunAction.inject = ["config", "cwd", "version"] as const;
+createTestRunAction.inject = ["config", "cwd", "version", "env", "self"] as const;
 export type TestRunAction = ReturnType<typeof createTestRunAction>;

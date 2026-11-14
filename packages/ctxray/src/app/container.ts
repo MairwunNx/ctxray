@@ -8,6 +8,7 @@ import type { Translate } from "#shared/i18n/index.ts";
 import type { Env } from "#shared/infra/index.ts";
 import type { Renderer } from "#shared/render/index.ts";
 import { VERSION } from "./package-info.ts";
+import { SELF } from "./self.ts";
 import type { Settings } from "./settings.ts";
 
 export const createContainer = (env: Env, cwd: string) =>
@@ -15,6 +16,7 @@ export const createContainer = (env: Env, cwd: string) =>
     .provideValue("env", env)
     .provideValue("cwd", cwd)
     .provideValue("version", VERSION)
+    .provideValue("self", SELF)
     .provideFactory("configLoader", createConfigLoader)
     .provideFactory("initAction", createInitAction);
 export type Container = ReturnType<typeof createContainer>;

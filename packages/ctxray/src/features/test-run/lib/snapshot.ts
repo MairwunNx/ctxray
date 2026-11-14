@@ -14,6 +14,18 @@ export const snapshotOf = (loadout: StaticLoadout) => ({
   tokens: { ...loadout.tokens.byComponent, method: loadout.tokens.method },
 });
 
+// A loadout view carries helper functions, so it keeps its snapshot value apart: what toMatchLoadoutSnapshot
+// stores, and the variant of the key, `static` or `<version> <model>` for a captured one.
+const attached = new WeakMap<object, { value: unknown; variant: string }>();
+
+export const attachSnapshot = <T extends object>(view: T, value: unknown, variant: string): T => {
+  attached.set(view, { value, variant });
+  return view;
+};
+
+export const attachedSnapshot = (view: unknown) =>
+  typeof view === "object" && view !== null ? attached.get(view) : undefined;
+
 // The harness and its version are part of the key: an upgrade changes the loadout by itself. A static run
 // reads files only, so its version is `static`.
 export const snapshotKey = (test: string, harness: string, version = "static") => `${test} › ${harness}@${version}`;

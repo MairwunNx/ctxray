@@ -12,7 +12,7 @@ export type Workspace = {
   inventoryOf: (harness: HarnessId) => Promise<Inventory>;
 };
 
-export type SnapshotCheck = (value: unknown) => void;
+export type SnapshotCheck = (value: unknown, variant: string) => void;
 
 // What a test body runs against: one harness in one workspace.
 export type CellScope = {
