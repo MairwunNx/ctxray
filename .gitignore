@@ -10,6 +10,7 @@ coverage/
 .ctxray-cache/
 
 # Development notes that stay on the developer's machine
+TASK.md
 PLAN.md
 docs/adr/
 spikes/
