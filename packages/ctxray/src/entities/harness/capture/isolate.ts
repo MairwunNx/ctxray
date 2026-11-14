@@ -128,6 +128,17 @@ export const createCopy = async (project: Project, canaries: ReadonlySet<string>
   return { work, aliases };
 };
 
+// What the launch changed in the copy, like MCP configs routed behind ctxray, goes into the copy's commit: git
+// status in the harness's prompt then shows the project as the user has it, not ctxray's edits.
+export const settleCopy = async (dirs: RunDirs) => {
+  const env = gitEnv(dirs.root);
+  await $`git add -A`.cwd(dirs.work).env(env).quiet();
+  await $`git ${IDENTITY} -c core.hooksPath=/dev/null commit -q --amend --no-edit --no-verify --allow-empty`
+    .cwd(dirs.work)
+    .env(env)
+    .quiet();
+};
+
 // Clones a copy for one session. A copy-on-write clone where the file system has them: APFS, Btrfs, XFS.
 const cloneTree = (from: string, to: string) =>
   process.platform === "darwin" ? $`cp -cR ${from} ${to}`.quiet() : $`cp -R --reflink=auto ${from} ${to}`.quiet();
