@@ -1,4 +1,4 @@
-import { type Egress, fetchThrough } from "./forward.ts";
+import { type Egress, fetchThrough } from "#shared/infra/index.ts";
 
 export type McpMessage = { from: "client" | "server"; message: unknown };
 

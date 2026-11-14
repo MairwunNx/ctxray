@@ -10,16 +10,10 @@ import {
   type ProjectCopy,
   startSession,
 } from "#entities/harness/index.ts";
-import {
-  createConversation,
-  createTraceWriter,
-  type Egress,
-  startEgressGuard,
-  startProxy,
-} from "#entities/proxy/index.ts";
+import { createConversation, createTraceWriter, startEgressGuard, startProxy } from "#entities/proxy/index.ts";
 import { type Config, resolveNetwork } from "#entities/user-config/index.ts";
 import type { HarnessId } from "#shared/contract/index.ts";
-import type { Env } from "#shared/infra/index.ts";
+import type { Egress, Env } from "#shared/infra/index.ts";
 import { createRedactor } from "#shared/redact/index.ts";
 import { fail } from "./failure.ts";
 import type { CellScope } from "./scope.ts";

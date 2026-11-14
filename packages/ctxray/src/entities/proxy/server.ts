@@ -1,5 +1,5 @@
 import { Elysia } from "elysia";
-import type { Egress } from "./forward.ts";
+import type { Egress } from "#shared/infra/index.ts";
 import { forwardMcp, type McpMessage } from "./mcp-forward.ts";
 import type { Handler, Incoming, Json, Protocol, Route } from "./model.ts";
 import { KITS } from "./protocols/index.ts";
