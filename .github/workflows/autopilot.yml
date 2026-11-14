@@ -1,0 +1,43 @@
+name: Autopilot
+
+# Every Monday Claude brings every dependency up to date through the update-deps skill.
+on:
+  schedule:
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: autopilot
+  cancel-in-progress: false
+
+jobs:
+  autopilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ github.token }}
+          claude_args: >-
+            --model claude-opus-5-5
+            --permission-mode bypassPermissions
+          prompt: |
+            You are this project's autopilot. You run unattended in GitHub Actions with the owner's standing go-ahead; nobody will answer questions, so decide as CLAUDE.md and the skill say.
+
+            1. Run /update-deps.
+            2. If it pushed anything, start CI on the new head with `gh workflow run ci.yml --ref master` (a push made with this token starts no workflow by itself), watch it with `gh run watch`, and fix what it reports.
+
+            Don't release: ctxray has no release workflow yet. If nothing was behind, stop without a commit. Never print a secret. End with the report the skill describes.
