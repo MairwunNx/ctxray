@@ -28,22 +28,39 @@ export type LoadoutInput = {
   servers: Readonly<Record<string, ServerRecord>>;
   work: string;
   first: boolean; // the session's first request: rules there load at start, later ones on the way
+  aliases?: Readonly<Record<string, readonly string[]>>; // a canary's other paths, through symlinks
+};
+
+// A canary names one path of a symlinked file. The harness loaded it under the path L3 expects, if any.
+const pathOf = (segment: Segment, input: LoadoutInput) => {
+  const candidates = [segment.id, ...(input.aliases?.[segment.id] ?? [])];
+  return candidates.find((path) => input.predicted.rules.some((rule) => rule.path === path)) ?? segment.id;
 };
 
 const tokensOf = (segment: Segment) => countTokens(withoutCanaries(segment.text));
 
-// A chunk without a canary or marker still counts when it holds a whole file of the project.
+// Enough text that a file starting with it is that file, not a coincidence.
+const PREFIX = 200;
+
+// A chunk without a canary or marker still counts when it holds a whole file of the project, or the start
+// of one: Codex cuts the file that crosses its byte budget, and the canary at its end with it.
 const fingerprinted = (segment: Segment, inventory: Inventory): Segment[] => {
   const text = normalise(segment.text);
-  return inventory.instructions
-    .filter((file) => normalise(file.text) !== "" && text.includes(normalise(file.text)))
-    .map((file) => ({ ...segment, id: file.path, text: file.text, evidence: "fingerprint" }));
+  const whole = inventory.instructions.filter(
+    (file) => normalise(file.text) !== "" && text.includes(normalise(file.text)),
+  );
+  const cut =
+    whole.length === 0 && text.length >= PREFIX
+      ? inventory.instructions.filter((file) => normalise(file.text).startsWith(text))
+      : [];
+  return [...whole, ...cut].map((file) => ({ ...segment, id: file.path, evidence: "fingerprint" }));
 };
 
 const rulesOf = (input: LoadoutInput, provenance: Record<string, Provenance>): RuleEntry[] => {
   const rules: RuleEntry[] = [];
   const segments = input.segments.filter((segment) => segment.component === "rules");
-  for (const segment of segments.flatMap((one) => (one.id === "" ? fingerprinted(one, input.inventory) : [one]))) {
+  for (const found of segments.flatMap((one) => (one.id === "" ? fingerprinted(one, input.inventory) : [one]))) {
+    const segment = found.evidence === "canary" ? { ...found, id: pathOf(found, input) } : found;
     if (rules.some((rule) => rule.path === segment.id)) continue;
     const predicted = input.predicted.rules.find((rule) => rule.path === segment.id);
     const activation = predicted?.activation ?? (input.first ? "always" : "path");

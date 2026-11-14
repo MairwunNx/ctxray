@@ -3,9 +3,7 @@ import { basename, join } from "node:path";
 import type { Exchange, Step } from "#shared/contract/index.ts";
 import { readShimLog, type ServerRecord } from "#shared/mcp-shim/index.ts";
 import type { Inventory } from "../inventory.ts";
-import type { Project } from "../project.ts";
-import type { RunDirs } from "./isolate.ts";
-import { isolate } from "./isolate.ts";
+import { isolate, type ProjectCopy, type RunDirs } from "./isolate.ts";
 import { type McpRouting, type RemoteMcp, routeMcp } from "./mcp.ts";
 import type { CaptureAdapter, Intent } from "./model.ts";
 import { sandboxed } from "./sandbox.ts";
@@ -22,7 +20,7 @@ export type ModelPort = {
 export type SessionOptions = {
   adapter: CaptureAdapter;
   binary: string;
-  project: Project;
+  copy: ProjectCopy; // the committed project copy from createCopy(), cloned for this session
   inventory: Inventory;
   cwd: string;
   prompt: string;
@@ -49,6 +47,7 @@ export type SessionResult = { servers: Record<string, ServerRecord>; output: str
 export type HarnessSession = {
   dirs: RunDirs;
   version: string;
+  aliases: ProjectCopy["aliases"];
   request: (position: number) => Promise<Exchange>; // waits for the turn, fails when the harness gives up
   servers: () => Promise<Record<string, ServerRecord>>; // what each MCP server told the harness so far
   events: () => readonly unknown[]; // the harness's own JSON events so far
@@ -61,12 +60,7 @@ const tail = (text: string, lines = 20) => text.trim().split("\n").slice(-lines)
 // Launches the harness on an isolated copy of the project, pointed at the mock model.
 export const startSession = async (options: SessionOptions): Promise<HarnessSession> => {
   const { adapter, port } = options;
-  const canaries = new Set([
-    ...options.inventory.instructions.map((file) => file.path),
-    ...options.inventory.skills.map((skill) => skill.path),
-    ...options.inventory.commands.map((command) => command.path),
-  ]);
-  const dirs = await isolate(options.project, canaries);
+  const dirs = await isolate(options.copy);
   const env = { ...options.env, PATH: `${dirs.bin}:${options.env["PATH"] ?? ""}`, HOME: dirs.home, TMPDIR: dirs.tmp };
   const version = await adapter.version(options.binary, env);
   const { shim, remote, close: closeRemotes } = routeMcp(dirs, options.mcp, options.remoteMcp);
@@ -136,6 +130,7 @@ export const startSession = async (options: SessionOptions): Promise<HarnessSess
   return {
     dirs,
     version,
+    aliases: options.copy.aliases,
     request,
     servers,
     events: () => events,

@@ -1,7 +1,15 @@
 // Records what Claude Code and Codex send for the capture fixture, for the segmenters' contract tests.
 // Run after a harness upgrade: bun scripts/record-payloads.ts. Both harnesses must be on PATH.
-import { join } from "node:path";
-import { CAPTURE_ADAPTERS, openProject, STATIC_ADAPTERS, startSession } from "#ctxray/entities/harness/index.ts";
+import { rm } from "node:fs/promises";
+import { dirname, join } from "node:path";
+import {
+  CAPTURE_ADAPTERS,
+  canaryFiles,
+  createCopy,
+  openProject,
+  STATIC_ADAPTERS,
+  startSession,
+} from "#ctxray/entities/harness/index.ts";
 import { createConversation, startEgressGuard, startProxy } from "#ctxray/entities/proxy/index.ts";
 import type { Exchange, HarnessId } from "#ctxray/shared/contract/index.ts";
 
@@ -26,13 +34,14 @@ for (const harness of ["claude-code", "codex"] as HarnessId[]) {
   if (!adapter || !binary) throw new Error(`${harness} isn't on PATH`);
   const inventory = await STATIC_ADAPTERS[harness]?.discover(project);
   if (!inventory) throw new Error(`${harness} has no static adapter`);
+  const copy = await createCopy(project, canaryFiles([inventory]));
   const conversation = createConversation();
   const prefix = proxy.open(conversation.handler);
   const proxies = { HTTPS_PROXY: guard.url, HTTP_PROXY: guard.url, ALL_PROXY: guard.url, NO_PROXY: "127.0.0.1" };
   const session = await startSession({
     adapter,
     binary,
-    project,
+    copy,
     inventory,
     cwd: "app",
     prompt: "Wait for instructions.",
@@ -52,6 +61,7 @@ for (const harness of ["claude-code", "codex"] as HarnessId[]) {
   const second = await session.request(1);
   const servers = await session.servers();
   await session.end();
+  await rm(dirname(copy.work), { recursive: true, force: true });
   const record = { version: session.version, model: adapter.defaultModel, read: READ, servers };
   await Bun.write(join(OUT, `${harness}.json`), `${JSON.stringify(record, null, 2)}\n`);
   await Bun.write(join(OUT, `${harness}-0.json`), `${JSON.stringify(stable(first, work, home), null, 2)}\n`);

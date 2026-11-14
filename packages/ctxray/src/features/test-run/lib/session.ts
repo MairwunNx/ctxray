@@ -65,6 +65,7 @@ export const createSession = (capture: Capture, scope: CellScope, request: Sessi
       servers: await session.harness.servers(),
       work: session.harness.dirs.work,
       first: index === 0,
+      aliases: session.harness.aliases,
     });
     const before = index > 0 ? (await build(index - 1)).loadout : undefined;
     const hadRules = new Set(before?.rules.map((rule) => rule.path));

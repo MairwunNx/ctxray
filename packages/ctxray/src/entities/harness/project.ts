@@ -30,7 +30,7 @@ const gitFiles = async (root: string): Promise<string[] | undefined> => {
 
 const walkFiles = async (root: string): Promise<string[]> => {
   const files: string[] = [];
-  for await (const path of new Bun.Glob("**").scan({ cwd: root, dot: true, onlyFiles: true })) {
+  for await (const path of new Bun.Glob("**").scan({ cwd: root, dot: true, onlyFiles: true, followSymlinks: true })) {
     const normal = path.replaceAll("\\", "/");
     if (!SKIPPED.test(normal)) files.push(normal);
   }

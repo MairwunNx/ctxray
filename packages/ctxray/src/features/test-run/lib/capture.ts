@@ -1,7 +1,15 @@
 import { rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
-import { CAPTURE_ADAPTERS, type CaptureAdapter, type HarnessSession, startSession } from "#entities/harness/index.ts";
+import { dirname, join } from "node:path";
+import {
+  CAPTURE_ADAPTERS,
+  type CaptureAdapter,
+  canaryFiles,
+  createCopy,
+  type HarnessSession,
+  type ProjectCopy,
+  startSession,
+} from "#entities/harness/index.ts";
 import {
   createConversation,
   createTraceWriter,
@@ -10,6 +18,7 @@ import {
   startProxy,
 } from "#entities/proxy/index.ts";
 import { type Config, resolveNetwork } from "#entities/user-config/index.ts";
+import type { HarnessId } from "#shared/contract/index.ts";
 import type { Env } from "#shared/infra/index.ts";
 import { createRedactor } from "#shared/redact/index.ts";
 import { fail } from "./failure.ts";
@@ -45,6 +54,20 @@ export const createCapture = ({ config, env, self }: CaptureDeps) => {
     ca: await Promise.all(network.caFiles.map((file) => Bun.file(file).text())),
   });
   let egress: Egress;
+  // One committed copy per project for the whole run, with canaries for every harness ctxray can launch.
+  const copies = new Map<string, Promise<ProjectCopy>>();
+  const copyOf = (scope: CellScope) => {
+    const { workspace } = scope;
+    const made =
+      copies.get(workspace.root) ??
+      (async () => {
+        const harnesses = Object.keys(CAPTURE_ADAPTERS) as HarnessId[];
+        const inventories = await Promise.all(harnesses.map((harness) => workspace.inventoryOf(harness)));
+        return createCopy(workspace.project, canaryFiles(inventories));
+      })();
+    copies.set(workspace.root, made);
+    return made;
+  };
 
   // MCP servers reach the network the way the user's own tools do: through the user's proxy, not the guard.
   const userNetwork = {
@@ -75,7 +98,7 @@ export const createCapture = ({ config, env, self }: CaptureDeps) => {
     const harness = await startSession({
       adapter,
       binary,
-      project: scope.workspace.project,
+      copy: await copyOf(scope),
       inventory: scope.inventory,
       cwd,
       prompt,
@@ -104,6 +127,9 @@ export const createCapture = ({ config, env, self }: CaptureDeps) => {
       await Promise.all([proxy.stop(), guard.stop()]);
     }
     if (!keepTraces) await rm(traceDir, { recursive: true, force: true });
+    for (const copy of copies.values()) {
+      await copy.then(({ work }) => rm(dirname(work), { recursive: true, force: true })).catch(() => {});
+    }
   };
 
   return { open, stop };
