@@ -1,6 +1,10 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.6.7/schema.json",
-  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
   "files": {
     "includes": ["**", "!Feature-Action-Architecture"]
   },
@@ -11,11 +15,29 @@
     "lineWidth": 120
   },
   "javascript": {
-    "formatter": { "quoteStyle": "double", "semicolons": "always", "trailingCommas": "all" }
+    "formatter": {
+      "quoteStyle": "double",
+      "semicolons": "always",
+      "trailingCommas": "all"
+    }
   },
   "linter": {
     "enabled": true,
-    "rules": { "preset": "recommended" }
+    "rules": {
+      "preset": "recommended"
+    }
   },
-  "assist": { "enabled": true, "actions": { "source": { "organizeImports": "on" } } }
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "markdown": {
+    "formatter": {
+      "enabled": false
+    }
+  }
 }
