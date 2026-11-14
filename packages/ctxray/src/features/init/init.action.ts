@@ -10,8 +10,10 @@ const IGNORED = ".ctxray/";
 const exists = (path: string) => Bun.file(path).exists();
 
 // Prefers AGENTS.md, the file most harnesses read, unless the project only has CLAUDE.md.
-const rootRulesFile = async (cwd: string) =>
-  (await exists(join(cwd, "CLAUDE.md"))) && !(await exists(join(cwd, "AGENTS.md"))) ? "CLAUDE.md" : "AGENTS.md";
+const rootRulesFile = async (cwd: string) => {
+  const [claude, agents] = await Promise.all([exists(join(cwd, "CLAUDE.md")), exists(join(cwd, "AGENTS.md"))]);
+  return claude && !agents ? "CLAUDE.md" : "AGENTS.md";
+};
 
 const writeFile = async (cwd: string, path: string, content: string, force: boolean): Promise<InitStep> => {
   const target = join(cwd, path);
@@ -38,9 +40,12 @@ const ignoreTraces = async (cwd: string): Promise<InitStep[]> => {
 
 export const createInitAction =
   (cwd: string): InitAction =>
-  async ({ force }) => [
-    await writeFile(cwd, CONFIG_PATH, CONFIG_TEMPLATE, force),
-    await writeFile(cwd, TEST_PATH, testTemplate(await rootRulesFile(cwd)), force),
-    ...(await ignoreTraces(cwd)),
-  ];
+  async ({ force }) => {
+    const [config, test, ignore] = await Promise.all([
+      writeFile(cwd, CONFIG_PATH, CONFIG_TEMPLATE, force),
+      rootRulesFile(cwd).then((rules) => writeFile(cwd, TEST_PATH, testTemplate(rules), force)),
+      ignoreTraces(cwd),
+    ]);
+    return [config, test, ...ignore];
+  };
 createInitAction.inject = ["cwd"] as const;

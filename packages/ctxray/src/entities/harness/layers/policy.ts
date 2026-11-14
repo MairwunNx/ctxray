@@ -1,6 +1,7 @@
 import type { Component, Policy } from "#shared/contract/index.ts";
 import { isGlob } from "#shared/glob/index.ts";
 import type { MessageKey } from "#shared/i18n/index.ts";
+import { inParallel } from "#shared/infra/index.ts";
 import type { Project } from "../project.ts";
 import type { StaticLoadout } from "../static-loadout.ts";
 
@@ -35,40 +36,39 @@ const tokenChecks = (limits: Policy["maxTokens"], loadout: StaticLoadout) => {
 };
 
 const missingFiles = async (project: Project, required: readonly string[]): Promise<Finding[]> => {
-  const missing: Finding[] = [];
-  for (const path of required) {
-    const found = isGlob(path)
-      ? project.files.some((file) => new Bun.Glob(path).match(file))
-      : await project.exists(path);
-    if (!found) missing.push({ key: "policy.missingFile", params: { path } });
-  }
-  return missing;
+  const found = await inParallel(required, async (path) =>
+    isGlob(path) ? project.files.some((file) => new Bun.Glob(path).match(file)) : project.exists(path),
+  );
+  return required
+    .filter((_, index) => !found[index])
+    .map((path): Finding => ({ key: "policy.missingFile", params: { path } }));
+};
+
+const checkPolicy = async (policy: Policy, project: Project, loadout: StaticLoadout): Promise<PolicyOutcome> => {
+  const servers = new Set(loadout.mcp.servers.map((server) => server.name));
+  const tokens = tokenChecks(policy.maxTokens, loadout);
+  const failures = [
+    ...[...new Set(policy.denyMcp).intersection(servers)].map(
+      (name): Finding => ({ key: "policy.deniedMcp", params: { name } }),
+    ),
+    ...[...new Set(policy.requireMcp).difference(servers)].map(
+      (name): Finding => ({ key: "policy.missingMcp", params: { name } }),
+    ),
+    ...(await missingFiles(project, policy.requireFiles ?? [])),
+    ...tokens.failures,
+  ];
+  const ran = tokens.checked > 0 || [policy.denyMcp, policy.requireMcp, policy.requireFiles].some(Boolean);
+  const status = failures.length > 0 ? "failed" : ran ? "passed" : "skipped";
+  return { id: policy.id, severity: policy.severity ?? "error", status, failures, skipped: tokens.skipped };
 };
 
 // L2: the configuration follows the organisation's rules. A policy names the harnesses it covers.
-export const checkPolicies = async (
+export const checkPolicies = (
   policies: readonly Policy[],
   project: Project,
   loadout: StaticLoadout,
-): Promise<PolicyOutcome[]> => {
-  const servers = new Set(loadout.mcp.servers.map((server) => server.name));
-  const outcomes: PolicyOutcome[] = [];
-  for (const policy of policies) {
-    if (policy.harnesses && !policy.harnesses.includes(loadout.harness)) continue;
-    const tokens = tokenChecks(policy.maxTokens, loadout);
-    const failures = [
-      ...[...new Set(policy.denyMcp).intersection(servers)].map(
-        (name): Finding => ({ key: "policy.deniedMcp", params: { name } }),
-      ),
-      ...[...new Set(policy.requireMcp).difference(servers)].map(
-        (name): Finding => ({ key: "policy.missingMcp", params: { name } }),
-      ),
-      ...(await missingFiles(project, policy.requireFiles ?? [])),
-      ...tokens.failures,
-    ];
-    const ran = tokens.checked > 0 || [policy.denyMcp, policy.requireMcp, policy.requireFiles].some(Boolean);
-    const status = failures.length > 0 ? "failed" : ran ? "passed" : "skipped";
-    outcomes.push({ id: policy.id, severity: policy.severity ?? "error", status, failures, skipped: tokens.skipped });
-  }
-  return outcomes;
-};
+): Promise<PolicyOutcome[]> =>
+  inParallel(
+    policies.filter((policy) => !policy.harnesses || policy.harnesses.includes(loadout.harness)),
+    (policy) => checkPolicy(policy, project, loadout),
+  );

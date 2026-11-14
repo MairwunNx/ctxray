@@ -1,6 +1,6 @@
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { POLICY_CHECKS, type Policy, UserConfig } from "#shared/contract/index.ts";
-import type { Env } from "#shared/infra/index.ts";
+import { allInOrder, type Env } from "#shared/infra/index.ts";
 import { type Config, finalizeConfig } from "./config.ts";
 import { mergeConfigs } from "./merge.ts";
 import { ConfigFailure, type ConfigProblem, fail, issueProblem, zodErrors } from "./problem.ts";
@@ -27,8 +27,8 @@ export const createConfigLoader = (cwd: string, env: Env): ConfigLoader => {
       const file = resolve(cwd, path);
       return (await exists(file)) ? file : fail("config.missing", { file: path });
     }
-    const found = [];
-    for (const name of CONFIG_FILES) if (await exists(join(cwd, name))) found.push(name);
+    const present = await Promise.all(CONFIG_FILES.map((name) => exists(join(cwd, name))));
+    const found = CONFIG_FILES.filter((_, index) => present[index]);
     if (found.length > 1) fail("config.ambiguous", { files: found.join(", ") });
     return found[0] === undefined ? undefined : join(cwd, found[0]);
   };
@@ -37,7 +37,9 @@ export const createConfigLoader = (cwd: string, env: Env): ConfigLoader => {
   const withOwnPaths = async (config: UserConfig, file: string): Promise<UserConfig> => {
     const ca = config.network?.ca?.map((path) => resolve(dirname(file), path));
     if (!ca) return config;
-    for (const path of ca) if (!(await exists(path))) fail("config.caMissing", { where: show(file), file: path });
+    const present = await Promise.all(ca.map(exists));
+    const missing = ca.find((_, index) => !present[index]);
+    if (missing !== undefined) fail("config.caMissing", { where: show(file), file: missing });
     return { ...config, network: { ...config.network, ca } };
   };
 
@@ -63,10 +65,9 @@ export const createConfigLoader = (cwd: string, env: Env): ConfigLoader => {
     if (!parsed.success) throw new ConfigFailure(parsed.error.issues.map((issue) => issueProblem(issue, show(file))));
     const config = await withOwnPaths(parsed.data, file);
     const specifiers = typeof config.extends === "string" ? [config.extends] : (config.extends ?? []);
-    const layers: Layer[] = [];
-    for (const specifier of specifiers)
-      layers.push(...(await collect(extended(specifier, file), [...chain, file], lang)));
-    return [...layers, { file, config }];
+    const targets = specifiers.map((specifier) => extended(specifier, file));
+    const layers = await allInOrder(targets.map((target) => collect(target, [...chain, file], lang)));
+    return [...layers.flat(), { file, config }];
   };
 
   return async (path, lang) => {

@@ -1,5 +1,6 @@
 import { type GlobProblem, globProblem } from "#shared/glob/index.ts";
 import type { MessageKey } from "#shared/i18n/index.ts";
+import { inParallel } from "#shared/infra/index.ts";
 import { findLinks } from "#shared/markdown/index.ts";
 import { type Inventory, type Problem, problem } from "../inventory.ts";
 import { dirOf, joinPath, type Project } from "../project.ts";
@@ -54,20 +55,23 @@ const documents = (inventory: Inventory) => [
   ...[...inventory.skills, ...inventory.commands].map(({ path, body }) => ({ path, text: body })),
 ];
 
-const brokenLinks = async (project: Project, inventory: Inventory): Promise<Problem[]> => {
-  const found: Problem[] = [];
-  for (const document of documents(inventory)) {
-    // A body starts after the frontmatter, so its line numbers shift by the frontmatter's lines.
-    const read = await project.read(document.path);
-    const offset = read === undefined ? 0 : read.split("\n").length - document.text.split("\n").length;
-    for (const { target, line } of findLinks(document.text)) {
-      const path = joinPath(dirOf(document.path), target);
-      if (path.startsWith("../") || (await project.exists(path))) continue;
-      found.push(problem("lint.brokenLink", "warning", document.path, { target }, line + Math.max(offset, 0)));
-    }
-  }
-  return found;
+const linksOf = async (project: Project, document: { path: string; text: string }): Promise<Problem[]> => {
+  const candidates = findLinks(document.text)
+    .map((link) => ({ ...link, path: joinPath(dirOf(document.path), link.target) }))
+    .filter(({ path }) => !path.startsWith("../"));
+  const [read, present] = await Promise.all([
+    project.read(document.path),
+    inParallel(candidates, ({ path }) => project.exists(path)),
+  ]);
+  // A body starts after the frontmatter, so its line numbers shift by the frontmatter's lines.
+  const offset = Math.max(read === undefined ? 0 : read.split("\n").length - document.text.split("\n").length, 0);
+  return candidates
+    .filter((_, index) => !present[index])
+    .map(({ target, line }) => problem("lint.brokenLink", "warning", document.path, { target }, line + offset));
 };
+
+const brokenLinks = async (project: Project, inventory: Inventory): Promise<Problem[]> =>
+  (await inParallel(documents(inventory), (document) => linksOf(project, document))).flat();
 
 // L1: the files are valid. Everything here reads files only and never needs the harness.
 export const lint = async (project: Project, inventory: Inventory): Promise<Problem[]> => [

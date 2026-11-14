@@ -1,6 +1,6 @@
 import { firstLine, flagOf, listOf, splitFrontmatter, textOf } from "#shared/markdown/index.ts";
 import { type Command, type McpDeclaration, type Problem, problem, type Skill } from "../inventory.ts";
-import type { Project } from "../project.ts";
+import { type Project, readMatching } from "../project.ts";
 import { readSkillFiles } from "../skill-file.ts";
 
 const SKILL = /^(?:(.*)\/)?\.claude\/skills\/([^/]+)\/SKILL\.md$/;
@@ -33,18 +33,12 @@ export const findSkills = async (project: Project, problems: Problem[]): Promise
     };
   });
 
-export const findCommands = async (project: Project): Promise<Command[]> => {
-  const commands: Command[] = [];
-  for (const path of project.files) {
-    const match = COMMAND.exec(path);
-    const text = match ? await project.read(path) : undefined;
-    if (!match || text === undefined) continue;
+export const findCommands = async (project: Project): Promise<Command[]> =>
+  (await readMatching(project, COMMAND)).map(({ path, match, text }) => {
     const { data, body } = splitFrontmatter(text);
     const description = textOf(data["description"]) ?? firstLine(body) ?? "";
-    commands.push({ name: match[2] ?? "", path, dir: match[1] ?? "", description, body });
-  }
-  return commands;
-};
+    return { name: match[2] ?? "", path, dir: match[1] ?? "", description, body };
+  });
 
 const parseJson = (text: string, path: string, problems: Problem[]): unknown => {
   try {
@@ -61,14 +55,15 @@ const record = (value: unknown): Record<string, unknown> =>
 // Project servers live in .mcp.json. Settings can switch some of them off.
 export const findMcp = async (project: Project, problems: Problem[]): Promise<McpDeclaration[]> => {
   const path = ".mcp.json";
-  const text = await project.read(path);
+  const settings = [".claude/settings.json", ".claude/settings.local.json"];
+  const [text, ...raws] = await project.readAll([path, ...settings]);
   if (text === undefined) return [];
   const disabled = new Set<string>();
-  for (const settings of [".claude/settings.json", ".claude/settings.local.json"]) {
-    const raw = await project.read(settings);
-    const names = raw === undefined ? undefined : record(parseJson(raw, settings, problems))["disabledMcpjsonServers"];
+  settings.forEach((file, index) => {
+    const raw = raws[index];
+    const names = raw === undefined ? undefined : record(parseJson(raw, file, problems))["disabledMcpjsonServers"];
     if (Array.isArray(names)) for (const name of names) disabled.add(String(name));
-  }
+  });
   const servers = record(record(parseJson(text, path, problems))["mcpServers"]);
   return Object.entries(servers).map(([name, server]) => {
     const { command, url } = record(server);

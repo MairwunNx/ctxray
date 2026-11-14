@@ -11,28 +11,30 @@ const PROJECT_SKILL = /^()\.codex\/skills\/([^/]+)\/SKILL\.md$/;
 
 // Per directory Codex takes the first non-empty file of AGENTS.override.md, AGENTS.md, and the fallbacks.
 const findInstructions = async (project: Project, config: CodexConfig, problems: Problem[]) => {
-  const instructions: Instruction[] = [];
-  for (const dir of project.dirs) {
+  const names = ["AGENTS.override.md", "AGENTS.md", ...config.fallbacks];
+  const paths = project.dirs.flatMap((dir) => names.map((name) => joinPath(dir, name)));
+  const texts = await project.readAll(paths);
+  return project.dirs.flatMap((dir, at): Instruction[] => {
     let chosen: Instruction | undefined;
-    for (const name of ["AGENTS.override.md", "AGENTS.md", ...config.fallbacks]) {
-      const path = joinPath(dir, name);
-      const text = await project.read(path);
-      if (text === undefined) continue;
+    names.forEach((_, offset) => {
+      const index = at * names.length + offset;
+      const [path, text] = [paths[index] ?? "", texts[index]];
+      if (text === undefined) return;
       if (text.trim() === "") problems.push(problem("lint.empty", "warning", path));
       else if (chosen) problems.push(problem("lint.shadowed", "warning", path, { by: chosen.path }));
       else chosen = { path, dir, kind: "agents", imports: [], text };
-    }
-    if (chosen) instructions.push(chosen);
-  }
-  return instructions;
+    });
+    return chosen ? [chosen] : [];
+  });
 };
 
 // Codex refuses a SKILL.md without a name or a description.
 const findSkills = async (project: Project, config: CodexConfig, problems: Problem[]): Promise<Skill[]> => {
-  const files = [
-    ...(await readSkillFiles(project, SKILL, problems)),
-    ...(await readSkillFiles(project, PROJECT_SKILL, problems)),
-  ];
+  const [nested, own] = await Promise.all([
+    readSkillFiles(project, SKILL, problems),
+    readSkillFiles(project, PROJECT_SKILL, problems),
+  ]);
+  const files = [...nested, ...own];
   return files.map(({ path, dir, folder, frontmatter: { data, body } }) => {
     const name = textOf(data["name"]);
     const description = textOf(data["description"]);
@@ -59,14 +61,18 @@ const overBudget = (instructions: readonly Instruction[], budget: number): Probl
 export const discoverCodex = async (project: Project): Promise<Inventory> => {
   const problems: Problem[] = [];
   const config = await readCodexConfig(project, problems);
-  const instructions = await findInstructions(project, config, problems);
+  const skillProblems: Problem[] = [];
+  const [instructions, skills] = await Promise.all([
+    findInstructions(project, config, problems),
+    findSkills(project, config, skillProblems),
+  ]);
   return {
     harness: "codex",
     instructions,
-    skills: await findSkills(project, config, problems),
+    skills,
     commands: [],
     mcp: config.mcp,
-    problems: [...problems, ...overBudget(instructions, config.budget)],
+    problems: [...problems, ...skillProblems, ...overBudget(instructions, config.budget)],
     budget: config.budget,
   };
 };

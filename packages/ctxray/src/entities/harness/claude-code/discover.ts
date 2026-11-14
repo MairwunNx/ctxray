@@ -15,10 +15,16 @@ const ignoredAgents = (instructions: readonly Instruction[]): Problem[] =>
     .map((agents) => problem("lint.agentsIgnored", "warning", agents.path));
 
 export const discoverClaudeCode = async (project: Project): Promise<Inventory> => {
-  const problems: Problem[] = [];
-  const found = await findInstructions(project);
-  const skills = await findSkills(project, problems);
-  const commands = await findCommands(project);
+  // Each finder keeps its own problems, so their order doesn't depend on which read finishes first.
+  const skillProblems: Problem[] = [];
+  const mcpProblems: Problem[] = [];
+  const [found, skills, commands, mcp] = await Promise.all([
+    findInstructions(project),
+    findSkills(project, skillProblems),
+    findCommands(project),
+    findMcp(project, mcpProblems),
+  ]);
+  const problems: Problem[] = [...skillProblems];
   // A skill and a command with one name: the skill wins.
   for (const command of commands) {
     const skill = skills.find((candidate) => candidate.name === command.name);
@@ -30,7 +36,7 @@ export const discoverClaudeCode = async (project: Project): Promise<Inventory> =
     instructions: found.instructions,
     skills,
     commands,
-    mcp: await findMcp(project, problems),
-    problems: [...found.problems, ...ignoredAgents(found.instructions), ...problems],
+    mcp,
+    problems: [...found.problems, ...ignoredAgents(found.instructions), ...problems, ...mcpProblems],
   };
 };

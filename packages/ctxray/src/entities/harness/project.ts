@@ -1,6 +1,7 @@
 import { join, posix } from "node:path";
 import { $ } from "bun";
 import { gitignoreGlob } from "#shared/glob/index.ts";
+import { inParallel } from "#shared/infra/index.ts";
 
 // The repository under test, read-only. Paths are relative to the root, with `/`, and "" is the root itself.
 export type Project = {
@@ -9,6 +10,8 @@ export type Project = {
   files: readonly string[];
   dirs: readonly string[];
   read: (path: string) => Promise<string | undefined>;
+  // Reads in parallel and answers in the order of `paths`.
+  readAll: (paths: readonly string[]) => Promise<(string | undefined)[]>;
   exists: (path: string) => Promise<boolean>;
 };
 
@@ -50,7 +53,8 @@ export const openProject = async (root: string): Promise<Project> => {
   };
   // Ignored files like CLAUDE.local.md are missing from the list but still count.
   const exists = async (path: string) => known.has(path) || Bun.file(join(root, path)).exists();
-  return { root, files, dirs, read, exists };
+  const readAll = (paths: readonly string[]) => inParallel(paths, read);
+  return { root, files, dirs, read, readAll, exists };
 };
 
 export const joinPath = (dir: string, path: string): string => posix.normalize(dir === "" ? path : `${dir}/${path}`);
@@ -74,4 +78,19 @@ export const matchingGlob = (globs: readonly string[], dir: string, file: string
   if (!isInside(file, dir)) return undefined;
   const relative = dir === "" ? file : file.slice(dir.length + 1);
   return globs.find((pattern) => gitignoreGlob(pattern).match(relative));
+};
+
+export type MatchedFile = { path: string; match: RegExpExecArray; text: string };
+
+// Every file of the project whose path matches, read in parallel, in the project's order.
+export const readMatching = async (project: Project, pattern: RegExp): Promise<MatchedFile[]> => {
+  const matched = project.files.flatMap((path) => {
+    const match = pattern.exec(path);
+    return match ? [{ path, match }] : [];
+  });
+  const texts = await project.readAll(matched.map(({ path }) => path));
+  return matched.flatMap((file, index) => {
+    const text = texts[index];
+    return text === undefined ? [] : [{ ...file, text }];
+  });
 };
