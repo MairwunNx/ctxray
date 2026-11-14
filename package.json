@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "check": "biome check . && tsc -p .",
+    "check": "biome check . && tsc -p . && bun scripts/check-file-size.ts",
     "fix": "biome check --write .",
     "typecheck": "tsc -p ."
   },
