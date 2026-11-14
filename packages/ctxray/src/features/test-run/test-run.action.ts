@@ -7,6 +7,7 @@ import { type Failure, toFailure } from "./lib/attempt.ts";
 import { createCapture } from "./lib/capture.ts";
 import { runChecks } from "./lib/checks.ts";
 import { collectFile, findTestFiles, installedVersion } from "./lib/collect.ts";
+import { runContextChecks } from "./lib/context.ts";
 import { type CellResult, runDefinition } from "./lib/run.ts";
 import { fullName, type Selection } from "./lib/selection.ts";
 import { createSnapshots, type SnapshotStats } from "./lib/snapshot.ts";
@@ -45,6 +46,7 @@ export const createTestRunAction =
     const context = { root, workspaces, snapshots, capture };
 
     const results = await runChecks(repository, selection.harnesses, config.policies, selection.layers);
+    results.push(...(await runContextChecks(repository, selection, capture, config.policies, env)));
     const total = definitions.length * selection.harnesses.length;
     let done = 0;
     for (const definition of definitions) {

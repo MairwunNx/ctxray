@@ -32,4 +32,7 @@ export const headingOf = (cell: CellResult, words: Words) => {
   return cell.suites.length > 0 ? cell.suites.join(" › ") : shown(words.cwd, cell.file);
 };
 
-export const nameOf = (cell: CellResult, words: Words) => (cell.check === "lint" ? words.t("test.lint") : cell.name);
+export const nameOf = (cell: CellResult, words: Words) => {
+  if (cell.check === "lint") return words.t("test.lint");
+  return cell.check === "context" ? words.t("test.context") : cell.name;
+};

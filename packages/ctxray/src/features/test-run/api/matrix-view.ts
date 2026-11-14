@@ -7,13 +7,17 @@ type Row = { heading: string; fixture: string | undefined; badge: string; name: 
 const reasonOf = (cell: CellResult, { t }: Words) => {
   if (cell.reason === "unsupported") return t("test.unsupported", { missing: (cell.missing ?? []).join(", ") });
   if (cell.reason === "filtered") return t("test.filtered");
+  if (cell.check === "context") return t("test.notInstalled", { binary: (cell.missing ?? []).join(", ") });
   return t("test.unavailable", { layer: cell.layer });
 };
 
 const cellSpans = (cell: CellResult, words: Words): Span[] => {
   const { t } = words;
   const harness = span(`${cell.harness} `);
-  const warnings = cell.warnings ? [span(` ${t("test.warnings", { count: cell.warnings })}`, "warning")] : [];
+  const warnings = [
+    ...(cell.tokens !== undefined ? [span(` ${t("test.tokens", { count: cell.tokens })}`, "muted")] : []),
+    ...(cell.warnings ? [span(` ${t("test.warnings", { count: cell.warnings })}`, "warning")] : []),
+  ];
   switch (cell.status) {
     case "passed":
       return [harness, span("✓", "success"), ...warnings];

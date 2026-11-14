@@ -58,7 +58,9 @@ const policiesOf = async (workspace: Workspace, harness: HarnessId, policies: re
   }
   const loadout = adapter.resolve(await workspace.inventoryOf(harness), { cwd: "", files: [] });
   const outcomes = await checkPolicies(covered, workspace.project, loadout);
-  return outcomes.map((outcome): CellResult => {
+  // A policy with only limits that need a run, like `total`, belongs to the L4 starting context check.
+  const here = outcomes.filter((outcome) => outcome.status !== "skipped" || outcome.skipped.length === 0);
+  return here.map((outcome): CellResult => {
     const base = checkResult(harness, "L2", "policy", outcome.id);
     const failure = { kind: "findings" as const, findings: outcome.failures };
     if (outcome.status === "skipped") return { ...base, status: "skipped", reason: "unavailable" };

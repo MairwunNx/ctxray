@@ -14,7 +14,7 @@ import type { Workspaces } from "./workspace.ts";
 // One cell of the matrix: a test on a harness.
 export type CellResult = {
   file: string | undefined; // the test file; undefined for ctxray's own L1 and L2 checks
-  check?: "lint" | "policy";
+  check?: "lint" | "policy" | "context";
   suites: readonly string[];
   fixture: string | undefined;
   name: string;
@@ -26,6 +26,7 @@ export type CellResult = {
   missing?: readonly string[];
   failure?: Failure;
   warnings?: number;
+  tokens?: number; // the starting context of a context check, counted locally
   attempts: number;
   duration: number;
 };

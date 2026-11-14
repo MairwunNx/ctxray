@@ -88,7 +88,7 @@ jobs:
           cd "$dir"
           git init -q
           "$GITHUB_WORKSPACE/dist/ctxray" test | tee test.log
-          grep -qF "L4 ✓ 4" test.log
+          grep -qF "L4 ✓ 6" test.log
           grep -qF "L5 ✓ 2" test.log
 
   # Biome failed: Claude fixes what Biome reports and commits to the same branch, once.
