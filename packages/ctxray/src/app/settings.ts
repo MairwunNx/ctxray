@@ -7,7 +7,7 @@ export type Settings = {
   readonly lang: string;
   readonly ci: boolean;
   readonly renderer: RendererKind;
-  readonly unsupportedLang: string | undefined; // asked for by --lang or CTXRAY_LANG, but without a catalog
+  readonly unsupportedLang: string | undefined; // asked for by --lang, CTXRAY_LANG, or the config, but without a catalog
 };
 
 export type SettingsSources = {
@@ -15,19 +15,20 @@ export type SettingsSources = {
   env: Env;
   tty: boolean;
   intlLocale?: string | undefined;
+  configLang?: string | undefined; // `lang` from the config, once a command has loaded it
 };
 
 const text = (value: string | boolean | undefined) => (typeof value === "string" ? value : undefined);
 
-// A flag beats the environment. The config file joins between the two once ctxray.config.ts loads.
-export const resolveSettings = ({ values, env, tty, intlLocale }: SettingsSources): Settings => {
+// A flag beats CTXRAY_LANG, which beats the config, which beats the system locale.
+export const resolveSettings = ({ values, env, tty, intlLocale, configLang }: SettingsSources): Settings => {
   const supported = Object.keys(CATALOGS);
   const flag = text(values["lang"]);
-  const requested = languageOf(flag ?? env["CTXRAY_LANG"]);
+  const requested = [flag, env["CTXRAY_LANG"], configLang].map(languageOf).find((lang) => lang !== undefined);
   const ci = values["ci"] === true || isCi(env);
   const plain = values["plain"] === true || values["no-color"] === true;
   return {
-    lang: resolveLocale({ flag, env, intlLocale }, supported),
+    lang: resolveLocale({ flag, env, config: configLang, intlLocale }, supported),
     ci,
     renderer: chooseRenderer({ tty, ci, plain, env }),
     unsupportedLang: requested && !supported.includes(requested) ? requested : undefined,

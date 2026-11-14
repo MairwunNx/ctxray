@@ -14,6 +14,7 @@ export type CommandSpec = {
   readonly name: string;
   readonly summary: MessageKey;
   readonly options: OptionSpecs;
+  readonly usesConfig?: boolean; // the CLI loads the config before the command runs, and stops on its errors
 };
 
 export type Handler = (values: Values) => Promise<ExitCode>;

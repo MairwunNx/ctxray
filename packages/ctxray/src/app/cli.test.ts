@@ -2,32 +2,14 @@ import { afterAll, describe, expect, test } from "bun:test";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { Writable } from "node:stream";
 import { widthOf } from "../shared/render/index.ts";
-import { runCli } from "./cli.ts";
-import { createContainer } from "./container.ts";
+import { runIn } from "./cli.fixture.ts";
 import { VERSION } from "./package-info.ts";
 
 const cwd = mkdtempSync(join(tmpdir(), "ctxray-cli-"));
 afterAll(() => rmSync(cwd, { recursive: true, force: true }));
 
-// Runs the CLI against a piped stdout, so it renders plain text.
-const run = async (args: string[], env: Record<string, string> = {}) => {
-  let stdout = "";
-  let stderr = "";
-  const out = new Writable({
-    write: (chunk, _, done) => {
-      stdout += chunk;
-      done();
-    },
-  }) as NodeJS.WriteStream;
-  const code = await runCli(
-    args,
-    { env, stdout: out, stderr: { write: (text) => (stderr += text) } },
-    createContainer(env, cwd),
-  );
-  return { code, stdout, stderr };
-};
+const run = (args: string[], env: Record<string, string> = {}) => runIn(cwd, args, env);
 
 test("--version prints the version only", async () => {
   expect(await run(["--version"])).toEqual({ code: 0, stdout: `ctxray ${VERSION}\n`, stderr: "" });
