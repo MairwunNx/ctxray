@@ -1,3 +1,5 @@
+import { realpath } from "node:fs/promises";
+import { join } from "node:path";
 import { type GlobProblem, globProblem } from "#shared/glob/index.ts";
 import type { MessageKey } from "#shared/i18n/index.ts";
 import { inParallel } from "#shared/infra/index.ts";
@@ -35,18 +37,23 @@ const skillNames = (inventory: Inventory): Problem[] => {
   });
 };
 
-// Two instruction files with the same text cost tokens twice and drift apart on the next edit.
-const duplicateText = (inventory: Inventory): Problem[] => {
-  const seen = new Map<string, string>();
-  return inventory.instructions.flatMap(({ path, text }) => {
+// Two instruction files with the same text cost tokens twice and drift apart on the next edit. A symlink and
+// its target are one file, the way AGENTS.md → CLAUDE.md gives each harness its name for it.
+const duplicateText = async (project: Project, inventory: Inventory): Promise<Problem[]> => {
+  const seen = new Map<string, { path: string; real: string }>();
+  const reals = await inParallel(inventory.instructions, ({ path }) =>
+    realpath(join(project.root, path)).catch(() => path),
+  );
+  return inventory.instructions.flatMap(({ path, text }, index) => {
     const normal = text.replace(/\s+/g, " ").trim();
     if (normal === "") return [];
     const first = seen.get(normal);
     if (first === undefined) {
-      seen.set(normal, path);
+      seen.set(normal, { path, real: reals[index] ?? path });
       return [];
     }
-    return [problem("lint.duplicateText", "warning", path, { other: first })];
+    if (first.real === reals[index]) return [];
+    return [problem("lint.duplicateText", "warning", path, { other: first.path })];
   });
 };
 
@@ -78,6 +85,6 @@ export const lint = async (project: Project, inventory: Inventory): Promise<Prob
   ...inventory.problems,
   ...badGlobs(inventory),
   ...skillNames(inventory),
-  ...duplicateText(inventory),
+  ...(await duplicateText(project, inventory)),
   ...(await brokenLinks(project, inventory)),
 ];

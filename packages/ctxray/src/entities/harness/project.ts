@@ -1,4 +1,4 @@
-import { realpath } from "node:fs/promises";
+import { lstat, realpath, stat } from "node:fs/promises";
 import { join, posix, resolve } from "node:path";
 import { $ } from "bun";
 import { matchesGitignore } from "#shared/glob/index.ts";
@@ -18,14 +18,43 @@ export type Project = {
 
 const SKIPPED = /(^|\/)(\.git|node_modules)\//;
 
+const nulSeparated = (text: string) => text.split("\0").filter((entry) => entry !== "");
+
+// git lists a symlink to a folder as one entry, like `.claude/skills -> ../.agents/skills`. Harnesses follow
+// the link, so the files behind it count under the link's path. Links that leave the project don't.
+const behindLinks = async (root: string, links: readonly string[]) => {
+  const found: string[] = [];
+  const folders = new Set<string>();
+  for (const link of links) {
+    const target = await realpath(join(root, link)).catch(() => undefined);
+    if (target === undefined || !(await stat(target)).isDirectory()) continue;
+    // The link is a folder, not a file, whether the files behind it count or not.
+    folders.add(link);
+    if (!target.startsWith(`${root}/`)) continue;
+    for await (const path of new Bun.Glob("**").scan({ cwd: target, dot: true, onlyFiles: true })) {
+      found.push(`${link}/${path.replaceAll("\\", "/")}`);
+    }
+  }
+  return { found, folders };
+};
+
 // Outside a repository, or without git installed, the exit code is not 0 and the walk takes over.
 const gitFiles = async (root: string): Promise<string[] | undefined> => {
   const git = await $`git ls-files -z --cached --others --exclude-standard`.cwd(root).quiet().nothrow();
   if (git.exitCode !== 0) return undefined;
-  return git.stdout
-    .toString()
-    .split("\0")
-    .filter((path) => path !== "");
+  const files = nulSeparated(git.stdout.toString());
+  // Tracked links carry mode 120000. Untracked ones git knows nothing about, so lstat tells.
+  const staged = nulSeparated(await $`git ls-files -s -z`.cwd(root).quiet().text());
+  const untracked = nulSeparated(await $`git ls-files -z --others --exclude-standard`.cwd(root).quiet().text());
+  const untrackedLinks = await inParallel(untracked, async (path) =>
+    (await lstat(join(root, path)).catch(() => undefined))?.isSymbolicLink() ? path : undefined,
+  );
+  const links = [
+    ...staged.filter((entry) => entry.startsWith("120000 ")).map((entry) => entry.slice(entry.indexOf("\t") + 1)),
+    ...untrackedLinks.filter((path) => path !== undefined),
+  ];
+  const { found, folders } = await behindLinks(root, links);
+  return [...files.filter((path) => !folders.has(path)), ...found];
 };
 
 const walkFiles = async (root: string): Promise<string[]> => {
