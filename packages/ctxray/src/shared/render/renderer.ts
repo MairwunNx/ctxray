@@ -4,11 +4,15 @@ import type { View } from "./view.ts";
 
 export type Renderer = {
   print: (view: View) => void;
+  // A status under the printed views that redraws in place, like progress. Plain output skips it: a CI log
+  // keeps only what stays.
+  live: (view: View | undefined) => void;
   close: () => Promise<void>;
 };
 
 export const createPlainRenderer = (write: (text: string) => void): Renderer => ({
   print: (view) => write(toPlain(view)),
+  live: () => {},
   close: async () => {},
 });
 
