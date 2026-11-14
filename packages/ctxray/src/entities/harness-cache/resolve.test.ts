@@ -82,8 +82,43 @@ describe("resolveHarness", () => {
   });
 
   test("a harness ctxray can't install", async () => {
-    await expect(resolveHarness(client, "cursor-cli", undefined)).rejects.toThrow(
-      "ctxray can't install cursor-cli yet",
+    await expect(resolveHarness(client, "cursor-ide", undefined)).rejects.toThrow(
+      "ctxray can't install cursor-ide yet",
     );
+  });
+});
+
+describe("a harness off npm", () => {
+  const HEX = "e945be006515b0f3b9aa06c2d06b9727be131d7471983cd25b9fd7356a89cb9e";
+  const LAB = "https://downloads.cursor.com/lab";
+  // Cursor's install script names the version, a `.sha256` sits beside each build that exists.
+  const files: Record<string, string> = {
+    "https://cursor.com/install": `DOWNLOAD_URL="${LAB}/2026.11.13-eacade1/\${OS}/\${ARCH}/agent-cli-package.tar.gz"`,
+    ...Object.fromEntries(
+      ["darwin/arm64", "darwin/x64", "linux/x64", "linux/arm64"].map((key) => [
+        `${LAB}/2026.11.13-eacade1/${key}/agent-cli-local-package.tar.gz.sha256`,
+        `${HEX}  agent-cli-local-package.tar.gz\n`,
+      ]),
+    ),
+  };
+  const stub = { text: async (url: string) => files[url] } as unknown as Parameters<typeof resolveHarness>[0];
+
+  test("the tag reads the version off the install script, each build's integrity off its checksum", async () => {
+    const locked = await resolveHarness(stub, "cursor-cli", undefined);
+    expect(locked.version).toBe("2026.11.13-eacade1");
+    expect(Object.keys(locked.platforms).sort()).toEqual([
+      "darwin-arm64",
+      "darwin-x64",
+      "linux-arm64-glibc",
+      "linux-x64-glibc",
+    ]);
+    expect(locked.platforms["linux-x64-glibc"]).toEqual({
+      package: `${LAB}/2026.11.13-eacade1/linux/x64/agent-cli-local-package.tar.gz`,
+      integrity: `sha256-${Buffer.from(HEX, "hex").toString("base64")}`,
+    });
+  });
+
+  test("a version Cursor never served", async () => {
+    await expect(resolveHarness(stub, "cursor-cli", "2020.01.01-0000000")).rejects.toThrow("cursor-cli has no version");
   });
 });

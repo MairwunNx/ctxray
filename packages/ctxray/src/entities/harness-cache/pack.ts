@@ -5,13 +5,24 @@ import { shortHash } from "./integrity.ts";
 import { splitSpec } from "./recipes.ts";
 import type { Registry } from "./registry.ts";
 
-// `@openai/codex@0.169.0-linux-x64` → `tarballs/e56b1614-openai-codex-0.169.0-linux-x64.tgz`.
-export const tarballName = (build: LockedPackage) =>
-  `tarballs/${shortHash(build.integrity)}-${build.package.replace(/^@/, "").replace(/[/@]/g, "-")}.tgz`;
+// `@openai/codex@0.169.0-linux-x64` → `tarballs/e56b1614-openai-codex-0.169.0-linux-x64.tgz`, a download by
+// the path of its URL.
+export const tarballName = (build: LockedPackage) => {
+  const name = isDownload(build) ? new URL(build.package).pathname.slice(1) : build.package.replace(/^@/, "");
+  return `tarballs/${shortHash(build.integrity)}-${name.replace(/[/@]/g, "-").replace(/\.tar\.gz$|\.tgz$/, "")}.tgz`;
+};
 
-// Tarballs straight from the registry: npm names the URL in the version's metadata.
+// A build that isn't on npm names its download URL instead of `name@version`.
+export const isDownload = (build: LockedPackage) => build.package.startsWith("https://");
+
+// Tarballs straight from the registry, where npm names the URL in the version's metadata, or from the URL a
+// download build names.
 export const registrySource = (registry: Registry): TarballSource =>
   async function* (build, onBytes) {
+    if (isDownload(build)) {
+      yield* registry.download(build.package, onBytes);
+      return;
+    }
     const { name, version } = splitSpec(build.package);
     const dist =
       (await registry.dist(name, version)) ?? fail("provision.noBuild", { harness: name, version, platform: "" });

@@ -102,12 +102,14 @@ export const createHarnessCache = (dirs: CacheDirs) => {
           writer.write(chunk);
         }
         await writer.end();
-        const actual = integrityOf(check.hasher);
+        const actual = integrityOf(check.hasher, check.algorithm);
         if (actual !== check.expected)
           fail("provision.integrity", { package: build.package, expected: check.expected, actual });
         onProgress({ phase: "unpack" });
         const unpacked = join(tmp, "entry");
         await new Bun.Archive(await Bun.file(tarball).bytes()).extract(unpacked);
+        // npm packs into `package/`, other archives into a folder of their own: ctxray keeps one layout.
+        if (recipe.root !== undefined) await rename(join(unpacked, recipe.root), join(unpacked, "package"));
         const bin = await recipe.bin(join(unpacked, "package"), platform);
         // Executable whatever mode the tarball stored.
         await chmod(join(unpacked, "package", bin), 0o755).catch(() => {});

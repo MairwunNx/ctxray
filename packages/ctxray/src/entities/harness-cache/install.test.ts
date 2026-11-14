@@ -122,3 +122,24 @@ describe("the harness cache", () => {
     expect(fake.downloads.length).toBe(before);
   });
 });
+
+test("a download off npm: its SHA-256 checked, its own top folder unpacked into the usual layout", async () => {
+  const tarball = await new Bun.Archive(
+    { "dist-package/cursor-agent-local": "#!/bin/sh\necho 2026.11.13-eacade1\n" },
+    { compress: "gzip" },
+  ).bytes();
+  const integrity = `sha256-${new Bun.CryptoHasher("sha256").update(tarball).digest("base64")}`;
+  const url = "https://downloads.cursor.com/lab/2026.11.13-eacade1/linux/x64/agent-cli-local-package.tar.gz";
+  const locked = {
+    source: "registry" as const,
+    range: "latest",
+    version: "2026.11.13-eacade1",
+    platforms: { "linux-x64-glibc": { package: url, integrity } },
+  };
+  const cache = createHarnessCache(cacheIn("download"));
+  const installed = await cache.install("cursor-cli", locked, LINUX, async function* () {
+    yield tarball;
+  });
+  expect(installed.binary.endsWith("/package/cursor-agent-local")).toBe(true);
+  expect((await $`${installed.binary}`.text()).trim()).toBe("2026.11.13-eacade1");
+});
