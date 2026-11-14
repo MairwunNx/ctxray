@@ -38,18 +38,20 @@ const configOf = (context: LaunchContext) =>
     "",
   ].join("\n");
 
-type Server = { command?: string; args?: string[] };
+type Server = { command?: string; args?: string[]; url?: string };
 
 // Project MCP servers run behind the shim. `-c` overrides beat the project file, which stays as it is.
-const serverOverrides = async ({ dirs, shim }: LaunchContext): Promise<string[]> => {
+// Server names with a dot can't be overridden this way: Codex splits `-c` keys at dots.
+const serverOverrides = async ({ dirs, shim, remote }: LaunchContext): Promise<string[]> => {
   const file = Bun.file(join(dirs.work, ".codex/config.toml"));
   if (!(await file.exists())) return [];
   const servers = (Bun.TOML.parse(await file.text()) as { mcp_servers?: Record<string, Server> }).mcp_servers ?? {};
   const overrides: string[] = [];
   for (const [name, server] of Object.entries(servers)) {
+    const key = `mcp_servers.${name}`;
+    if (server.url !== undefined) overrides.push("-c", `${key}.url=${toml(remote(name, server.url))}`);
     if (server.command === undefined) continue;
     const [command, ...args] = await shim(name, [server.command, ...(server.args ?? [])]);
-    const key = `mcp_servers.${name}`;
     overrides.push("-c", `${key}.command=${toml(command)}`, "-c", `${key}.args=${toml(args)}`);
     overrides.push("-c", `${key}.default_tools_approval_mode="approve"`);
   }

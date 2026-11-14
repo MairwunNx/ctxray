@@ -1,11 +1,12 @@
 import { readdir, readFile, rm } from "node:fs/promises";
 import { basename, join } from "node:path";
 import type { Exchange, Step } from "#shared/contract/index.ts";
-import { readShimLog, type ServerRecord, type ShimConfig } from "#shared/mcp-shim/index.ts";
+import { readShimLog, type ServerRecord } from "#shared/mcp-shim/index.ts";
 import type { Inventory } from "../inventory.ts";
 import type { Project } from "../project.ts";
 import type { RunDirs } from "./isolate.ts";
 import { isolate } from "./isolate.ts";
+import { type McpRouting, type RemoteMcp, routeMcp } from "./mcp.ts";
 import type { CaptureAdapter, Intent } from "./model.ts";
 import { sandboxed } from "./sandbox.ts";
 
@@ -27,9 +28,9 @@ export type SessionOptions = {
   prompt: string;
   model: string;
   env: Record<string, string>; // isolation, without HOME and TMPDIR: the session adds its own
-  self: readonly string[]; // how to run ctxray itself, for the MCP shim
-  shimEnv: Pick<ShimConfig, "env" | "unset" | "patterns">;
+  mcp: McpRouting; // how to run ctxray itself for the shim, and the server's environment
   port: ModelPort;
+  remoteMcp: RemoteMcp;
   timeout: number; // milliseconds a harness may take for one turn
 };
 
@@ -68,11 +69,7 @@ export const startSession = async (options: SessionOptions): Promise<HarnessSess
   const dirs = await isolate(options.project, canaries);
   const env = { ...options.env, PATH: `${dirs.bin}:${options.env["PATH"] ?? ""}`, HOME: dirs.home, TMPDIR: dirs.tmp };
   const version = await adapter.version(options.binary, env);
-  const shim = async (name: string, command: readonly string[]) => {
-    const config = join(dirs.logs, `${name}.shim.json`);
-    await Bun.write(config, JSON.stringify({ ...options.shimEnv, log: join(dirs.logs, `${name}.jsonl`) }));
-    return [...options.self, "__mcp-shim", config, "--", ...command];
-  };
+  const { shim, remote, close: closeRemotes } = routeMcp(dirs, options.mcp, options.remoteMcp);
   const context = {
     dirs,
     cwd: options.cwd,
@@ -81,6 +78,7 @@ export const startSession = async (options: SessionOptions): Promise<HarnessSess
     baseUrl: port.baseUrl,
     env,
     shim,
+    remote,
   };
   const launch = await adapter.launch(options.binary, context, options.inventory);
   const command = adapter.sandboxesItself ? launch.command : sandboxed(launch.command, dirs.root);
@@ -151,6 +149,7 @@ export const startSession = async (options: SessionOptions): Promise<HarnessSess
       const code = await child.exited;
       clearTimeout(stop);
       port.close();
+      closeRemotes();
       const records = await servers();
       const text = tail(await output, 40);
       await rm(dirs.root, { recursive: true, force: true });

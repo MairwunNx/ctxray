@@ -2,7 +2,13 @@ import { rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { CAPTURE_ADAPTERS, type CaptureAdapter, type HarnessSession, startSession } from "#entities/harness/index.ts";
-import { createConversation, createTraceWriter, startEgressGuard, startProxy } from "#entities/proxy/index.ts";
+import {
+  createConversation,
+  createTraceWriter,
+  type Egress,
+  startEgressGuard,
+  startProxy,
+} from "#entities/proxy/index.ts";
 import { type Config, resolveNetwork } from "#entities/user-config/index.ts";
 import type { Env } from "#shared/infra/index.ts";
 import { createRedactor } from "#shared/redact/index.ts";
@@ -32,6 +38,13 @@ export const createCapture = ({ config, env, self }: CaptureDeps) => {
   const network = resolveNetwork(config, env);
   let resources: Promise<{ proxy: ReturnType<typeof startProxy>; guard: Awaited<ReturnType<typeof startEgressGuard>> }>;
   let count = 0;
+  // Remote MCP servers go out the way the user's own tools do: their proxy and their CA certificates.
+  const egressOf = async (): Promise<Egress> => ({
+    proxy: network.httpsProxy ?? network.httpProxy,
+    noProxy: network.noProxy,
+    ca: await Promise.all(network.caFiles.map((file) => Bun.file(file).text())),
+  });
+  let egress: Egress;
 
   // MCP servers reach the network the way the user's own tools do: through the user's proxy, not the guard.
   const userNetwork = {
@@ -52,6 +65,7 @@ export const createCapture = ({ config, env, self }: CaptureDeps) => {
       fail("capture.notInstalled", { harness: scope.harness, binary: adapter.binary });
     resources ??= (async () => ({ proxy: startProxy(), guard: await startEgressGuard() }))();
     const { proxy, guard } = await resources;
+    egress ??= await egressOf();
     const trace = join(traceDir, `${scope.harness}-${++count}.jsonl`);
     const writer = createTraceWriter(trace, redactor);
     const conversation = createConversation(writer.write);
@@ -76,9 +90,9 @@ export const createCapture = ({ config, env, self }: CaptureDeps) => {
         ...both("ALL_PROXY", guard.url),
         ...both("NO_PROXY", "127.0.0.1,localhost"),
       },
-      self,
-      shimEnv,
+      mcp: { self, shimEnv },
       port: { ...conversation, baseUrl: prefix.baseUrl, close: prefix.close },
+      remoteMcp: (target, onMessage) => proxy.openMcp(target, egress, onMessage),
       timeout: 60_000,
     });
     return { harness, adapter, model, trace, egress: () => guard.attempts().slice(seen) };

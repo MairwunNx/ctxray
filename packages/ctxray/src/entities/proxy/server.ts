@@ -1,4 +1,6 @@
 import { Elysia } from "elysia";
+import type { Egress } from "./forward.ts";
+import { forwardMcp, type McpMessage } from "./mcp-forward.ts";
 import type { Handler, Incoming, Json, Protocol, Route } from "./model.ts";
 import { KITS } from "./protocols/index.ts";
 
@@ -46,6 +48,12 @@ export type ProxyServer = {
   url: string; // http://127.0.0.1:<port>
   // A harness run gets its own prefix, `<url>/s/<id>`, to use as its base URL.
   open: (handler: Handler) => { id: string; baseUrl: string; close: () => void };
+  // An HTTP MCP server behind ctxray: the harness gets `url`, the messages reach `onMessage`.
+  openMcp: (
+    target: string,
+    egress: Egress,
+    onMessage: (line: McpMessage) => void,
+  ) => { url: string; close: () => void };
   stop: () => Promise<void>;
 };
 
@@ -53,27 +61,35 @@ export type ProxyServer = {
 // requests of parallel sessions never mix.
 export const startProxy = (): ProxyServer => {
   const sessions = new Map<string, Handler>();
-  const app = new Elysia().all("/s/:session/*", async ({ params, request }) => {
-    const handler = sessions.get(params.session);
-    const url = new URL(request.url);
-    const path = url.pathname.slice(`/s/${params.session}`.length);
-    const matched = matchRoute(path);
-    if (!handler) return KITS[matched.protocol].error(404, `ctxray: no session ${params.session}`);
-    const body = request.method === "GET" ? {} : await readBody(request);
-    const incoming: Incoming = {
-      session: params.session,
-      protocol: matched.protocol,
-      route: matched.route,
-      stream: matched.stream ?? body["stream"] === true,
-      path,
-      search: url.search,
-      method: request.method,
-      headers: request.headers,
-      body,
-      model: matched.model ?? (typeof body["model"] === "string" ? body["model"] : undefined),
-    };
-    return handler(incoming);
-  });
+  const servers = new Map<string, ReturnType<typeof forwardMcp>>();
+  const mcp = ({ params, request }: { params: { id: string; "*"?: string }; request: Request }) => {
+    const forward = servers.get(params.id);
+    return forward ? forward(request, params["*"] ?? "") : new Response("ctxray: no such MCP server", { status: 404 });
+  };
+  const app = new Elysia()
+    .all("/m/:id", mcp)
+    .all("/m/:id/*", mcp)
+    .all("/s/:session/*", async ({ params, request }) => {
+      const handler = sessions.get(params.session);
+      const url = new URL(request.url);
+      const path = url.pathname.slice(`/s/${params.session}`.length);
+      const matched = matchRoute(path);
+      if (!handler) return KITS[matched.protocol].error(404, `ctxray: no session ${params.session}`);
+      const body = request.method === "GET" ? {} : await readBody(request);
+      const incoming: Incoming = {
+        session: params.session,
+        protocol: matched.protocol,
+        route: matched.route,
+        stream: matched.stream ?? body["stream"] === true,
+        path,
+        search: url.search,
+        method: request.method,
+        headers: request.headers,
+        body,
+        model: matched.model ?? (typeof body["model"] === "string" ? body["model"] : undefined),
+      };
+      return handler(incoming);
+    });
   app.listen({ hostname: "127.0.0.1", port: 0 });
   const url = `http://127.0.0.1:${app.server?.port}`;
   return {
@@ -82,6 +98,11 @@ export const startProxy = (): ProxyServer => {
       const id = crypto.randomUUID().slice(0, 8);
       sessions.set(id, handler);
       return { id, baseUrl: `${url}/s/${id}`, close: () => sessions.delete(id) };
+    },
+    openMcp: (target, egress, onMessage) => {
+      const id = crypto.randomUUID().slice(0, 8);
+      servers.set(id, forwardMcp(target, egress, onMessage));
+      return { url: `${url}/m/${id}`, close: () => servers.delete(id) };
     },
     stop: async () => {
       await app.stop(true);

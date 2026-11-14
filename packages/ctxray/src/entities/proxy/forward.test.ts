@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { createRedactor } from "#shared/redact/index.ts";
 import { startEgressGuard } from "./egress.ts";
 import { createForward } from "./forward.ts";
+import type { McpMessage } from "./mcp-forward.ts";
 import type { Exchange } from "./model.ts";
 import { startProxy } from "./server.ts";
 import { createTraceWriter } from "./trace.ts";
@@ -56,6 +57,35 @@ describe("forward", () => {
     expect(response.status).toBe(502);
     expect(((await response.json()) as { error: { message: string } }).error.message).toContain("unreachable");
     session.close();
+  });
+});
+
+describe("an HTTP MCP server behind the proxy", () => {
+  test.each([
+    ["JSON", "application/json", (body: string) => body],
+    ["server-sent events", "text/event-stream", (body: string) => `event: message\ndata: ${body}\n\n`],
+  ])("logs both sides of %s", async (_, contentType, frame) => {
+    const mcp = Bun.serve({
+      hostname: "127.0.0.1",
+      port: 0,
+      fetch: async (request) => {
+        const { id } = (await request.json()) as { id: number };
+        const reply = JSON.stringify({ jsonrpc: "2.0", id, result: { tools: [{ name: "search_issues" }] } });
+        return new Response(frame(reply), { headers: { "content-type": contentType } });
+      },
+    });
+    const lines: McpMessage[] = [];
+    const server = proxy.openMcp(`${mcp.url.origin}/mcp`, NO_EGRESS, (line) => lines.push(line));
+    const call = { jsonrpc: "2.0", id: 7, method: "tools/list" };
+    const response = await fetch(server.url, { method: "POST", body: JSON.stringify(call) });
+    expect(await response.text()).toContain("search_issues");
+    await Bun.sleep(10);
+    expect(lines.map((line) => [line.from, (line.message as { id: number }).id])).toEqual([
+      ["client", 7],
+      ["server", 7],
+    ]);
+    server.close();
+    mcp.stop(true);
   });
 });
 

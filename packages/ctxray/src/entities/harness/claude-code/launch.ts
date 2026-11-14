@@ -2,14 +2,19 @@ import { join } from "node:path";
 import { $ } from "bun";
 import type { LaunchContext } from "../capture/model.ts";
 
-type McpEntry = { command?: string; args?: string[]; type?: string; [key: string]: unknown };
+type McpEntry = { command?: string; args?: string[]; type?: string; url?: string; [key: string]: unknown };
 
-// Project MCP servers run behind the shim. The file belongs to the isolated copy, never to the user.
-const wrapServers = async ({ dirs, shim }: LaunchContext) => {
+// Project MCP servers run behind the shim, remote ones behind the proxy. The file belongs to the isolated
+// copy, never to the user.
+const wrapServers = async ({ dirs, shim, remote }: LaunchContext) => {
   const file = Bun.file(join(dirs.work, ".mcp.json"));
   if (!(await file.exists())) return;
   const config = (await file.json()) as { mcpServers?: Record<string, McpEntry> };
   for (const [name, server] of Object.entries(config.mcpServers ?? {})) {
+    if (server.url !== undefined) {
+      config.mcpServers = { ...config.mcpServers, [name]: { ...server, url: remote(name, server.url) } };
+      continue;
+    }
     if (server.command === undefined) continue;
     const [command = server.command, ...args] = await shim(name, [server.command, ...(server.args ?? [])]);
     config.mcpServers = { ...config.mcpServers, [name]: { ...server, command, args } };

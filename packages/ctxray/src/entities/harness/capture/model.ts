@@ -12,6 +12,8 @@ export type LaunchContext = {
   env: Record<string, string>; // isolation: PATH, HOME, TMPDIR, the egress guard
   // The command line that runs an MCP server behind ctxray's shim, which logs it as `name`.
   shim: (name: string, command: readonly string[]) => Promise<string[]>;
+  // The URL that reaches an HTTP MCP server through ctxray, which logs it as `name`.
+  remote: (name: string, url: string) => string;
 };
 
 export type Launch = { command: string[]; env: Record<string, string> };

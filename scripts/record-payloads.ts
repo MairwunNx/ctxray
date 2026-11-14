@@ -38,8 +38,11 @@ for (const harness of ["claude-code", "codex"] as HarnessId[]) {
     prompt: "Wait for instructions.",
     model: adapter.defaultModel,
     env: { PATH: process.env["PATH"] ?? "", TERM: "dumb", LANG: "en_US.UTF-8", TZ: "UTC", ...proxies },
-    self: [process.execPath, join(process.cwd(), "packages/ctxray/src/app/main.ts")],
-    shimEnv: { env: {}, unset: Object.keys(proxies), patterns: [] },
+    mcp: {
+      self: [process.execPath, join(process.cwd(), "packages/ctxray/src/app/main.ts")],
+      shimEnv: { env: {}, unset: Object.keys(proxies), patterns: [] },
+    },
+    remoteMcp: (target, onMessage) => proxy.openMcp(target, { proxy: undefined, noProxy: [], ca: [] }, onMessage),
     port: { ...conversation, baseUrl: prefix.baseUrl, close: prefix.close },
     timeout: 60_000,
   });

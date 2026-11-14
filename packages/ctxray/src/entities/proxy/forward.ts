@@ -22,6 +22,12 @@ const bypasses = (host: string, noProxy: readonly string[]) =>
     return entry === "*" || host === suffix || host.endsWith(`.${suffix}`);
   });
 
+// fetch() through the user's proxy, unless the host is in NO_PROXY, and with the user's CA certificates.
+export const fetchThrough = (url: URL, init: RequestInit, egress: Egress) => {
+  const proxy = egress.proxy && !bypasses(url.hostname, egress.noProxy) ? egress.proxy : undefined;
+  return fetch(url, { ...init, ...(proxy && { proxy }), ...(egress.ca.length > 0 && { tls: { ca: [...egress.ca] } }) });
+};
+
 const HOP_BY_HOP = ["host", "connection", "content-length", "accept-encoding", "transfer-encoding"];
 
 export type ForwardOptions = {
@@ -53,15 +59,16 @@ export const createForward = ({ upstream, egress, headers = {}, onExchange = () 
     const sent = new Headers(incoming.headers);
     for (const name of HOP_BY_HOP) sent.delete(name);
     for (const [name, value] of Object.entries(headers)) sent.set(name, value);
-    const proxy = egress.proxy && !bypasses(target.hostname, egress.noProxy) ? egress.proxy : undefined;
     try {
-      const response = await fetch(target, {
-        method: incoming.method,
-        headers: sent,
-        ...(incoming.method !== "GET" && { body: JSON.stringify(incoming.body) }),
-        ...(proxy && { proxy }),
-        ...(egress.ca.length > 0 && { tls: { ca: [...egress.ca] } }),
-      });
+      const response = await fetchThrough(
+        target,
+        {
+          method: incoming.method,
+          headers: sent,
+          ...(incoming.method !== "GET" && { body: JSON.stringify(incoming.body) }),
+        },
+        egress,
+      );
       const back = new Headers(response.headers);
       back.delete("content-encoding");
       back.delete("content-length");

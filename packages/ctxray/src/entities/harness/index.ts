@@ -2,6 +2,7 @@ export { CAPTURE_ADAPTERS, STATIC_ADAPTERS, type StaticAdapter } from "./adapter
 export { CAPABILITIES, type Capability } from "./capability.ts";
 export { canariesIn } from "./capture/canary.ts";
 export { buildLoadout, type LoadoutInput } from "./capture/loadout.ts";
+export type { McpRouting, RemoteMcp } from "./capture/mcp.ts";
 export type { CaptureAdapter, Intent, Segment } from "./capture/model.ts";
 export {
   HarnessExit,
