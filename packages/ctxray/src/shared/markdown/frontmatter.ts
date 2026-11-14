@@ -5,7 +5,21 @@ export type Frontmatter = {
   // Lines the frontmatter takes, so a finding in the body can name its line in the file.
   offset: number;
   error?: string;
+  // Not strict YAML, read line by line the way Claude Code and Codex read it: `key: value` at the top level.
+  loose?: boolean;
 };
+
+const unquote = (value: string) => value.replace(/^(["'])(.*)\1$/, "$2");
+
+// What the harnesses fall back to when YAML fails, like a `: ` inside an unquoted description.
+const looseFields = (block: string): Record<string, string> =>
+  Object.fromEntries(
+    block.split(/\r?\n/).flatMap((line) => {
+      const match = /^([A-Za-z][\w-]*):[ \t]*(.*)$/.exec(line);
+      const value = unquote((match?.[2] ?? "").trim());
+      return match && value !== "" ? [[match[1] as string, value]] : [];
+    }),
+  );
 
 // Harnesses read frontmatter only when the opening `---` is the file's first line.
 const BLOCK = /^---[ \t]*\r?\n(?:([\s\S]*?)\r?\n)?---[ \t]*(?:\r?\n|$)/;
@@ -21,7 +35,11 @@ export const splitFrontmatter = (text: string): Frontmatter => {
     if (typeof data !== "object" || Array.isArray(data)) return { data: {}, body, offset, error: "not a mapping" };
     return { data: data as Record<string, unknown>, body, offset };
   } catch (error) {
-    return { data: {}, body, offset, error: error instanceof Error ? error.message : String(error) };
+    const message = error instanceof Error ? error.message : String(error);
+    const data = looseFields(match[1] ?? "");
+    return Object.keys(data).length > 0
+      ? { data, body, offset, error: message, loose: true }
+      : { data: {}, body, offset, error: message };
   }
 };
 

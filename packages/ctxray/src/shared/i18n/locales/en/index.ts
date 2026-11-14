@@ -87,6 +87,8 @@ export const en = {
   "inspect.capture":
     "The system prompt, built-in tools, and MCP tool schemas get counted once ctxray launches the harness",
   "lint.frontmatter": "The frontmatter isn't valid YAML, so the harness ignores it: {message}",
+  "lint.looseFrontmatter":
+    "The frontmatter isn't valid YAML. Claude Code and Codex still read it line by line, stricter tools won't: {message}",
   "lint.ruleField": "Claude Code reads only “paths” in a rule, “{field}” does nothing",
   "lint.tooLarge": "The file is over {limit}, so Claude Code skips all of it",
   "lint.importMissing": "@{target} points to a file that doesn't exist",

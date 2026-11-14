@@ -93,6 +93,8 @@ export const ru: Catalog = {
   "inspect.capture":
     "Системный промпт, встроенные инструменты и схемы MCP-инструментов ctxray посчитает, когда запустит ИИ-харнесс",
   "lint.frontmatter": "Frontmatter — не валидный YAML, харнесс его игнорирует: {message}",
+  "lint.looseFrontmatter":
+    "Frontmatter — невалидный YAML. Claude Code и Codex всё равно читают его построчно, более строгие инструменты — нет: {message}",
   "lint.ruleField": "Claude Code читает в правиле только «paths», «{field}» ничего не делает",
   "lint.tooLarge": "Файл больше {limit}, Claude Code пропускает его целиком",
   "lint.importMissing": "@{target} ссылается на файл, которого нет",

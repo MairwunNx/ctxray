@@ -21,8 +21,10 @@ const contextOf = (path: string) => {
 };
 
 const ruleOf = (path: string, dir: string, text: string, problems: Problem[]): Instruction => {
-  const { data, body, error } = splitFrontmatter(text);
-  if (error !== undefined) problems.push(problem("lint.frontmatter", "warning", path, { message: error }));
+  const { data, body, error, loose } = splitFrontmatter(text);
+  if (error !== undefined) {
+    problems.push(problem(loose ? "lint.looseFrontmatter" : "lint.frontmatter", "warning", path, { message: error }));
+  }
   // `paths` is the only field Claude Code reads from a rule. Cursor's `globs` here does nothing.
   for (const field of Object.keys(data)) {
     if (field !== "paths") problems.push(problem("lint.ruleField", "warning", path, { field }));

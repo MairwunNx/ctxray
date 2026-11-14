@@ -9,7 +9,12 @@ export const readSkillFiles = async (project: Project, pattern: RegExp, problems
   (await readMatching(project, pattern)).map(({ path, match, text }) => {
     const frontmatter = splitFrontmatter(text);
     if (frontmatter.error !== undefined) {
-      problems.push(problem("lint.frontmatter", "error", path, { message: frontmatter.error }));
+      const loose = frontmatter.loose === true;
+      problems.push(
+        problem(loose ? "lint.looseFrontmatter" : "lint.frontmatter", loose ? "warning" : "error", path, {
+          message: frontmatter.error,
+        }),
+      );
     }
     return { path, dir: match[1] ?? "", folder: match[2] ?? "", frontmatter };
   });

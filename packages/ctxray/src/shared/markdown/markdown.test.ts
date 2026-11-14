@@ -98,3 +98,19 @@ describe("findLinks", () => {
     expect(findLinks(text).map((reference) => reference.target)).toEqual(targets);
   });
 });
+
+describe("loose frontmatter", () => {
+  test("reads `key: value` lines when YAML fails, as Claude Code and Codex do", () => {
+    const text = '---\nname: allure\ndescription: Read CI results: failures and "traces".\n---\nBody\n';
+    expect(splitFrontmatter(text)).toMatchObject({
+      data: { name: "allure", description: 'Read CI results: failures and "traces".' },
+      body: "Body\n",
+      loose: true,
+    });
+  });
+
+  test("stays an error when no line reads as a field", () => {
+    const parsed = splitFrontmatter("---\n- [a\n---\nBody\n");
+    expect([parsed.data, parsed.loose, parsed.error !== undefined]).toEqual([{}, undefined, true]);
+  });
+});
