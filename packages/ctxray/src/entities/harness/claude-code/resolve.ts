@@ -1,7 +1,7 @@
 import type { Activation } from "#shared/contract/index.ts";
 import { countTokens } from "#shared/tokens/index.ts";
 import type { Instruction, Inventory } from "../inventory.ts";
-import { chainTo, isInside, matchingGlob, parentDirs } from "../project.ts";
+import { chainTo, isInside, isWithin, matchingGlob, parentDirs } from "../project.ts";
 import { createRules, listingLine, type Scope, type StaticLoadout, withTokens } from "../static-loadout.ts";
 import { isClaudeFile } from "./discover.ts";
 
@@ -14,11 +14,19 @@ export const resolveClaudeCode = (inventory: Inventory, { cwd, files }: Scope): 
   const agentsMode = !instructions.some((file) => isClaudeFile(file) && chain.includes(file.dir));
   const { rules, add: addRule } = createRules();
 
-  const add = (instruction: Instruction, activation: Activation, reason: string) => {
+  // Claude Code 2.1.311 expands `@imports` only for files in the cwd and below it: a CLAUDE.md above the cwd
+  // loads without its imports (verified on the wire, stage 9).
+  const add = (
+    instruction: Instruction,
+    activation: Activation,
+    reason: string,
+    expands = isWithin(instruction.dir, cwd),
+  ) => {
     addRule(instruction.path, activation, reason, instruction.text);
+    if (!expands) return;
     for (const path of instruction.imports) {
       const imported = instructions.find((candidate) => candidate.path === path);
-      if (imported) add(imported, activation, `import:${instruction.path}`);
+      if (imported) add(imported, activation, `import:${instruction.path}`, true);
     }
   };
   const at = (dir: string, kind: Instruction["kind"]) =>

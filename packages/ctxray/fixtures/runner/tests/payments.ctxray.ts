@@ -12,8 +12,11 @@ suite("payments", { fixture: "../payments" }, () => {
 
   test.resolve("instructions of the app load in app", async ({ resolve }) => {
     const l = await resolve({ cwd: "app" });
-    expect(l.rules).toInclude(["AGENTS.md", "app/AGENTS.md"]);
+    expect(l.rules).toInclude("app/AGENTS.md");
+    expect.on("codex", () => expect(l.rules).toInclude("AGENTS.md"));
+    // Claude Code takes the root CLAUDE.md here, but not what it imports: only the cwd's own imports expand.
     expect.on("claude-code", () => expect(l.rules).toInclude(["CLAUDE.md", "app/CLAUDE.md"]));
+    expect.on("claude-code", () => expect(l.rules).not.toInclude("AGENTS.md"));
     expect(l).toMatchLoadoutSnapshot();
   });
 

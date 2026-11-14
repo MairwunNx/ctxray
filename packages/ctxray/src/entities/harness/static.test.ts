@@ -65,9 +65,9 @@ describe("L3 resolve on the payments fixture", () => {
       {
         cwd: "app",
         files: [CHARGE],
+        // Claude Code doesn't expand the imports of a CLAUDE.md above the cwd.
         rules: [
           "CLAUDE.md always cwd",
-          "AGENTS.md always import:CLAUDE.md",
           ".claude/rules/style.md always always",
           "app/CLAUDE.md always cwd",
           "app/AGENTS.md always import:app/CLAUDE.md",

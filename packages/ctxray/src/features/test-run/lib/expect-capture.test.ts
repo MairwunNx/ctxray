@@ -63,12 +63,20 @@ describe("toLoadRule", () => {
 });
 
 describe("toAgreeWithResolver", () => {
+  test.each<[string, number, string[]]>([
+    ["the start in `app`, imports of the root CLAUDE.md left out", 0, []],
+    ["after the read of Charge.kt", 1, [READ]],
+  ])("agrees on %s", async (_, index, files) => {
+    const request = await requestOf(index, files);
+    bunExpect(failureOf(() => expect(request).toAgreeWithResolver())).toBeUndefined();
+  });
+
   test("names what only one side has", async () => {
-    // Claude Code 2.1.311 skips the root AGENTS.md that the root CLAUDE.md imports once it starts in `app`.
-    const request = await requestOf(0, []);
+    // The first request, held against a prediction for a file the harness hasn't read yet.
+    const request = await requestOf(0, [READ]);
     bunExpect(failureOf(() => expect(request).toAgreeWithResolver())).toEqual([
       "drift.found",
-      "drift.onlyResolver: AGENTS.md",
+      "drift.onlyResolver: app/src/main/kotlin/payments/CLAUDE.md, app/src/main/kotlin/payments/AGENTS.md, .claude/rules/kotlin.md, .claude/rules/payments.md",
     ]);
   });
 

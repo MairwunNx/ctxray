@@ -6,11 +6,6 @@
         "reason": "cwd",
         "tokens": 38
       },
-      "AGENTS.md": {
-        "activation": "always",
-        "reason": "import:CLAUDE.md",
-        "tokens": 14
-      },
       ".claude/rules/style.md": {
         "activation": "always",
         "reason": "always",
@@ -44,7 +39,7 @@
     "mcp": ["github", "jira"],
     "commands": ["changelog"],
     "tokens": {
-      "rules": 83,
+      "rules": 69,
       "skills": 30,
       "commands": 12,
       "method": "local:o200k_base"
