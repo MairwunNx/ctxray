@@ -94,18 +94,6 @@ export const en = {
     one: "{count} skill here, and no harness looks in this folder, so no model ever sees it",
     other: "{count} skills here, and no harness looks in this folder, so no model ever sees them",
   },
-  "reach.otherHarness": "Only {harnesses} can read this, and the run includes none of them",
-  "reach.otherHarnessSkills": {
-    one: "{count} skill here that only {harnesses} can read, and the run includes none of them",
-    other: "{count} skills here that only {harnesses} can read, and the run includes none of them",
-  },
-  "reach.differs":
-    "{harness} doesn't read this, and nothing it reads says the same, so the harnesses get different instructions. Only {by} reads it",
-  "reach.differsSkills": {
-    one: "{harness} doesn't see the skill here and has no copy of it, so the harnesses get different skills. Only {by} reads it",
-    other:
-      "{harness} doesn't see {count} skills here and has no copies of them, so the harnesses get different skills. Only {by} reads them",
-  },
   "lint.skillFolderName":
     "The skill calls itself “{name}” in a folder named “{folder}”: Claude Code lists it as {folder}, Codex and Cursor as {name}. Name the folder after the skill",
   "size.lines": { one: "{count} line, over the limit of {limit}", other: "{count} lines, over the limit of {limit}" },
@@ -116,6 +104,30 @@ export const en = {
   "size.tokens": {
     one: "{count} token, over the limit of {limit}",
     other: "{count} tokens, over the limit of {limit}",
+  },
+  "reach.otherHarness": "Only {harnesses} reads this file, and it isn't in the run",
+  "reach.otherHarnesses": "Only {harnesses} read this file, and none of them is in the run",
+  "reach.otherHarnessSkills": {
+    one: "{count} skill here that only {harnesses} reads, and it isn't in the run",
+    other: "{count} skills here that only {harnesses} reads, and it isn't in the run",
+  },
+  "reach.otherHarnessesSkills": {
+    one: "{count} skill here that only {harnesses} read, and none of them is in the run",
+    other: "{count} skills here that only {harnesses} read, and none of them is in the run",
+  },
+  "reach.differs":
+    "{harness} doesn't read this file, and nothing it reads says the same, so the harnesses get different instructions. Only {by} reads it",
+  "reach.differsMany":
+    "{harness} doesn't read this file, and nothing it reads says the same, so the harnesses get different instructions. Only {by} read it",
+  "reach.differsSkills": {
+    one: "{harness} doesn't see the skill here and has no copy of it, so the harnesses get different skills. Only {by} sees it",
+    other:
+      "{harness} doesn't see {count} skills here and has no copies of them, so the harnesses get different skills. Only {by} sees them",
+  },
+  "reach.differsManySkills": {
+    one: "{harness} doesn't see the skill here and has no copy of it, so the harnesses get different skills. Only {by} see it",
+    other:
+      "{harness} doesn't see {count} skills here and has no copies of them, so the harnesses get different skills. Only {by} see them",
   },
   "lint.ruleField": "Claude Code reads only “paths” in a rule, “{field}” does nothing",
   "lint.tooLarge": "The file is over {limit}, so Claude Code skips all of it",

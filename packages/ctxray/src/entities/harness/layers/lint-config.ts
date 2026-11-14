@@ -49,8 +49,12 @@ const RULES: Partial<Record<MessageKey, LintRule>> = {
   "reach.nowhereSkills": "unread",
   "reach.otherHarness": "other-harness",
   "reach.otherHarnessSkills": "other-harness",
+  "reach.otherHarnesses": "other-harness",
+  "reach.otherHarnessesSkills": "other-harness",
   "reach.differs": "harness-differences",
   "reach.differsSkills": "harness-differences",
+  "reach.differsMany": "harness-differences",
+  "reach.differsManySkills": "harness-differences",
 };
 
 export const ruleOf = (key: MessageKey): LintRule | undefined => RULES[key];

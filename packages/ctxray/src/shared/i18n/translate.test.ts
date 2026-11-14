@@ -34,6 +34,14 @@ describe("templates", () => {
     );
   });
 
+  test.each([
+    ["en", ["OpenCode"], "Only OpenCode read this file"],
+    ["en", ["Claude Code", "Claude Code Desktop"], "Only Claude Code and Claude Code Desktop read"],
+    ["ru", ["Cursor CLI", "Cursor", "OpenCode"], "читают только Cursor CLI, Cursor и OpenCode"],
+  ])("joins a list the %s way", (lang, harnesses, expected) => {
+    expect(createTranslator(lang)("reach.otherHarnesses", { harnesses })).toContain(expected);
+  });
+
   test("leaves a placeholder without a value as it is", () => {
     expect(createTranslator("en")("lang.unsupported")).toContain("{lang}");
   });

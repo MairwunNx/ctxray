@@ -9,7 +9,7 @@ export type Problem = {
   severity: Severity;
   path: string;
   line?: number;
-  params: Readonly<Record<string, string | number>>;
+  params: Readonly<Record<string, string | number | readonly string[]>>;
 };
 
 // A file the harness puts into context as instructions. `dir` is the directory it belongs to: CLAUDE.md

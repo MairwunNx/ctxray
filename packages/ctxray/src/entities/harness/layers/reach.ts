@@ -18,14 +18,17 @@ const BY_PLACE_ONLY = /\/agents?\/[^/]+\.md$|\.toml$/;
 
 export type ReachOptions = { differences: boolean }; // false skips “the harnesses get different instructions”
 
-type Kind = "nowhere" | "otherHarness" | "differs";
+// One harness or several: the message agrees with the number, “only OpenCode reads” or “only … read”.
+type Kind = "nowhere" | "otherHarness" | "otherHarnesses" | "differs" | "differsMany";
 const KEYS: Record<Kind, { file: MessageKey; skills: MessageKey; severity: Severity }> = {
   nowhere: { file: "reach.nowhere", skills: "reach.nowhereSkills", severity: "error" },
   otherHarness: { file: "reach.otherHarness", skills: "reach.otherHarnessSkills", severity: "warning" },
+  otherHarnesses: { file: "reach.otherHarnesses", skills: "reach.otherHarnessesSkills", severity: "warning" },
   differs: { file: "reach.differs", skills: "reach.differsSkills", severity: "warning" },
+  differsMany: { file: "reach.differsMany", skills: "reach.differsManySkills", severity: "warning" },
 };
 
-const titles = (ids: readonly HarnessId[]) => ids.map((id) => PROFILES[id].title).join(", ");
+const titles = (ids: readonly HarnessId[]) => ids.map((id) => PROFILES[id].title);
 
 // Whether a harness that doesn't read the file still gets what it says: through a copy, a symlink, an import,
 // or the same text in a file it does read. A skill counts when it has a skill of that name with the same text.
@@ -46,9 +49,9 @@ const createReport = (ids: readonly HarnessId[]) => {
   const found: Partial<Record<HarnessId, Problem[]>> = Object.fromEntries(ids.map((id) => [id, []]));
   const skills = new Map<
     string,
-    { id: HarnessId; kind: Kind; root: string; params: Record<string, string>; count: number }
+    { id: HarnessId; kind: Kind; root: string; params: Problem["params"]; count: number }
   >();
-  const add = (id: HarnessId, path: string, kind: Kind, params: Record<string, string> = {}) => {
+  const add = (id: HarnessId, path: string, kind: Kind, params: Problem["params"] = {}) => {
     if (!SKILL.test(path)) return found[id]?.push(problem(KEYS[kind].file, KEYS[kind].severity, path, params));
     const root = posix.dirname(posix.dirname(path));
     const group = [id, kind, root, JSON.stringify(params)].join("\0");
@@ -92,7 +95,8 @@ export const checkReach = async (
       if ((await Promise.all(ids.map((id) => covered(project, index, id, path)))).every(Boolean)) continue;
       const elsewhere = byPlace.filter((id) => !ids.includes(id));
       for (const id of ids) {
-        if (elsewhere.length > 0) report.add(id, path, "otherHarness", { harnesses: titles(elsewhere) });
+        const kind = elsewhere.length > 1 ? "otherHarnesses" : "otherHarness";
+        if (elsewhere.length > 0) report.add(id, path, kind, { harnesses: titles(elsewhere) });
         else report.add(id, path, "nowhere");
       }
       continue;
@@ -101,7 +105,8 @@ export const checkReach = async (
     if (!differences || OWN_KIND.test(path)) continue;
     for (const id of ids.filter((one) => !readers.includes(one))) {
       if (await covered(project, index, id, path)) continue;
-      report.add(id, path, "differs", { harness: PROFILES[id].title, by: titles(readers) });
+      const kind = readers.length > 1 ? "differsMany" : "differs";
+      report.add(id, path, kind, { harness: PROFILES[id].title, by: titles(readers) });
     }
   }
   return report.done();
