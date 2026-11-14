@@ -65,13 +65,6 @@ describe("decide", () => {
       {},
       { run: false, reason: "unsupported", missing: ["pathRules"] },
     ],
-    [
-      "L3 without a static adapter",
-      definition("resolve"),
-      "claude-code-desktop",
-      {},
-      { run: false, reason: "unavailable" },
-    ],
     ["L4 launches Claude Code on the mock", definition("assemble"), "claude-code", {}, { run: true }],
     [
       "L4 on replay comes later",

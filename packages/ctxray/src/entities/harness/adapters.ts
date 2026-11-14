@@ -33,6 +33,11 @@ export const STATIC_ADAPTERS: Partial<Record<HarnessId, StaticAdapter>> = {
   opencode: { discover: discoverOpencode, resolve: resolveOpencode },
   "cursor-cli": { discover: (project) => discoverCursor(project, "cursor-cli"), resolve: resolveCursor("cursor-cli") },
   "cursor-ide": { discover: (project) => discoverCursor(project, "cursor-ide"), resolve: resolveCursor("cursor-ide") },
+  // The Code tab of the Claude app runs Claude Code and reads the same project files (ADR 0011).
+  "claude-code-desktop": {
+    discover: async (project) => ({ ...(await discoverClaudeCode(project)), harness: "claude-code-desktop" }),
+    resolve: (inventory, scope) => ({ ...resolveClaudeCode(inventory, scope), harness: "claude-code-desktop" }),
+  },
 };
 
 // Harnesses a run without a config takes: every one ctxray reads, less an editor that reads its CLI's files.
