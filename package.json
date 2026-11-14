@@ -10,7 +10,8 @@
     "check": "biome check . && tsc -p . && bun scripts/check-file-size.ts",
     "fix": "biome check --write .",
     "typecheck": "tsc -p .",
-    "schemas": "bun scripts/gen-schemas.ts"
+    "schemas": "bun scripts/gen-schemas.ts",
+    "build": "bun scripts/build.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.7",

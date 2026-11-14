@@ -37,6 +37,14 @@ jobs:
         run: bun scripts/check-file-size.ts
       - name: Test
         run: bun test
+      - name: Build
+        run: bun run build
+      # Ink only runs in a terminal outside CI, so the second check fakes both.
+      - name: Smoke test the binary
+        run: |
+          ./dist/ctxray --version
+          script -qec "env -u CI -u GITHUB_ACTIONS ./dist/ctxray --help" /dev/null | tee help.log
+          grep -qF $'\e[?2026h' help.log
 
   # Biome failed: Claude fixes what Biome reports and commits to the same branch, once.
   autopilot:
