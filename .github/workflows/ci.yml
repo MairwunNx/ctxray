@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+env:
+  CLAUDE_CODE_VERSION: 2.1.311
+  CODEX_VERSION: 0.169.0
+
 concurrency:
   # Per event, so the CI run the autopilot dispatches never cancels the run that called it.
   group: ci-${{ github.ref }}-${{ github.event_name }}
@@ -68,6 +72,24 @@ jobs:
           "$GITHUB_WORKSPACE/dist/ctxray" test | tee test.log
           grep -qF "L3 ✓ 6" test.log
           grep -qF "@mairwunnx/ctxray 0.0.1" test.log
+      # Until ctxray.lock arrives (stage 10), CI pins the harnesses here. Upgrade them together with
+      # fixtures/payloads and the capture snapshots (update-deps says how).
+      - name: Install the harnesses
+        run: |
+          prefix="$RUNNER_TEMP/harnesses"
+          npm install --prefix "$prefix" --no-audit --no-fund \
+            "@anthropic-ai/claude-code@${{ env.CLAUDE_CODE_VERSION }}" "@openai/codex@${{ env.CODEX_VERSION }}"
+          echo "$prefix/node_modules/.bin" >> "$GITHUB_PATH"
+      # L4 and L5: the binary launches both harnesses on the mock model, with their MCP servers behind its shim.
+      - name: Smoke test capture
+        run: |
+          dir="$(mktemp -d)"
+          cp -R packages/ctxray/fixtures/capture/. "$dir"
+          cd "$dir"
+          git init -q
+          "$GITHUB_WORKSPACE/dist/ctxray" test | tee test.log
+          grep -qF "L4 ✓ 4" test.log
+          grep -qF "L5 ✓ 2" test.log
 
   # Biome failed: Claude fixes what Biome reports and commits to the same branch, once.
   autopilot:
