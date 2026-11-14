@@ -111,3 +111,15 @@ test("the cache: its folder for CI, its builds, and a prune that keeps what the 
   expect(pruned.stdout).toContain("Removed 1 build");
   expect((await runIn(dir, ["cache", "prune", "--older-than", "soon"], env)).code).toBe(2);
 });
+
+test("doctor finds the pinned harnesses and the registry", async () => {
+  const { dir, env } = project(`{ "harnesses": { "codex": {} } }`);
+  await runIn(dir, ["harness", "add", "codex@0.169.0"], env);
+  const before = await runIn(dir, ["doctor"], env);
+  expect(before.code).toBe(0);
+  expect(before.stdout).toContain(`✓ npm registry ${registry.url}`);
+  expect(before.stdout).toContain("✓ The registry answers (");
+  expect(before.stdout).toContain("! codex 0.169.0 isn't installed yet");
+  await runIn(dir, ["harness", "install"], env);
+  expect((await runIn(dir, ["doctor"], env)).stdout).toContain("✓ codex 0.169.0 installed");
+});
