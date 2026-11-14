@@ -28,6 +28,7 @@
     "ctxray": "./src/app/main.ts"
   },
   "dependencies": {
+    "braces": "3.0.3",
     "gpt-tokenizer": "4.1.2",
     "ignore": "7.0.14",
     "ink": "8.0.0",
@@ -38,6 +39,7 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@types/braces": "3.0.5",
     "@types/react": "19.3.0"
   }
 }

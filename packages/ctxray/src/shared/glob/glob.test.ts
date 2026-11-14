@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { gitignoreGlob, globProblem, isGlob } from "./glob.ts";
+import { globProblem, isGlob, matchesGitignore } from "./glob.ts";
 
 describe("globProblem", () => {
   test.each<[string, string | undefined]>([
@@ -17,7 +17,7 @@ describe("globProblem", () => {
   });
 });
 
-describe("gitignoreGlob", () => {
+describe("matchesGitignore", () => {
   test.each<[string, string, boolean]>([
     ["*.md", "README.md", true],
     ["*.md", "docs/deep/a.md", true],
@@ -29,8 +29,11 @@ describe("gitignoreGlob", () => {
     ["**/payments/**/*.kt", "app/src/payments/Charge.kt", true],
     ["src/**/*.{ts,tsx}", "src/a.tsx", true],
     ["docs/", "docs/a/b.md", true],
+    ["{a,b}/{c,d}/*.kt", "b/c/X.kt", true],
+    ["{1..5000}.md", "7.md", false],
+    ["{1..5000}.md", "{1..5000}.md", true],
   ])("%s on %s: %p", (pattern, path, matches) => {
-    expect(gitignoreGlob(pattern).match(path)).toBe(matches);
+    expect(matchesGitignore(pattern, path)).toBe(matches);
   });
 });
 

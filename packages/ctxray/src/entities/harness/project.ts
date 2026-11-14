@@ -1,6 +1,6 @@
 import { join, posix } from "node:path";
 import { $ } from "bun";
-import { gitignoreGlob } from "#shared/glob/index.ts";
+import { matchesGitignore } from "#shared/glob/index.ts";
 import { inParallel } from "#shared/infra/index.ts";
 
 // The repository under test, read-only. Paths are relative to the root, with `/`, and "" is the root itself.
@@ -77,7 +77,7 @@ export const chainTo = (cwd: string): string[] => (cwd === "" ? [""] : parentDir
 export const matchingGlob = (globs: readonly string[], dir: string, file: string): string | undefined => {
   if (!isInside(file, dir)) return undefined;
   const relative = dir === "" ? file : file.slice(dir.length + 1);
-  return globs.find((pattern) => gitignoreGlob(pattern).match(relative));
+  return globs.find((pattern) => matchesGitignore(pattern, relative));
 };
 
 export type MatchedFile = { path: string; match: RegExpExecArray; text: string };

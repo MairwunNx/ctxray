@@ -1,1 +1,1 @@
-export { type GlobProblem, gitignoreGlob, globProblem, isGlob } from "./glob.ts";
+export { type GlobProblem, globProblem, isGlob, matchesGitignore } from "./glob.ts";
