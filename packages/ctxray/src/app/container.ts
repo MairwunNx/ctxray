@@ -1,5 +1,6 @@
 import { createInjector } from "typed-inject";
 import { type Config, createConfigLoader } from "#entities/user-config/index.ts";
+import { createCacheAction } from "#features/cache/index.ts";
 import {
   createHarnessAddAction,
   createHarnessInstallAction,
@@ -46,5 +47,6 @@ export const createRunInjector = (
     .provideFactory("harnessAddAction", createHarnessAddAction)
     .provideFactory("harnessInstallAction", createHarnessInstallAction)
     .provideFactory("harnessListAction", createHarnessListAction)
-    .provideFactory("harnessPackAction", createHarnessPackAction);
+    .provideFactory("harnessPackAction", createHarnessPackAction)
+    .provideFactory("cacheAction", createCacheAction);
 export type RunInjector = ReturnType<typeof createRunInjector>;

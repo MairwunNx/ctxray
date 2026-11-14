@@ -1,3 +1,4 @@
+import { cacheSpec, createCacheCommand } from "#features/cache/index.ts";
 import { createHarnessCommand, harnessSpec } from "#features/harness-install/index.ts";
 import { createInitCommand, initSpec } from "#features/init/index.ts";
 import { createInspectCommand, inspectSpec } from "#features/inspect/index.ts";
@@ -15,6 +16,7 @@ export const COMMANDS: readonly Command[] = [
   { spec: inspectSpec, handler: (injector) => injector.injectFunction(createInspectCommand) },
   { spec: testSpec, handler: (injector) => injector.injectFunction(createTestCommand) },
   { spec: harnessSpec, handler: (injector) => injector.injectFunction(createHarnessCommand) },
+  { spec: cacheSpec, handler: (injector) => injector.injectFunction(createCacheCommand) },
   { spec: initSpec, handler: (injector) => injector.injectFunction(createInitCommand) },
   { spec: showConfigSpec, handler: (injector) => injector.injectFunction(createShowConfigCommand) },
 ];

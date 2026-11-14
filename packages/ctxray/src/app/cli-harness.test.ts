@@ -95,3 +95,19 @@ test.each<[string[], number, string]>([
   expect(result.code as number).toBe(code);
   expect(result.stdout + result.stderr).toContain(text);
 });
+
+test("the cache: its folder for CI, its builds, and a prune that keeps what the lockfile pins", async () => {
+  const { dir, env } = project(`{ "harnesses": { "codex": {}, "claude-code": {} } }`);
+  expect((await runIn(dir, ["cache", "dir"], env)).stdout).toBe(`${env.CTXRAY_CACHE_DIR}\n`);
+  await runIn(dir, ["harness", "add", "codex@0.168.0", "claude-code"], env);
+  await runIn(dir, ["harness", "install"], env);
+  await runIn(dir, ["harness", "add", "codex@0.169.0"], env);
+  await runIn(dir, ["harness", "install"], env);
+  const listed = await runIn(dir, ["cache", "ls"], env);
+  expect(listed.stdout).toContain("3 builds");
+  expect((await runIn(dir, ["cache", "prune"], env)).stdout).toContain("Nothing to prune");
+  const pruned = await runIn(dir, ["cache", "prune", "--all"], env);
+  expect(pruned.stdout).toContain("− codex 0.168.0");
+  expect(pruned.stdout).toContain("Removed 1 build");
+  expect((await runIn(dir, ["cache", "prune", "--older-than", "soon"], env)).code).toBe(2);
+});
