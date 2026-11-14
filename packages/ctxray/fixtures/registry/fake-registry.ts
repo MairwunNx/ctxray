@@ -31,6 +31,21 @@ export const codexBuilds = (
   })),
 ];
 
+// Gemini CLI: one package for every platform, the script in `bundle/`.
+export const geminiBuilds = (version: string): FakeBuild[] => [
+  { name: "@google/gemini-cli", version, files: { "bundle/gemini.js": script(version) } },
+];
+
+// OpenCode: a wrapper to resolve and one package per platform, `windows` instead of `win32`.
+export const opencodeBuilds = (version: string): FakeBuild[] => [
+  { name: "opencode-ai", version, files: {} },
+  ...PLATFORMS.map((platform) => ({
+    name: `opencode-${platform.os === "win32" ? "windows" : platform.os}-${platform.arch}${platform.libc === "musl" ? "-musl" : ""}`,
+    version,
+    files: { [platform.os === "win32" ? "bin/opencode.exe" : "bin/opencode"]: script(version) },
+  })),
+];
+
 const tarballOf = ({ files }: FakeBuild) =>
   new Bun.Archive(
     Object.fromEntries([

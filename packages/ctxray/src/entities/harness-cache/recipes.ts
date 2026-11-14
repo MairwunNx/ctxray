@@ -38,7 +38,30 @@ const codex: Recipe = {
   },
 };
 
-export const RECIPES: Partial<Record<HarnessId, Recipe>> = { "claude-code": claudeCode, codex };
+// Gemini CLI is one bundled script for every platform, run by Node (ADR 0007). Its native extras are optional.
+const geminiCli: Recipe = {
+  package: "@google/gemini-cli",
+  tag: "latest",
+  build: (version) => `@google/gemini-cli@${version}`,
+  bin: async () => "bundle/gemini.js",
+};
+
+// OpenCode ships one Bun-compiled executable per platform package, Windows under the name `windows`
+// (ADR 0008). The wrapper's postinstall never runs: it would write into the real HOME.
+const opencode: Recipe = {
+  package: "opencode-ai",
+  tag: "latest",
+  build: (version, { os, arch, libc }) =>
+    `opencode-${os === "win32" ? "windows" : os}-${arch}${libc === "musl" ? "-musl" : ""}@${version}`,
+  bin: async (_, platform) => `bin/opencode${exe(platform)}`,
+};
+
+export const RECIPES: Partial<Record<HarnessId, Recipe>> = {
+  "claude-code": claudeCode,
+  codex,
+  "gemini-cli": geminiCli,
+  opencode,
+};
 
 // `@openai/codex@0.169.0-linux-x64` → its name and version.
 export const splitSpec = (spec: string) => {
