@@ -44,7 +44,7 @@ ctxray reads each agent's files without launching it. Where the agent allows it,
 | Agent | Reads files | Launches and records | Records your session |
 |---|:-:|:-:|:-:|
 | Claude Code | ✓ | ✓ | ✓ |
-| Codex | ✓ | ✓ | ✓ |
+| Codex | ✓ | ✓ | |
 | Gemini CLI | ✓ | ✓ | |
 | OpenCode | ✓ | ✓ | |
 | Cursor CLI | ✓ | experimental | ✓ |
