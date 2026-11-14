@@ -1,4 +1,5 @@
-import { BUILTIN_PATTERNS, type Pattern } from "./patterns.ts";
+import { gitleaksPatterns } from "./gitleaks.ts";
+import { BUILTIN_PATTERNS, type Found, type Pattern } from "./patterns.ts";
 
 export type Redactor = {
   text: (value: string) => string;
@@ -13,16 +14,38 @@ export const marker = (id: string) => `⟦redacted:${id}⟧`;
 
 const global = (regex: RegExp) => (regex.global ? regex : new RegExp(regex.source, `${regex.flags}g`));
 
-// Built-in patterns always run, and the configured ones come after them.
-export const createRedactor = (extra: readonly RegExp[] = []): Redactor => {
-  const patterns: Pattern[] = [...BUILTIN_PATTERNS, ...extra.map((regex) => ({ id: "custom", regex: global(regex) }))];
+// A replace() callback gets the groups, then the offset, the text, and named groups when the regex has any.
+const foundOf = (args: unknown[]): Found => {
+  const tail = typeof args.at(-1) === "object" ? args.slice(0, -1) : args;
+  return {
+    match: tail[0] as string,
+    groups: tail.slice(1, -2) as (string | undefined)[],
+    offset: tail.at(-2) as number,
+    text: tail.at(-1) as string,
+  };
+};
 
-  const text = (value: string) =>
-    patterns.reduce(
-      (current, { id, regex, accept }) =>
-        current.replace(regex, (match) => (accept && !accept(match) ? match : marker(id))),
-      value,
-    );
+const apply = (text: string, pattern: Pattern) => {
+  const { id, regex, accept, keywords, secret } = pattern;
+  if (keywords && !keywords.some((keyword) => text.toLowerCase().includes(keyword))) return text;
+  return text.replace(regex, (...args: unknown[]) => {
+    const found = foundOf(args);
+    if (accept && !accept(found.match)) return found.match;
+    if (!secret) return marker(id);
+    const part = secret(found);
+    return part === undefined ? found.match : found.match.replace(part, marker(id));
+  });
+};
+
+// ctxray's own patterns run first, then the gitleaks rules, then the configured ones.
+export const createRedactor = (extra: readonly RegExp[] = []): Redactor => {
+  const patterns: Pattern[] = [
+    ...BUILTIN_PATTERNS,
+    ...gitleaksPatterns(),
+    ...extra.map((regex) => ({ id: "custom", regex: global(regex) })),
+  ];
+
+  const text = (value: string) => patterns.reduce(apply, value);
 
   const walk = (value: unknown): unknown => {
     if (typeof value === "string") return text(value);

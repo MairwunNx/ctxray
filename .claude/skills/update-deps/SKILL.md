@@ -17,6 +17,7 @@ If the owner named only some dependencies (`$ARGUMENTS`), update just those.
 - **TypeScript:** the `typescript` devDependency. A new major can tighten checks: fix the code, never loosen `tsconfig.json`.
 - **Libraries:** everything `bun outdated` lists, in every workspace package.
 - **GitHub Actions:** the `uses:` lines in `.github/workflows/`. Keep pinning the major tag (`actions/checkout@v7`).
+- **gitleaks rules:** `VERSION` in `scripts/gen-gitleaks.ts`. Run `bun run gitleaks`, which rewrites `packages/ctxray/src/shared/redact/gitleaks-rules.json`, then `bun test packages/ctxray/src/shared/redact`. A rule that fails to translate stops the script: fix `scripts/lib/go-regex.ts` and add the new syntax to its tests.
 - **Feature-Action Architecture:** `git submodule update --remote Feature-Action-Architecture`, then commit the new submodule pointer.
 - **Harnesses** (once `ctxray.lock` and fixtures exist): Claude Code, Codex, Gemini CLI, OpenCode, Cursor CLI. A new harness version changes what it loads, so loadout snapshots move with it. Upgrade one harness per commit with `ctxray harness upgrade <name>`, read the loadout diff it prints, update the snapshots, and say in the report what changed in the loadout.
 
@@ -25,7 +26,7 @@ If the owner named only some dependencies (`$ARGUMENTS`), update just those.
 1. **Read CLAUDE.md**, then run `git status`: leave other people's uncommitted changes alone and keep them out of your commits.
 2. **List every pinned version** from the places above, and look for more: `Dockerfile` `FROM` lines, `image:` lines, anything with a version in `.github/`.
 3. **Find each newest version** where `sources.md` (next to this file) says to ask. Note old and new side by side. If nothing is behind, say so and stop: no commit, no changelog.
-4. **Update in groups,** in this order: Bun, TypeScript, Biome, libraries, Actions, the submodule, then each harness. After each group run the check below, so a failure points at its cause.
+4. **Update in groups,** in this order: Bun, TypeScript, Biome, libraries, gitleaks rules, Actions, the submodule, then each harness. After each group run the check below, so a failure points at its cause.
 5. **Majors:** read the release notes or the migration guide and fix the code. If a major breaks too much to fix well, keep the old major and say so in the report.
 6. **Check:** `bun install && bun run check && bun test`. When Bun moved, also build the compiled binary and run its smoke test, once they exist: user test files reach the binary through `Bun.plugin` with `build.module`, which Bun doesn't document and may change.
 7. **Changelog:** when an update reaches what ctxray ships (the CLI, the npm package, the image, the plugin), add a line to the topmost `CHANGELOG.md` section that isn't released yet (`gh release view vX.Y.Z` fails), or open a new section with the next patch version. Updates that only touch CI or development tools need none.

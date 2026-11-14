@@ -14,6 +14,7 @@
     "fix": "biome check --write .",
     "typecheck": "tsc -p .",
     "schemas": "bun scripts/gen-schemas.ts",
+    "gitleaks": "bun scripts/gen-gitleaks.ts",
     "build": "bun scripts/build.ts"
   },
   "devDependencies": {

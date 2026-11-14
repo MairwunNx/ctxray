@@ -1,9 +1,14 @@
 import { passesLuhn } from "./luhn.ts";
 
+// One match of a pattern, with where it sits in the text it came from.
+export type Found = { match: string; groups: readonly (string | undefined)[]; offset: number; text: string };
+
 export type Pattern = {
   id: string;
   regex: RegExp; // global
   accept?: (match: string) => boolean;
+  keywords?: readonly string[]; // lower case: the pattern runs only on text that holds one of them
+  secret?: (found: Found) => string | undefined; // the part of the match to redact, undefined keeps it all
 };
 
 const card = (match: string) => {
