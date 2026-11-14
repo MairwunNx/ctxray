@@ -39,7 +39,7 @@ describe.each<[HarnessId, string[], string[], string[]]>([
   [
     "claude-code",
     ["CLAUDE.md", ".claude/rules/style.md", "app/CLAUDE.md", "app/AGENTS.md"],
-    ["payouts", "refunds"],
+    ["android-build", "payouts", "refunds"],
     [
       "app/src/main/kotlin/payments/CLAUDE.md",
       "app/src/main/kotlin/payments/AGENTS.md",
@@ -47,7 +47,7 @@ describe.each<[HarnessId, string[], string[], string[]]>([
       ".claude/rules/payments.md",
     ],
   ],
-  ["codex", ["AGENTS.md", "app/AGENTS.md"], ["android-build", "refunds"], []],
+  ["codex", ["AGENTS.md", "app/AGENTS.md"], ["android-build", "payouts", "refunds", "release"], []],
 ])("%s", (harness, rules, skills, later) => {
   test("the first request: rules, project skills, MCP servers, tokens", async () => {
     const loadout = await loadoutOf(harness, 0);

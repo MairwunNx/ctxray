@@ -20,9 +20,8 @@ suite("payments rules", { fixture: "../payments" }, () => {
   test.resolve("always rules of the payments zone", async ({ resolve }) => {
     const l = await resolve({ cwd: "app/src/main/kotlin/payments" });
     const always = payments.where({ activation: "always" });
-    expect.on("codex", () => expect(l.rules).toInclude(always));
-    // Claude Code skips AGENTS.md where a CLAUDE.md above is in charge: lint warns about it too.
-    expect.on("claude-code", () => expect(l.rules).not.toInclude(always));
+    // Codex reads the AGENTS.md, Claude Code the CLAUDE.md beside it, which imports the AGENTS.md.
+    expect(l.rules).toInclude(always);
   });
 
   test.activate(

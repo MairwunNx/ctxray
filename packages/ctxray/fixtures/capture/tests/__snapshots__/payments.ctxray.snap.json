@@ -37,6 +37,7 @@
       }
     },
     "skills": {
+      "android-build": "app/.claude/skills/android-build/SKILL.md",
       "payouts": ".claude/skills/payouts/SKILL.md",
       "refunds": ".claude/skills/refunds/SKILL.md",
       "dataviz": "builtin",
@@ -78,7 +79,9 @@
       "skill-creator": "builtin",
       "skill-installer": "builtin",
       "android-build": "app/.agents/skills/android-build/SKILL.md",
-      "refunds": ".agents/skills/refunds/SKILL.md"
+      "payouts": ".agents/skills/payouts/SKILL.md",
+      "refunds": ".agents/skills/refunds/SKILL.md",
+      "release": ".agents/skills/release/SKILL.md"
     },
     "loaded": [],
     "mcp": {

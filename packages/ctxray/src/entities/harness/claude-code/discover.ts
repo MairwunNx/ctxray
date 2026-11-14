@@ -12,7 +12,7 @@ const ignoredAgents = (instructions: readonly Instruction[]): Problem[] =>
     .filter((agents) => agents.kind === "agents")
     .filter((agents) => instructions.some((file) => isClaudeFile(file) && isWithin(agents.dir, file.dir)))
     .filter((agents) => !instructions.some((file) => file.imports.includes(agents.path)))
-    .map((agents) => problem("lint.agentsIgnored", "warning", agents.path));
+    .map((agents) => problem("lint.agentsIgnored", "error", agents.path));
 
 export const discoverClaudeCode = async (project: Project): Promise<Inventory> => {
   // Each finder keeps its own problems, so their order doesn't depend on which read finishes first.

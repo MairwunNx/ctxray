@@ -17,8 +17,9 @@ afterAll(() => {
 const copy = (extra: Record<string, string> = {}) => {
   const root = realpathSync(mkdtempSync(join(tmpdir(), "ctxray-cli-test-")));
   roots.push(root);
-  cpSync(join(FIXTURES, "runner"), root, { recursive: true });
-  cpSync(join(FIXTURES, "static/payments"), join(root, "payments"), { recursive: true });
+  // Symlinks as they are: Node otherwise points relative links back at the fixture.
+  cpSync(join(FIXTURES, "runner"), root, { recursive: true, verbatimSymlinks: true });
+  cpSync(join(FIXTURES, "static/payments"), join(root, "payments"), { recursive: true, verbatimSymlinks: true });
   for (const [path, text] of Object.entries(extra)) Bun.write(join(root, path), text);
   Bun.spawnSync(["git", "init", "-q"], { cwd: root });
   return root;

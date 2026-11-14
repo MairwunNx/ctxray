@@ -18,7 +18,12 @@ describe("discover.rules on the payments fixture", () => {
       "by owner",
       "claude-code",
       [{ owner: "@ACME/payments" }],
-      ["app/src/main/kotlin/payments/AGENTS.md", ".claude/rules/payments.md", ".claude/skills/refunds/SKILL.md"],
+      [
+        "app/src/main/kotlin/payments/AGENTS.md",
+        "app/src/main/kotlin/payments/CLAUDE.md",
+        ".claude/rules/payments.md",
+        ".claude/skills/refunds/SKILL.md",
+      ],
     ],
     [
       "owner and activation",
@@ -30,7 +35,12 @@ describe("discover.rules on the payments fixture", () => {
       "several activations",
       "claude-code",
       [{ activation: ["intent", "manual"] }],
-      [".claude/skills/payouts/SKILL.md", ".claude/skills/refunds/SKILL.md", ".claude/skills/release/SKILL.md"],
+      [
+        ".claude/skills/payouts/SKILL.md",
+        ".claude/skills/refunds/SKILL.md",
+        ".claude/skills/release/SKILL.md",
+        "app/.claude/skills/android-build/SKILL.md",
+      ],
     ],
     [
       "under a folder",
@@ -78,6 +88,6 @@ describe("a set inside a test", () => {
       "app/src/main/kotlin/web/Page.kt",
     ]);
     expect(rule?.matchingFiles({ sample: 1 })).toEqual(["app/src/main/kotlin/payments/Charge.kt"]);
-    expect(rule?.nonMatchingFile()).toBe(".agents/skills/refunds/SKILL.md");
+    expect(rule?.nonMatchingFile()).toBe(".agents/skills/payouts/SKILL.md");
   });
 });

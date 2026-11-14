@@ -35,13 +35,17 @@
       "refunds": {
         "path": ".claude/skills/refunds/SKILL.md",
         "tokens": 12
+      },
+      "android-build": {
+        "path": "app/.claude/skills/android-build/SKILL.md",
+        "tokens": 11
       }
     },
     "mcp": ["github", "jira"],
     "commands": ["changelog"],
     "tokens": {
       "rules": 83,
-      "skills": 19,
+      "skills": 30,
       "commands": 12,
       "method": "local:o200k_base"
     }
@@ -60,20 +64,28 @@
       }
     },
     "skills": {
+      "android-build": {
+        "path": "app/.agents/skills/android-build/SKILL.md",
+        "tokens": 11
+      },
+      "payouts": {
+        "path": ".agents/skills/payouts/SKILL.md",
+        "tokens": 7
+      },
       "refunds": {
         "path": ".agents/skills/refunds/SKILL.md",
         "tokens": 12
       },
-      "android-build": {
-        "path": "app/.agents/skills/android-build/SKILL.md",
-        "tokens": 11
+      "release": {
+        "path": ".agents/skills/release/SKILL.md",
+        "tokens": 7
       }
     },
     "mcp": ["github", "jira"],
     "commands": [],
     "tokens": {
       "rules": 24,
-      "skills": 23,
+      "skills": 37,
       "commands": 0,
       "method": "local:o200k_base"
     }

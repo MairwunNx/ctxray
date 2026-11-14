@@ -89,6 +89,17 @@ export const en = {
   "lint.frontmatter": "The frontmatter isn't valid YAML, so the harness ignores it: {message}",
   "lint.looseFrontmatter":
     "The frontmatter isn't valid YAML. Claude Code and Codex still read it line by line, stricter tools won't: {message}",
+  "reach.skillsNowhere": {
+    one: "{count} skill here, and no harness looks in this folder, so no model ever sees it",
+    other: "{count} skills here, and no harness looks in this folder, so no model ever sees them",
+  },
+  "reach.skillsMissed": {
+    one: "{harness} never sees the skill here, only {by} reads it. Link or move it to where {harness} looks",
+    other: "{harness} never sees {count} skills here, only {by} reads them. Link or move them to where {harness} looks",
+  },
+  "reach.claudeOnly":
+    "Codex reads AGENTS.md, not CLAUDE.md, so it gets none of this. Put the instructions in AGENTS.md, or make one file a symlink to the other",
+  "reach.unread": "No harness reads this file, and no file a harness reads links to it",
   "lint.ruleField": "Claude Code reads only “paths” in a rule, “{field}” does nothing",
   "lint.tooLarge": "The file is over {limit}, so Claude Code skips all of it",
   "lint.importMissing": "@{target} points to a file that doesn't exist",

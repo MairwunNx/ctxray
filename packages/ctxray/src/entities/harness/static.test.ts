@@ -6,25 +6,18 @@ const CHARGE = "app/src/main/kotlin/payments/Charge.kt";
 
 describe("L1 lint and dead rules on fixtures", () => {
   test.each<[string, HarnessId, string[]]>([
-    [
-      "payments",
-      "claude-code",
-      [
-        "warning lint.agentsIgnored app/src/main/kotlin/payments/AGENTS.md",
-        "warning resolve.deadRule .claude/rules/web.md",
-      ],
-    ],
+    ["payments", "claude-code", ["warning resolve.deadRule .claude/rules/web.md"]],
     ["payments", "codex", []],
     [
       "broken",
       "claude-code",
       [
+        "error lint.agentsIgnored AGENTS.md",
+        "error lint.agentsIgnored empty/AGENTS.md",
+        "error lint.agentsIgnored sub/AGENTS.md",
         "error lint.globUnbalanced .claude/rules/bad-yaml.md",
         "error lint.globUnbalanced .claude/rules/braces.md",
         "error lint.mcpTransport .mcp.json",
-        "warning lint.agentsIgnored AGENTS.md",
-        "warning lint.agentsIgnored empty/AGENTS.md",
-        "warning lint.agentsIgnored sub/AGENTS.md",
         "warning lint.brokenLink CLAUDE.md:5",
         "warning lint.duplicateText .claude/rules/dup-b.md",
         "warning lint.importDepth docs/four.md:1",
@@ -80,10 +73,12 @@ describe("L3 resolve on the payments fixture", () => {
           ".claude/rules/style.md always always",
           "app/CLAUDE.md always cwd",
           "app/AGENTS.md always import:app/CLAUDE.md",
+          "app/src/main/kotlin/payments/CLAUDE.md path nested:app/src/main/kotlin/payments/Charge.kt",
+          "app/src/main/kotlin/payments/AGENTS.md path import:app/src/main/kotlin/payments/CLAUDE.md",
           ".claude/rules/kotlin.md path glob:**/*.kt",
           ".claude/rules/payments.md path glob:**/payments/**/*.kt",
         ],
-        skills: ["payouts", "refunds"],
+        skills: ["payouts", "refunds", "android-build"],
       },
     ],
     [
@@ -100,13 +95,13 @@ describe("L3 resolve on the payments fixture", () => {
           "app/AGENTS.md path import:app/CLAUDE.md",
           ".claude/rules/kotlin.md path glob:**/*.kt",
         ],
-        skills: ["payouts", "refunds"],
+        skills: ["payouts", "refunds", "android-build"],
       },
     ],
     [
       "codex reads AGENTS.md at the root only",
       "codex",
-      { cwd: "", rules: ["AGENTS.md always cwd"], skills: ["refunds"] },
+      { cwd: "", rules: ["AGENTS.md always cwd"], skills: ["payouts", "refunds", "release"] },
     ],
     [
       "codex fixes the chain by the cwd, whatever the agent reads",
@@ -119,7 +114,7 @@ describe("L3 resolve on the payments fixture", () => {
           "app/AGENTS.md always cwd",
           "app/src/main/kotlin/payments/AGENTS.md always cwd",
         ],
-        skills: ["refunds", "android-build"],
+        skills: ["android-build", "payouts", "refunds", "release"],
       },
     ],
   ])("%s (%s)", async (_, harness, { cwd, files = [], rules, skills }) => {

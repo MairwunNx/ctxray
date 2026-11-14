@@ -1,8 +1,10 @@
 import { realpath, stat } from "node:fs/promises";
 import { relative, resolve, sep } from "node:path";
 import {
+  checkReach,
   findDeadRules,
   findRoot,
+  type Inventory,
   lint,
   openProject,
   type Problem,
@@ -49,9 +51,14 @@ const chooseHarnesses = (request: InspectRequest, config: Config): readonly Harn
 
 const byPlace = (a: Problem, b: Problem) => a.path.localeCompare(b.path) || (a.line ?? 0) - (b.line ?? 0);
 
-const inspectOne = async (project: Project, adapter: StaticAdapter, scope: Scope): Promise<InspectedHarness> => {
-  const inventory = await adapter.discover(project);
-  const problems = [...(await lint(project, inventory)), ...findDeadRules(project, inventory)];
+const inspectOne = async (
+  project: Project,
+  adapter: StaticAdapter,
+  inventory: Inventory,
+  scope: Scope,
+  unread: readonly Problem[],
+): Promise<InspectedHarness> => {
+  const problems = [...(await lint(project, inventory)), ...findDeadRules(project, inventory), ...unread];
   return toInspection(adapter.resolve(inventory, scope), inventory, scope, problems.toSorted(byPlace));
 };
 
@@ -68,11 +75,19 @@ export const createInspectAction =
     const scope: Scope = { cwd: inRoot(dir), files };
     const project = await openProject(root);
     const ids = chooseHarnesses(request, config);
+    const readable = ids.flatMap((id) => {
+      const adapter = STATIC_ADAPTERS[id];
+      return adapter ? [{ id, adapter }] : [];
+    });
+    const inventories = await Promise.all(readable.map(({ adapter }) => adapter.discover(project)));
+    const unread = await checkReach(
+      project,
+      Object.fromEntries(readable.map(({ id }, index) => [id, inventories[index]])),
+    );
     const harnesses = await Promise.all(
-      ids.flatMap((id) => {
-        const adapter = STATIC_ADAPTERS[id];
-        return adapter ? [inspectOne(project, adapter, scope)] : [];
-      }),
+      readable.map(({ id, adapter }, index) =>
+        inspectOne(project, adapter, inventories[index] as Inventory, scope, unread[id] ?? []),
+      ),
     );
     return { root, scope, harnesses, unsupported: ids.filter((id) => !STATIC_ADAPTERS[id]) };
   };
