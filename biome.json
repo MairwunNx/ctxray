@@ -6,7 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!Feature-Action-Architecture"]
+    "includes": ["**", "!Feature-Action-Architecture", "!**/__snapshots__", "!packages/ctxray/fixtures/payloads"]
   },
   "formatter": {
     "enabled": true,
