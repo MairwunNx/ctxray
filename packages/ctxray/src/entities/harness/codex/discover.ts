@@ -48,14 +48,17 @@ const findSkills = async (project: Project, config: CodexConfig, problems: Probl
 
 // A session started in a deep directory may hit the byte budget: Codex cuts the file that crosses it.
 const overBudget = (instructions: readonly Instruction[], budget: number): Problem[] => {
-  const cut = new Set<string>();
+  // A file over the budget on its own gets cut wherever the agent starts, the others only below their parents.
+  const cut = new Map<string, Problem>();
   for (const deepest of instructions) {
     const chain = chainTo(deepest.dir).flatMap((dir) => instructions.filter((file) => file.dir === dir));
     const kept = withinBudget(chain, budget);
     const first = kept.find((entry) => entry.cut)?.instruction ?? chain[kept.length];
-    if (first) cut.add(first.path);
+    if (!first || cut.has(first.path)) continue;
+    const alone = Buffer.byteLength(first.text) > budget;
+    cut.set(first.path, problem(alone ? "lint.overBudget" : "lint.budget", "warning", first.path, { budget }));
   }
-  return [...cut].map((path) => problem("lint.budget", "warning", path, { budget }));
+  return [...cut.values()];
 };
 
 export const discoverCodex = async (project: Project): Promise<Inventory> => {

@@ -81,6 +81,7 @@ export const ru: Catalog = {
   "lint.shadowed": "Codex читает вместо него {by}, по одному файлу на папку",
   "lint.skillField": "Во frontmatter нет {field}, Codex пропускает скилл",
   "lint.budget": "Файлы AGENTS.md выше упираются здесь в лимит Codex в {budget} байт, этот файл обрежется или выпадет",
+  "lint.overBudget": "Файл сам по себе больше лимита Codex в {budget} байт, поэтому Codex его обрезает",
   "lint.globEmpty": "Пустой glob ничему не соответствует",
   "lint.globUnbalanced": "В glob «{pattern}» не закрыта скобка, он ничему не соответствует",
   "lint.globOutside": "Glob «{pattern}» выходит из своей папки через «..» и ничему не соответствует",

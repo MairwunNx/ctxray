@@ -117,4 +117,13 @@ describe("codex", () => {
     const { problems } = await analyse("codex", { ".codex/config.toml": "model = " });
     expect(problems).toEqual(["lint.badToml .codex/config.toml"]);
   });
+
+  test.each([
+    ["is over the budget alone", "x".repeat(5), "y".repeat(30), "lint.overBudget a/AGENTS.md"],
+    ["crosses it with the files above", "x".repeat(15), "y".repeat(15), "lint.budget a/AGENTS.md"],
+  ])("a file that %s gets its own warning", async (_, top, nested, expected) => {
+    const config = { ".codex/config.toml": "project_doc_max_bytes = 20" };
+    const { problems } = await analyse("codex", { ...config, "AGENTS.md": top, "a/AGENTS.md": nested });
+    expect(problems).toEqual([expected]);
+  });
 });

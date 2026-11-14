@@ -77,6 +77,7 @@ export const en = {
   "lint.shadowed": "Codex reads {by} instead, one file per directory",
   "lint.skillField": "The frontmatter has no {field}, so Codex skips the skill",
   "lint.budget": "The AGENTS.md files above reach Codex's {budget}-byte budget here, so it cuts or drops this one",
+  "lint.overBudget": "The file alone is over Codex's {budget}-byte budget, so Codex cuts it",
   "lint.globEmpty": "An empty glob matches nothing",
   "lint.globUnbalanced": "Glob “{pattern}” has an unclosed bracket or brace, so it matches nothing",
   "lint.globOutside": "Glob “{pattern}” points outside its folder with “..”, so it matches nothing",
