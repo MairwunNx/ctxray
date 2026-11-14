@@ -1,0 +1,23 @@
+{
+  "name": "@mairwunnx/ctxray",
+  "version": "0.1.0",
+  "description": "X-ray for agent harnesses. See exactly what your Claude Code, Codex, Cursor & co. loaded – and test it in CI.",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MairwunNx/ctxray.git",
+    "directory": "packages/ctxray"
+  },
+  "homepage": "https://github.com/MairwunNx/ctxray/wiki",
+  "bugs": "https://github.com/MairwunNx/ctxray/issues",
+  "engines": {
+    "bun": ">=1.4.4"
+  },
+  "bin": {
+    "ctxray": "./src/app/main.ts"
+  },
+  "dependencies": {
+    "typed-inject": "5.0.0"
+  }
+}
