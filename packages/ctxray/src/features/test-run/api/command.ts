@@ -22,6 +22,7 @@ export const testSpec: CommandSpec = {
     layer: { type: "string", summary: "option.layer", value: "layers" },
     filter: { type: "string", summary: "option.filter", value: "text" },
     "update-snapshots": { type: "boolean", short: "u", summary: "option.updateSnapshots" },
+    "ignore-harness-differences": { type: "boolean", summary: "option.ignoreHarnessDifferences" },
     config: CONFIG_OPTION,
   },
   usesConfig: true,
@@ -47,7 +48,11 @@ export const createTestCommand =
     }
     renderer.print(headerView(selection, t, version));
     const result = await testRun(
-      { selection, updateSnapshots: values["update-snapshots"] === true },
+      {
+        selection,
+        updateSnapshots: values["update-snapshots"] === true,
+        differences: values["ignore-harness-differences"] !== true && !config.ignoreHarnessDifferences,
+      },
       (done, total, current) =>
         renderer.live(
           current === undefined

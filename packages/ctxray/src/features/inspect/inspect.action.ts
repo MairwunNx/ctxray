@@ -22,6 +22,7 @@ export type InspectRequest = {
   // Where the agent starts and the files it works with, relative to where ctxray runs.
   cwd?: string | undefined;
   files?: readonly string[] | undefined;
+  differences?: boolean | undefined; // warn when the harnesses get different instructions, true by default
 };
 
 export type InspectResult = {
@@ -83,6 +84,7 @@ export const createInspectAction =
     const unread = await checkReach(
       project,
       Object.fromEntries(readable.map(({ id }, index) => [id, inventories[index]])),
+      { differences: (request.differences ?? true) && !config.ignoreHarnessDifferences },
     );
     const harnesses = await Promise.all(
       readable.map(({ id, adapter }, index) =>

@@ -9,6 +9,8 @@ export type Config = {
   readonly upstream: string | undefined;
   readonly offline: boolean;
   readonly network: Network;
+  // The reach check stays quiet about harnesses that get different instructions. CTXRAY_IGNORE_HARNESS_DIFFERENCES=1.
+  readonly ignoreHarnessDifferences: boolean;
   readonly policies: readonly Policy[];
   readonly redact: { readonly patterns: readonly RegExp[] };
   readonly reporters: readonly string[];
@@ -31,6 +33,8 @@ export const finalizeConfig = (merged: UserConfig, env: Env, files: readonly str
     upstream: present(env["CTXRAY_UPSTREAM"]) ?? merged.upstream,
     offline: isOn(env["CTXRAY_OFFLINE"]) || merged.offline === true,
     network: merged.network ?? {},
+    ignoreHarnessDifferences:
+      isOn(env["CTXRAY_IGNORE_HARNESS_DIFFERENCES"]) || merged.ignoreHarnessDifferences === true,
     policies: merged.policies ?? [],
     redact: { patterns: merged.redact?.patterns ?? [] },
     reporters: merged.reporters ?? ["console"],

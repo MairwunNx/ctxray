@@ -18,6 +18,7 @@ export const inspectSpec: CommandSpec = {
     cwd: { type: "string", summary: "option.cwd", value: "dir" },
     files: { type: "string", summary: "option.files", value: "paths" },
     json: { type: "boolean", summary: "option.json" },
+    "ignore-harness-differences": { type: "boolean", summary: "option.ignoreHarnessDifferences" },
     config: CONFIG_OPTION,
   },
   usesConfig: true,
@@ -49,6 +50,7 @@ export const createInspectCommand =
       harnesses: harnesses as HarnessId[] | undefined,
       cwd: text(values["cwd"]),
       files: listOf(values["files"]),
+      differences: values["ignore-harness-differences"] !== true,
     });
     if ("missingFolder" in result) return fail([span(t("inspect.noFolder", { dir: result.missingFolder }), "failure")]);
     // Problem messages quote the files, so they pass the same redaction as any other output.

@@ -24,5 +24,6 @@ export const resolveIn = async (fixture: string, harness: HarnessId, scope: Part
   const project = await openProject(join(FIXTURES, fixture));
   const adapter = STATIC_ADAPTERS[harness];
   if (!adapter) throw new Error(`no static adapter for ${harness}`);
-  return { project, loadout: adapter.resolve(await adapter.discover(project), { cwd: "", files: [], ...scope }) };
+  const inventory = await adapter.discover(project);
+  return { project, inventory, loadout: adapter.resolve(inventory, { cwd: "", files: [], ...scope }) };
 };

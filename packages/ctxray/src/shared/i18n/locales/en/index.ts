@@ -89,23 +89,32 @@ export const en = {
   "lint.frontmatter": "The frontmatter isn't valid YAML, so the harness ignores it: {message}",
   "lint.looseFrontmatter":
     "The frontmatter isn't valid YAML. Claude Code and Codex still read it line by line, stricter tools won't: {message}",
-  "reach.skillsNowhere": {
+  "reach.nowhere": "No harness reads this file, and no file a harness reads links to it",
+  "reach.nowhereSkills": {
     one: "{count} skill here, and no harness looks in this folder, so no model ever sees it",
     other: "{count} skills here, and no harness looks in this folder, so no model ever sees them",
   },
-  "reach.skillsMissed": {
-    one: "{harness} never sees the skill here, only {by} reads it. Link or move it to where {harness} looks",
-    other: "{harness} never sees {count} skills here, only {by} reads them. Link or move them to where {harness} looks",
+  "reach.otherHarness": "Only {harnesses} can read this, and the run includes none of them",
+  "reach.otherHarnessSkills": {
+    one: "{count} skill here that only {harnesses} can read, and the run includes none of them",
+    other: "{count} skills here that only {harnesses} can read, and the run includes none of them",
   },
-  "reach.claudeOnly":
-    "Codex reads AGENTS.md, not CLAUDE.md, so it gets none of this. Put the instructions in AGENTS.md, or make one file a symlink to the other",
-  "reach.unread": "No harness reads this file, and no file a harness reads links to it",
+  "reach.differs":
+    "{harness} doesn't read this, and nothing it reads says the same, so the harnesses get different instructions. Only {by} reads it",
+  "reach.differsSkills": {
+    one: "{harness} doesn't see the skill here and has no copy of it, so the harnesses get different skills. Only {by} reads it",
+    other:
+      "{harness} doesn't see {count} skills here and has no copies of them, so the harnesses get different skills. Only {by} reads them",
+  },
+  "lint.longBody":
+    "{lines} lines, past the {limit} a skill or command should stay under: split it, or move details to files it links",
+  "lint.longInstructions": "{size} characters, past the {limit} after which Claude Code warns it slows down",
+  "lint.skillFolderName":
+    "The skill calls itself “{name}” in a folder named “{folder}”: Claude Code lists it as {folder}, Codex and Cursor as {name}. Name the folder after the skill",
   "lint.ruleField": "Claude Code reads only “paths” in a rule, “{field}” does nothing",
   "lint.tooLarge": "The file is over {limit}, so Claude Code skips all of it",
   "lint.importMissing": "@{target} points to a file that doesn't exist",
   "lint.importDepth": "@{target} is more than {hops} imports deep, so it never loads",
-  "lint.agentsIgnored":
-    "Claude Code doesn't read this AGENTS.md because a CLAUDE.md sits next to it or above. Import it with @AGENTS.md",
   "lint.shadowedCommand": "The skill {by} has the same name “{name}”, so this command never runs",
   "lint.noDescription": "Skill “{name}” has no description, so the model has little to pick it by",
   "lint.longDescription": "The description is {length} characters long, and the listing cuts it at {limit}",
@@ -128,6 +137,7 @@ export const en = {
   "resolve.deadRule": "No file in the repository matches {patterns}, so the rule never loads",
   "resolve.deadPattern": "No file in the repository matches {pattern}",
   "policy.needsCapture": "The {component} limit needs a real run, a static view doesn't know these tokens",
+  "policy.itemOverBudget": "{path}: {tokens} tokens, past the limit of {limit} for one {kind}",
   "policy.overBudget": "{component}: {tokens} tokens, the limit is {limit}",
   "policy.missingFile": "{path} is missing",
   "policy.deniedMcp": "MCP server “{name}” isn't allowed",
@@ -135,6 +145,7 @@ export const en = {
   "command.test": "Run the *.ctxray.ts tests and ctxray's own checks",
   "option.backend": "Model backend: mock, replay, real, or a name from the config's backends",
   "option.layer": "Layers to run, like L1-L3 or L3,L5",
+  "option.ignoreHarnessDifferences": "Don't warn when the harnesses get different instructions or skills",
   "option.filter": "Run only the tests whose name holds this text",
   "option.updateSnapshots": "Write new and changed loadout snapshots",
   "test.unknownBackend": "Unknown backend “{name}”. Known ones: {known}",

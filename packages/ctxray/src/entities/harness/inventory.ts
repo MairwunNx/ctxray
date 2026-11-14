@@ -49,6 +49,8 @@ export type Inventory = {
   mcp: readonly McpDeclaration[];
   // What discovery itself found wrong, like frontmatter that doesn't parse.
   problems: readonly Problem[];
+  // Files found but never loaded, like an AGENTS.md that a CLAUDE.md beside or above it shadows for Claude Code.
+  ignored?: readonly string[];
   // Codex stops adding AGENTS.md files once their bytes reach this budget.
   budget?: number;
 };

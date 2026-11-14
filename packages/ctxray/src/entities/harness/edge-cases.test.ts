@@ -30,7 +30,8 @@ const analyse = async (harness: HarnessId, files: Record<string, string>, cwd = 
   const inventory = await adapter.discover(opened);
   const problems = (await lint(opened, inventory)).map((found) => `${found.key} ${found.path}`);
   const loadout = adapter.resolve(inventory, { cwd, files: touched });
-  return { problems, rules: loadout.rules.map((rule) => `${rule.path} ${rule.reason}`), loadout };
+  const rules = loadout.rules.map((rule) => `${rule.path} ${rule.reason}`);
+  return { problems, rules, loadout, ignored: inventory.ignored ?? [] };
 };
 
 describe("project", () => {
@@ -70,8 +71,8 @@ describe("claude code", () => {
   });
 
   test.each([".claude/CLAUDE.md", "CLAUDE.local.md"])("%s turns AGENTS.md off", async (claude) => {
-    const { rules, problems } = await analyse("claude-code", { "AGENTS.md": "root", [claude]: "claude" });
-    expect(problems).toEqual(["lint.agentsIgnored AGENTS.md"]);
+    const { rules, problems, ignored } = await analyse("claude-code", { "AGENTS.md": "root", [claude]: "claude" });
+    expect([problems, ignored]).toEqual([[], ["AGENTS.md"]]);
     expect(rules).toEqual([`${claude} cwd`]);
   });
 

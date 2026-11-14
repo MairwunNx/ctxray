@@ -13,7 +13,11 @@ import { fullName, type Selection } from "./lib/selection.ts";
 import { createSnapshots, type SnapshotStats } from "./lib/snapshot.ts";
 import { createWorkspaces } from "./lib/workspace.ts";
 
-export type TestRunRequest = { selection: Selection; updateSnapshots: boolean };
+export type TestRunRequest = {
+  selection: Selection;
+  updateSnapshots: boolean;
+  differences?: boolean; // warn when the harnesses get different instructions, true by default
+};
 
 export type TestRunResult = {
   cwd: string; // where ctxray runs: paths in the view are relative to it
@@ -29,7 +33,10 @@ export type Progress = (done: number, total: number, current: string | undefined
 
 export const createTestRunAction =
   (config: Config, cwd: string, version: string, env: Env, self: readonly string[]) =>
-  async ({ selection, updateSnapshots }: TestRunRequest, progress: Progress = () => {}): Promise<TestRunResult> => {
+  async (
+    { selection, updateSnapshots, differences = true }: TestRunRequest,
+    progress: Progress = () => {},
+  ): Promise<TestRunResult> => {
     const started = performance.now();
     const here = await realpath(cwd);
     const { root } = await findRoot(here);
@@ -45,7 +52,9 @@ export const createTestRunAction =
     const capture = createCapture({ config, env, self });
     const context = { root, workspaces, snapshots, capture };
 
-    const results = await runChecks(repository, selection.harnesses, config.policies, selection.layers);
+    const results = await runChecks(repository, selection.harnesses, config.policies, selection.layers, {
+      differences,
+    });
     results.push(...(await runContextChecks(repository, selection, capture, config.policies, env)));
     const total = definitions.length * selection.harnesses.length;
     let done = 0;

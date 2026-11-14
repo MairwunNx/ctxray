@@ -28,47 +28,65 @@ const project = (files: Record<string, string>, links: Record<string, string> = 
   return root;
 };
 
-const reach = async (root: string, harnesses: HarnessId[] = ["claude-code", "codex"]) => {
+const reach = async (root: string, harnesses: HarnessId[] = ["claude-code", "codex"], differences = true) => {
   const opened = await openProject(root);
   const inventories = Object.fromEntries(
     await Promise.all(harnesses.map(async (id) => [id, await STATIC_ADAPTERS[id]?.discover(opened)])),
   );
-  const found = await checkReach(opened, inventories);
-  return harnesses.flatMap((id) => (found[id] ?? []).map((item) => `${id} ${item.key} ${item.path}`)).sort();
+  const found = await checkReach(opened, inventories, { differences });
+  return harnesses
+    .flatMap((id) => (found[id] ?? []).map((item) => `${id} ${item.severity} ${item.key} ${item.path}`))
+    .sort();
 };
 
-test("names what a harness never reads, and what none does", async () => {
+test("what no harness reads is an error, what others read or harnesses get differently a warning", async () => {
   const root = project({
     "CLAUDE.md": "Use bun.\n",
     ".agents/skills/deploy/SKILL.md": skill("deploy"),
     ".agents/streams/team/skills/triage/SKILL.md": skill("triage"),
     ".agents/rules/style.md": "Short functions.\n",
     ".agents/README.md": "For people.\n",
+    ".cursor/rules/web.mdc": "React.\n",
   });
   expect(await reach(root)).toEqual([
-    "claude-code reach.skillsMissed .agents/skills",
-    "claude-code reach.skillsNowhere .agents/streams/team/skills",
-    "claude-code reach.unread .agents/rules/style.md",
-    "codex reach.claudeOnly CLAUDE.md",
-    "codex reach.skillsNowhere .agents/streams/team/skills",
-    "codex reach.unread .agents/rules/style.md",
+    "claude-code error reach.nowhere .agents/rules/style.md",
+    "claude-code error reach.nowhereSkills .agents/streams/team/skills",
+    "claude-code warning reach.differsSkills .agents/skills",
+    "claude-code warning reach.otherHarness .cursor/rules/web.mdc",
+    "codex error reach.nowhere .agents/rules/style.md",
+    "codex error reach.nowhereSkills .agents/streams/team/skills",
+    "codex warning reach.differs CLAUDE.md",
+    "codex warning reach.otherHarness .cursor/rules/web.mdc",
   ]);
+  expect((await reach(root, ["claude-code", "codex"], false)).filter((line) => line.includes("differs"))).toEqual([]);
 });
 
-test("a symlink and a link from read files make it reach", async () => {
+test("the same text under another name, a symlink, an import, or a link reaches everyone", async () => {
   const root = project(
     {
-      "AGENTS.md": "See [style](.agents/rules/style.md).\n",
+      "AGENTS.md": "See [style](.agents/rules/style.md). Use bun.\n",
       "CLAUDE.md": "@AGENTS.md\n",
+      "lib/CLAUDE.md": "Lib rules.\n",
+      "lib/AGENTS.md": "Lib   rules.\n",
       ".agents/skills/deploy/SKILL.md": skill("deploy"),
+      ".claude/skills/review/SKILL.md": skill("review"),
+      ".agents/skills/review/SKILL.md": skill("review"),
       ".agents/rules/style.md": "Short functions.\n",
     },
-    { ".claude/skills": "../.agents/skills" },
+    { ".claude/skills/deploy": "../../.agents/skills/deploy" },
   );
   expect(await reach(root)).toEqual([]);
 });
 
-test("a harness's own folder counts only when the harness takes part", async () => {
+test("a copy that says something else is a difference", async () => {
+  const root = project({ "CLAUDE.md": "Use bun.\n", "AGENTS.md": "Use npm.\n" });
+  expect(await reach(root)).toEqual([
+    "claude-code warning reach.differs AGENTS.md",
+    "codex warning reach.differs CLAUDE.md",
+  ]);
+});
+
+test("a harness's own folder outside the run reads as that harness's", async () => {
   const root = project({ "AGENTS.md": "Hi.\n", ".opencode/agents/review.md": "Review.\n" });
-  expect(await reach(root, ["codex"])).toEqual([]);
+  expect(await reach(root, ["codex"])).toEqual(["codex warning reach.otherHarness .opencode/agents/review.md"]);
 });

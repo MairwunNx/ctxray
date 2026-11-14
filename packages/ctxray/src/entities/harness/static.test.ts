@@ -12,9 +12,6 @@ describe("L1 lint and dead rules on fixtures", () => {
       "broken",
       "claude-code",
       [
-        "error lint.agentsIgnored AGENTS.md",
-        "error lint.agentsIgnored empty/AGENTS.md",
-        "error lint.agentsIgnored sub/AGENTS.md",
         "error lint.globUnbalanced .claude/rules/bad-yaml.md",
         "error lint.globUnbalanced .claude/rules/braces.md",
         "error lint.mcpTransport .mcp.json",

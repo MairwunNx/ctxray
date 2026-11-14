@@ -6,13 +6,14 @@ import { findInstructions } from "./instructions.ts";
 export const isClaudeFile = (instruction: Instruction): boolean =>
   instruction.kind === "memory" || instruction.kind === "local";
 
-// By default Claude Code reads AGENTS.md only where no CLAUDE.md sits in the directory or above it.
-const ignoredAgents = (instructions: readonly Instruction[]): Problem[] =>
+// By default Claude Code reads AGENTS.md only where no CLAUDE.md sits in the directory or above it, unless a
+// CLAUDE.md imports it. Whether that loses anything, the reach check tells by comparing the texts.
+const ignoredAgents = (instructions: readonly Instruction[]): string[] =>
   instructions
     .filter((agents) => agents.kind === "agents")
     .filter((agents) => instructions.some((file) => isClaudeFile(file) && isWithin(agents.dir, file.dir)))
     .filter((agents) => !instructions.some((file) => file.imports.includes(agents.path)))
-    .map((agents) => problem("lint.agentsIgnored", "error", agents.path));
+    .map((agents) => agents.path);
 
 export const discoverClaudeCode = async (project: Project): Promise<Inventory> => {
   // Each finder keeps its own problems, so their order doesn't depend on which read finishes first.
@@ -37,6 +38,7 @@ export const discoverClaudeCode = async (project: Project): Promise<Inventory> =
     skills,
     commands,
     mcp,
-    problems: [...found.problems, ...ignoredAgents(found.instructions), ...problems, ...mcpProblems],
+    problems: [...found.problems, ...problems, ...mcpProblems],
+    ignored: ignoredAgents(found.instructions),
   };
 };

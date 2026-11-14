@@ -4,8 +4,8 @@ import { resolveIn } from "../static.fixture.ts";
 import { checkPolicies, type PolicyOutcome } from "./policy.ts";
 
 const run = async (policies: Policy[], harness: HarnessId = "claude-code") => {
-  const { project, loadout } = await resolveIn("payments", harness);
-  return checkPolicies(policies, project, loadout);
+  const { project, loadout, inventory } = await resolveIn("payments", harness);
+  return checkPolicies(policies, project, loadout, inventory);
 };
 
 type Summary = { status: PolicyOutcome["status"]; failures: string[]; skipped: string[] };
@@ -29,6 +29,8 @@ describe("L2 policies on the payments fixture", () => {
     ],
     ["rules fit the budget", { id: "p", maxTokens: { rules: 10_000 } }, pass()],
     ["rules exceed the budget", { id: "p", maxTokens: { rules: 10, skills: 10_000 } }, fail(["policy.overBudget"])],
+    ["every file fits its limit", { id: "p", maxTokensEach: { rule: 500, skill: 500, command: 500 } }, pass()],
+    ["one skill over its own limit", { id: "p", maxTokensEach: { skill: 8 } }, fail(["policy.itemOverBudget"])],
     [
       "MCP and total limits need a real run",
       { id: "p", maxTokens: { mcp: 10_000, total: 25_000 } },

@@ -95,28 +95,38 @@ export const ru: Catalog = {
   "lint.frontmatter": "Frontmatter — не валидный YAML, харнесс его игнорирует: {message}",
   "lint.looseFrontmatter":
     "Frontmatter — невалидный YAML. Claude Code и Codex всё равно читают его построчно, более строгие инструменты — нет: {message}",
-  "reach.skillsNowhere": {
+  "reach.nowhere": "Этот файл не читает ни один ИИ-харнесс, и ни один прочитанный файл на него не ссылается",
+  "reach.nowhereSkills": {
     one: "Здесь {count} скилл, но ни один ИИ-харнесс не смотрит в эту папку, и модель его не увидит",
     few: "Здесь {count} скилла, но ни один ИИ-харнесс не смотрит в эту папку, и модель их не увидит",
     many: "Здесь {count} скиллов, но ни один ИИ-харнесс не смотрит в эту папку, и модель их не увидит",
     other: "Здесь {count} скилла, но ни один ИИ-харнесс не смотрит в эту папку, и модель их не увидит",
   },
-  "reach.skillsMissed": {
-    one: "{harness} не видит здесь {count} скилл, его читает только {by}. Свяжите или перенесите его туда, где ищет {harness}",
-    few: "{harness} не видит здесь {count} скилла, их читает только {by}. Свяжите или перенесите их туда, где ищет {harness}",
-    many: "{harness} не видит здесь {count} скиллов, их читает только {by}. Свяжите или перенесите их туда, где ищет {harness}",
-    other:
-      "{harness} не видит здесь {count} скилла, их читает только {by}. Свяжите или перенесите их туда, где ищет {harness}",
+  "reach.otherHarness": "Это читает только {harnesses}, а в прогоне их нет",
+  "reach.otherHarnessSkills": {
+    one: "Здесь {count} скилл, который читает только {harnesses}, а в прогоне их нет",
+    few: "Здесь {count} скилла, которые читает только {harnesses}, а в прогоне их нет",
+    many: "Здесь {count} скиллов, которые читает только {harnesses}, а в прогоне их нет",
+    other: "Здесь {count} скилла, которые читает только {harnesses}, а в прогоне их нет",
   },
-  "reach.claudeOnly":
-    "Codex читает AGENTS.md, а не CLAUDE.md, и не получает ничего отсюда. Перенесите инструкции в AGENTS.md или сделайте один файл симлинком на другой",
-  "reach.unread": "Этот файл не читает ни один ИИ-харнесс, и ни один прочитанный файл на него не ссылается",
+  "reach.differs":
+    "{harness} это не читает, и ни в одном его файле нет того же текста, поэтому ИИ-харнессы получают разные инструкции. Читает только {by}",
+  "reach.differsSkills": {
+    one: "{harness} не видит здесь {count} скилл, и копии у него нет, поэтому ИИ-харнессы получают разные скиллы. Читает только {by}",
+    few: "{harness} не видит здесь {count} скилла, и копий у него нет, поэтому ИИ-харнессы получают разные скиллы. Читает только {by}",
+    many: "{harness} не видит здесь {count} скиллов, и копий у него нет, поэтому ИИ-харнессы получают разные скиллы. Читает только {by}",
+    other:
+      "{harness} не видит здесь {count} скилла, и копий у него нет, поэтому ИИ-харнессы получают разные скиллы. Читает только {by}",
+  },
+  "lint.longBody":
+    "{lines} строк при рекомендованных {limit} для скилла или команды: разделите его или вынесите детали в файлы со ссылками",
+  "lint.longInstructions": "{size} символов, больше {limit}, после которых Claude Code предупреждает о замедлении",
+  "lint.skillFolderName":
+    "Скилл называет себя «{name}», а папка у него «{folder}»: Claude Code покажет его как {folder}, Codex и Cursor — как {name}. Назовите папку по имени скилла",
   "lint.ruleField": "Claude Code читает в правиле только «paths», «{field}» ничего не делает",
   "lint.tooLarge": "Файл больше {limit}, Claude Code пропускает его целиком",
   "lint.importMissing": "@{target} ссылается на файл, которого нет",
   "lint.importDepth": "@{target} глубже {hops} импортов и не загрузится",
-  "lint.agentsIgnored":
-    "Claude Code не читает этот AGENTS.md: рядом или выше есть CLAUDE.md. Импортируйте его через @AGENTS.md",
   "lint.shadowedCommand": "У скилла {by} то же имя «{name}», эта команда никогда не запустится",
   "lint.noDescription": "У скилла «{name}» нет описания, модели не по чему его выбрать",
   "lint.longDescription": "Описание длиной {length} символов, в списке оно обрежется до {limit}",
@@ -140,6 +150,7 @@ export const ru: Catalog = {
   "resolve.deadPattern": "Ни один файл репозитория не подходит под {pattern}",
   "policy.needsCapture":
     "Лимит на {component} проверяется только на настоящем прогоне, статически эти токены не известны",
+  "policy.itemOverBudget": "{path}: {tokens} токенов при лимите {limit} на один элемент ({kind})",
   "policy.overBudget": "{component}: {tokens} токенов при лимите {limit}",
   "policy.missingFile": "Нет файла {path}",
   "policy.deniedMcp": "MCP-сервер «{name}» запрещён",
@@ -147,6 +158,7 @@ export const ru: Catalog = {
   "command.test": "Запустить тесты *.ctxray.ts и собственные проверки ctxray",
   "option.backend": "Бэкенд модели: mock, replay, real или имя из backends в конфиге",
   "option.layer": "Слои для прогона, например L1-L3 или L3,L5",
+  "option.ignoreHarnessDifferences": "Не предупреждать, если ИИ-харнессы получают разные инструкции или скиллы",
   "option.filter": "Запустить только тесты, в имени которых есть этот текст",
   "option.updateSnapshots": "Записать новые и изменившиеся снапшоты loadout",
   "test.unknownBackend": "Неизвестный бэкенд «{name}». Известные: {known}",

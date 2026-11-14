@@ -5,6 +5,7 @@ import {
   type Inventory,
   lint,
   type Problem,
+  type ReachOptions,
   STATIC_ADAPTERS,
 } from "#entities/harness/index.ts";
 import type { HarnessId, Layer, Policy } from "#shared/contract/index.ts";
@@ -56,8 +57,9 @@ const policiesOf = async (workspace: Workspace, harness: HarnessId, policies: re
       }),
     );
   }
-  const loadout = adapter.resolve(await workspace.inventoryOf(harness), { cwd: "", files: [] });
-  const outcomes = await checkPolicies(covered, workspace.project, loadout);
+  const inventory = await workspace.inventoryOf(harness);
+  const loadout = adapter.resolve(inventory, { cwd: "", files: [] });
+  const outcomes = await checkPolicies(covered, workspace.project, loadout, inventory);
   // A policy with only limits that need a run, like `total`, belongs to the L4 starting context check.
   const here = outcomes.filter((outcome) => outcome.status !== "skipped" || outcome.skipped.length === 0);
   return here.map((outcome): CellResult => {
@@ -77,13 +79,14 @@ export const runChecks = async (
   harnesses: readonly HarnessId[],
   policies: readonly Policy[],
   layers: ReadonlySet<Layer>,
+  reach: ReachOptions = { differences: true },
 ): Promise<CellResult[]> => {
   // What none of the run's harnesses reads is checked across them, then reported under each that misses it.
   const readable = harnesses.filter((harness) => STATIC_ADAPTERS[harness]);
   const inventories: Partial<Record<HarnessId, Inventory>> = Object.fromEntries(
     await Promise.all(readable.map(async (harness) => [harness, await workspace.inventoryOf(harness)])),
   );
-  const unread = await checkReach(workspace.project, inventories);
+  const unread = await checkReach(workspace.project, inventories, reach);
   const lints = layers.has("L1")
     ? await Promise.all(harnesses.map((harness) => lintOne(workspace, harness, unread[harness] ?? [])))
     : [];

@@ -17,7 +17,7 @@ export type { Command, Instruction, Inventory, McpDeclaration, Problem, Severity
 export { findDeadRules } from "./layers/dead-rules.ts";
 export { lint } from "./layers/lint.ts";
 export { checkPolicies, type Finding, type PolicyOutcome } from "./layers/policy.ts";
-export { checkReach } from "./layers/reach.ts";
+export { checkReach, type ReachOptions } from "./layers/reach.ts";
 export { checkSupport, type HarnessProfile, type Requirement, type Support } from "./profile.ts";
 export { PROFILES } from "./profiles.ts";
 export { findRoot, openProject, type Project } from "./project.ts";
