@@ -1,7 +1,7 @@
 import { type OptionSpecs, type ParseError, parseFlags } from "../shared/cli/index.ts";
 import { ExitCode } from "../shared/contract/index.ts";
-import { createTranslator, type Translate } from "../shared/i18n/index.ts";
-import type { Env } from "../shared/infra/index.ts";
+import { CATALOGS, createTranslator, DEFAULT_LANG, type Translate } from "../shared/i18n/index.ts";
+import { type Env, isOn } from "../shared/infra/index.ts";
 import { createRenderer } from "../shared/render/index.ts";
 import { COMMANDS } from "./commands.ts";
 import { type Container, createRunInjector } from "./container.ts";
@@ -26,8 +26,11 @@ export const runCli = async (args: readonly string[], io: Io, container: Contain
   const probe = parseFlags(args, ANY_OPTIONS);
   const values = probe.ok ? probe.values : {};
   const settings = resolveSettings({ values, env: io.env, tty: io.stdout.isTTY === true, intlLocale: io.intlLocale });
-  const t = createTranslator(settings.lang);
   const say = (text: string) => io.stderr.write(`ctxray: ${text}\n`);
+  // With CTXRAY_DEBUG a message missing from the chosen catalog says so, in English, the catalog it falls back to.
+  const english = createTranslator(DEFAULT_LANG);
+  const onMissing = (key: string, lang: string) => say(english("debug.missingMessage", { key, lang }));
+  const t = createTranslator(settings.lang, CATALOGS, isOn(io.env["CTXRAY_DEBUG"]) ? onMissing : undefined);
   const usageError = (text: string) => {
     say(text);
     io.stderr.write(`${t("error.hint", { command: "ctxray --help" })}\n`);

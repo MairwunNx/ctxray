@@ -1,1 +1,1 @@
-export { type Env, isCi } from "./env.ts";
+export { type Env, isCi, isOn } from "./env.ts";

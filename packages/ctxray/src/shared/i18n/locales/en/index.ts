@@ -11,6 +11,7 @@ export const en = {
   "status.inconclusive": "inconclusive",
   "status.flaky": "flaky",
   "lang.unsupported": "Language “{lang}” isn't supported yet, so ctxray speaks English",
+  "debug.missingMessage": "Message {key} is missing in the {lang} catalog, so it shows in English",
   "cli.tagline": "X-ray for agent harnesses",
   "help.usage": "Usage",
   "help.command": "<command>",

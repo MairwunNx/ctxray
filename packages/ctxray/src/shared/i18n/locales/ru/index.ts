@@ -15,6 +15,7 @@ export const ru: Catalog = {
   "status.inconclusive": "не определён",
   "status.flaky": "нестабилен",
   "lang.unsupported": "Язык «{lang}» пока не поддерживается, поэтому ctxray говорит по-английски",
+  "debug.missingMessage": "Строки {key} нет в каталоге {lang}, поэтому она показана по-английски",
   "cli.tagline": "рентген для ИИ-харнессов",
   "help.usage": "Использование",
   "help.command": "<команда>",
