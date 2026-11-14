@@ -1,4 +1,4 @@
-import { Box, render, Static, Text, type TextProps } from "ink";
+import { Box, type Instance, render, Static, Text, type TextProps } from "ink";
 import type { Renderer } from "./renderer.ts";
 import type { Line, Tone, View } from "./view.ts";
 
@@ -41,17 +41,19 @@ const Printed = ({ items }: { items: readonly Printed[] }) => (
   </Static>
 );
 
+// Ink starts on the first print: an empty first frame would leave a blank line behind.
 export const createInkRenderer = (stdout: NodeJS.WriteStream): Renderer => {
   let items: readonly Printed[] = [];
-  const app = render(<Printed items={items} />, { stdout, patchConsole: false });
+  let app: Instance | undefined;
   return {
     print: (view) => {
       items = [...items, { id: items.length, view }];
-      app.rerender(<Printed items={items} />);
+      if (app) app.rerender(<Printed items={items} />);
+      else app = render(<Printed items={items} />, { stdout, patchConsole: false });
     },
     close: async () => {
-      app.unmount();
-      await app.waitUntilExit();
+      app?.unmount();
+      await app?.waitUntilExit();
     },
   };
 };
