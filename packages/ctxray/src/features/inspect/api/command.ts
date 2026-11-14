@@ -43,9 +43,7 @@ export const createInspectCommand =
     const harnesses = listOf(values["harness"]);
     const unknown = harnesses?.find((id) => !HarnessId.safeParse(id).success);
     if (unknown !== undefined) {
-      return fail([
-        span(t("inspect.unknownHarness", { name: unknown, known: HarnessId.options.join(", ") }), "failure"),
-      ]);
+      return fail([span(t("error.unknownHarness", { name: unknown, known: HarnessId.options.join(", ") }), "failure")]);
     }
     const result = await inspect({
       harnesses: harnesses as HarnessId[] | undefined,

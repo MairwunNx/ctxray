@@ -1,0 +1,81 @@
+{
+  "payments › instructions of the app load in app › claude-code@static": {
+    "rules": {
+      "CLAUDE.md": {
+        "activation": "always",
+        "reason": "cwd",
+        "tokens": 38
+      },
+      "AGENTS.md": {
+        "activation": "always",
+        "reason": "import:CLAUDE.md",
+        "tokens": 14
+      },
+      ".claude/rules/style.md": {
+        "activation": "always",
+        "reason": "always",
+        "tokens": 7
+      },
+      "app/CLAUDE.md": {
+        "activation": "always",
+        "reason": "cwd",
+        "tokens": 14
+      },
+      "app/AGENTS.md": {
+        "activation": "always",
+        "reason": "import:app/CLAUDE.md",
+        "tokens": 10
+      }
+    },
+    "skills": {
+      "payouts": {
+        "path": ".claude/skills/payouts/SKILL.md",
+        "tokens": 7
+      },
+      "refunds": {
+        "path": ".claude/skills/refunds/SKILL.md",
+        "tokens": 12
+      }
+    },
+    "mcp": ["github", "jira"],
+    "commands": ["changelog"],
+    "tokens": {
+      "rules": 83,
+      "skills": 19,
+      "commands": 12,
+      "method": "local:o200k_base"
+    }
+  },
+  "payments › instructions of the app load in app › codex@static": {
+    "rules": {
+      "AGENTS.md": {
+        "activation": "always",
+        "reason": "cwd",
+        "tokens": 14
+      },
+      "app/AGENTS.md": {
+        "activation": "always",
+        "reason": "cwd",
+        "tokens": 10
+      }
+    },
+    "skills": {
+      "refunds": {
+        "path": ".agents/skills/refunds/SKILL.md",
+        "tokens": 12
+      },
+      "android-build": {
+        "path": "app/.agents/skills/android-build/SKILL.md",
+        "tokens": 11
+      }
+    },
+    "mcp": ["github", "jira"],
+    "commands": [],
+    "tokens": {
+      "rules": 24,
+      "skills": 23,
+      "commands": 0,
+      "method": "local:o200k_base"
+    }
+  }
+}

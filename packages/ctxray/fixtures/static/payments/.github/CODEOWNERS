@@ -1,0 +1,5 @@
+*                             @acme/platform
+**/payments/                  @acme/payments
+/.claude/rules/payments.md    @acme/payments
+/.claude/skills/refunds/      @acme/payments
+/.agents/skills/refunds/      @acme/payments
