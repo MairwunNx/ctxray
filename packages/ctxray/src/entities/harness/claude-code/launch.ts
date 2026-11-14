@@ -1,6 +1,7 @@
 import { join } from "node:path";
 import { $ } from "bun";
 import type { LaunchContext } from "../capture/model.ts";
+import { claudeUserScope, copyUserScope } from "../capture/user-scope.ts";
 
 type McpEntry = { command?: string; args?: string[]; type?: string; url?: string; [key: string]: unknown };
 
@@ -26,6 +27,8 @@ const wrapServers = async ({ dirs, shim, remote }: LaunchContext) => {
 // switch that stops Claude Code from phoning home.
 export const launchClaudeCode = async (binary: string, context: LaunchContext) => {
   await wrapServers(context);
+  const configDir = join(context.dirs.home, ".claude-config");
+  if (context.user) await copyUserScope(claudeUserScope(context.user, configDir));
   return {
     command: [
       binary,
@@ -41,7 +44,7 @@ export const launchClaudeCode = async (binary: string, context: LaunchContext) =
     ],
     env: {
       ...context.env,
-      CLAUDE_CONFIG_DIR: join(context.dirs.home, ".claude-config"),
+      CLAUDE_CONFIG_DIR: configDir,
       ANTHROPIC_BASE_URL: context.baseUrl,
       ANTHROPIC_API_KEY: "ctxray-dummy-key",
       CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1",

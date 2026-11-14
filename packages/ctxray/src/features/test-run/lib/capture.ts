@@ -71,6 +71,15 @@ export const createCapture = ({ config, env, self, binaries }: CaptureDeps) => {
     patterns: config.redact.patterns.map(({ source, flags }) => ({ source, flags })),
   };
 
+  // Node-based MCP servers trust the user's CA certificates through one PEM file (ADR 0003).
+  let caFile: string | undefined;
+  const caFileOf = async () => {
+    if (network.caFiles.length <= 1) return network.caFiles[0];
+    const file = join(traceDir, "ca.pem");
+    await Bun.write(file, (await Promise.all(network.caFiles.map((one) => Bun.file(one).text()))).join("\n"));
+    return file;
+  };
+
   const open = async (scope: CellScope, { cwd, prompt }: OpenRequest): Promise<OpenSession> => {
     const adapter = CAPTURE_ADAPTERS[scope.harness] ?? fail("capture.noAdapter", { harness: scope.harness });
     const binary =
@@ -79,6 +88,7 @@ export const createCapture = ({ config, env, self, binaries }: CaptureDeps) => {
     resources ??= (async () => ({ proxy: startProxy(), guard: await startEgressGuard() }))();
     const { proxy, guard } = await resources;
     egress ??= await egressOf(network);
+    caFile ??= await caFileOf();
     const trace = join(traceDir, `${scope.harness}-${++count}.jsonl`);
     const writer = createTraceWriter(trace, redactor);
     const conversation = createConversation(writer.write);
@@ -103,10 +113,11 @@ export const createCapture = ({ config, env, self, binaries }: CaptureDeps) => {
         ...both("ALL_PROXY", guard.url),
         ...both("NO_PROXY", "127.0.0.1,localhost"),
       },
-      mcp: { self, shimEnv },
+      mcp: { self, shimEnv: caFile ? { ...shimEnv, env: { ...shimEnv.env, NODE_EXTRA_CA_CERTS: caFile } } : shimEnv },
       port: { ...conversation, baseUrl: prefix.baseUrl, close: prefix.close },
       remoteMcp: (target, onMessage) => proxy.openMcp(target, egress, onMessage),
       timeout: 60_000,
+      user: config.harnesses[scope.harness]?.userScope === "inherit" ? { home: env["HOME"] ?? "", env } : undefined,
     });
     return { harness, adapter, model, trace, egress: () => guard.attempts().slice(seen) };
   };

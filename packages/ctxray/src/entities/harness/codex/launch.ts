@@ -2,6 +2,7 @@ import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { $ } from "bun";
 import type { LaunchContext } from "../capture/model.ts";
+import { codexUserScope, copyUserScope } from "../capture/user-scope.ts";
 
 const toml = (value: unknown) => JSON.stringify(value);
 
@@ -61,6 +62,7 @@ const serverOverrides = async ({ dirs, shim, remote }: LaunchContext): Promise<s
 export const launchCodex = async (binary: string, context: LaunchContext) => {
   const codexHome = join(context.dirs.home, ".codex");
   await mkdir(codexHome, { recursive: true });
+  if (context.user) await copyUserScope(codexUserScope(context.user, codexHome, context.dirs.home));
   await Bun.write(join(codexHome, "config.toml"), configOf(context));
   return {
     command: [

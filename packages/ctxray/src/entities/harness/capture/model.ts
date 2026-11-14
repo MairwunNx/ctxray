@@ -1,6 +1,7 @@
 import type { Exchange, ToolCall } from "#shared/contract/index.ts";
 import type { Inventory } from "../inventory.ts";
 import type { RunDirs } from "./isolate.ts";
+import type { UserScope } from "./user-scope.ts";
 
 // Everything a capture adapter needs to start its harness against ctxray.
 export type LaunchContext = {
@@ -14,6 +15,7 @@ export type LaunchContext = {
   shim: (name: string, command: readonly string[]) => Promise<string[]>;
   // The URL that reaches an HTTP MCP server through ctxray, which logs it as `name`.
   remote: (name: string, url: string) => string;
+  user: UserScope | undefined; // set with `userScope: "inherit"`: the user's own rules and skills join the run
 };
 
 export type Launch = { command: string[]; env: Record<string, string> };

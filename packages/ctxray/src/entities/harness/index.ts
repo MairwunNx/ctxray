@@ -13,6 +13,7 @@ export {
   type SessionResult,
   startSession,
 } from "./capture/session.ts";
+export type { UserScope } from "./capture/user-scope.ts";
 export type { Command, Instruction, Inventory, McpDeclaration, Problem, Severity, Skill } from "./inventory.ts";
 export { findDeadRules } from "./layers/dead-rules.ts";
 export { checkFiles, type FileCheckSettings } from "./layers/files.ts";

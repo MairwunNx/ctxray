@@ -7,6 +7,7 @@ import { isolate, type ProjectCopy, type RunDirs } from "./isolate.ts";
 import { type McpRouting, type RemoteMcp, routeMcp } from "./mcp.ts";
 import type { CaptureAdapter, Intent } from "./model.ts";
 import { sandboxed } from "./sandbox.ts";
+import type { UserScope } from "./user-scope.ts";
 
 // The mock model a session talks to, as the proxy provides it.
 export type ModelPort = {
@@ -30,6 +31,7 @@ export type SessionOptions = {
   port: ModelPort;
   remoteMcp: RemoteMcp;
   timeout: number; // milliseconds a harness may take for one turn
+  user?: UserScope | undefined; // `userScope: "inherit"`
 };
 
 export class HarnessExit extends Error {
@@ -61,7 +63,17 @@ const tail = (text: string, lines = 20) => text.trim().split("\n").slice(-lines)
 export const startSession = async (options: SessionOptions): Promise<HarnessSession> => {
   const { adapter, port } = options;
   const dirs = await isolate(options.copy);
-  const env = { ...options.env, PATH: `${dirs.bin}:${options.env["PATH"] ?? ""}`, HOME: dirs.home, TMPDIR: dirs.tmp };
+  // XDG folders under the run's HOME too: a harness that reads them never sees the user's.
+  const env = {
+    ...options.env,
+    PATH: `${dirs.bin}:${options.env["PATH"] ?? ""}`,
+    HOME: dirs.home,
+    TMPDIR: dirs.tmp,
+    XDG_CONFIG_HOME: join(dirs.home, ".config"),
+    XDG_CACHE_HOME: join(dirs.home, ".cache"),
+    XDG_DATA_HOME: join(dirs.home, ".local", "share"),
+    XDG_STATE_HOME: join(dirs.home, ".local", "state"),
+  };
   const version = await adapter.version(options.binary, env);
   const { shim, remote, close: closeRemotes } = routeMcp(dirs, options.mcp, options.remoteMcp);
   const context = {
@@ -73,6 +85,7 @@ export const startSession = async (options: SessionOptions): Promise<HarnessSess
     env,
     shim,
     remote,
+    user: options.user,
   };
   const launch = await adapter.launch(options.binary, context, options.inventory);
   const command = adapter.sandboxesItself ? launch.command : sandboxed(launch.command, dirs.root);
