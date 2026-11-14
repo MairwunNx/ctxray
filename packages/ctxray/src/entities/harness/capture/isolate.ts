@@ -116,6 +116,9 @@ export const createCopy = async (project: Project, canaries: ReadonlySet<string>
     await copyFiles(project.root, work, project.files);
     await $`git init -q`.cwd(work).env(env).quiet();
   }
+  // Instruction files git ignores, like CLAUDE.local.md, still load: the copy needs them too.
+  const ignored = [...canaries].filter((path) => !project.files.includes(path));
+  await copyFiles(project.root, work, ignored);
   const aliases = await markCanaries(work, canaries);
   await $`git add -A`.cwd(work).env(env).quiet();
   await $`git ${IDENTITY} -c core.hooksPath=/dev/null commit -q --no-verify --allow-empty -m ctxray`

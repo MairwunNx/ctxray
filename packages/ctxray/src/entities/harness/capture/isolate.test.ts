@@ -54,8 +54,11 @@ test("a repository copy is the working tree: uncommitted changes and files hidde
   rmSync(join(root, "AGENTS.md"));
   writeFileSync(join(root, "CLAUDE.md"), "Edited.\n");
   writeFileSync(join(root, "new.md"), "Untracked.\n");
-  const copy = await createCopy(await openProject(root), new Set());
+  writeFileSync(join(root, ".gitignore"), "CLAUDE.local.md\n");
+  writeFileSync(join(root, "CLAUDE.local.md"), "Mine.\n");
+  const copy = await createCopy(await openProject(root), new Set(["CLAUDE.local.md"]));
   roots.push(dirname(copy.work));
+  expect(readFileSync(join(copy.work, "CLAUDE.local.md"), "utf8")).toBe("Mine.\n\n⟦ctx:CLAUDE.local.md⟧\n");
   expect(lstatExists(join(copy.work, "AGENTS.md"))).toBe(false);
   expect(readFileSync(join(copy.work, "CLAUDE.md"), "utf8")).toBe("Edited.\n");
   expect(readFileSync(join(copy.work, "new.md"), "utf8")).toBe("Untracked.\n");
