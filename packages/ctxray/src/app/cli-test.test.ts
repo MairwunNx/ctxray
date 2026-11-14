@@ -26,7 +26,10 @@ const copy = (extra: Record<string, string> = {}) => {
 };
 
 const shared = copy();
-const run = (args: string[], root = shared, env: Record<string, string> = {}) => runIn(root, ["test", ...args], env);
+// A cache of its own: looking for a harness creates the cache folder, and the user's stays untouched.
+const cache = join(shared, ".cache");
+const run = (args: string[], root = shared, env: Record<string, string> = {}) =>
+  runIn(root, ["test", ...args], { CTXRAY_CACHE_DIR: cache, ...env });
 
 describe.each([
   ["en", ["ctxray checks", "payments rules attach to payment sources", "needs pathRules", "L6 doesn't run here yet"]],
