@@ -78,6 +78,45 @@
           "integrity": "sha512-nTN9SpkacGohq60+I80R3t0R8Mhbnlt3OVYNahgAv1Gu77KFwhPc0vz9Ou/DAGDtYhKVWA/jiYXJXnlzkwb/JA=="
         }
       }
+    },
+    "gemini-cli": {
+      "source": "registry",
+      "range": "0.68.0",
+      "version": "0.68.0",
+      "platforms": {
+        "darwin-arm64": {
+          "package": "@google/gemini-cli@0.68.0",
+          "integrity": "sha512-eq7AWY+YCijNGKVwyiRjN+GuOdXU/djuOZhX18p+HDmNyUqFdqH7C5V6vDJLl1uffhRPhGijePV+YvY8lymrbQ=="
+        },
+        "darwin-x64": {
+          "package": "@google/gemini-cli@0.68.0",
+          "integrity": "sha512-eq7AWY+YCijNGKVwyiRjN+GuOdXU/djuOZhX18p+HDmNyUqFdqH7C5V6vDJLl1uffhRPhGijePV+YvY8lymrbQ=="
+        },
+        "linux-x64-glibc": {
+          "package": "@google/gemini-cli@0.68.0",
+          "integrity": "sha512-eq7AWY+YCijNGKVwyiRjN+GuOdXU/djuOZhX18p+HDmNyUqFdqH7C5V6vDJLl1uffhRPhGijePV+YvY8lymrbQ=="
+        },
+        "linux-x64-musl": {
+          "package": "@google/gemini-cli@0.68.0",
+          "integrity": "sha512-eq7AWY+YCijNGKVwyiRjN+GuOdXU/djuOZhX18p+HDmNyUqFdqH7C5V6vDJLl1uffhRPhGijePV+YvY8lymrbQ=="
+        },
+        "linux-arm64-glibc": {
+          "package": "@google/gemini-cli@0.68.0",
+          "integrity": "sha512-eq7AWY+YCijNGKVwyiRjN+GuOdXU/djuOZhX18p+HDmNyUqFdqH7C5V6vDJLl1uffhRPhGijePV+YvY8lymrbQ=="
+        },
+        "linux-arm64-musl": {
+          "package": "@google/gemini-cli@0.68.0",
+          "integrity": "sha512-eq7AWY+YCijNGKVwyiRjN+GuOdXU/djuOZhX18p+HDmNyUqFdqH7C5V6vDJLl1uffhRPhGijePV+YvY8lymrbQ=="
+        },
+        "win32-x64": {
+          "package": "@google/gemini-cli@0.68.0",
+          "integrity": "sha512-eq7AWY+YCijNGKVwyiRjN+GuOdXU/djuOZhX18p+HDmNyUqFdqH7C5V6vDJLl1uffhRPhGijePV+YvY8lymrbQ=="
+        },
+        "win32-arm64": {
+          "package": "@google/gemini-cli@0.68.0",
+          "integrity": "sha512-eq7AWY+YCijNGKVwyiRjN+GuOdXU/djuOZhX18p+HDmNyUqFdqH7C5V6vDJLl1uffhRPhGijePV+YvY8lymrbQ=="
+        }
+      }
     }
   }
 }

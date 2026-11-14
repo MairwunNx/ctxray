@@ -35,6 +35,9 @@ const pathVersion = async (harness: HarnessId, env: Env) => {
 };
 
 const harnessCheck = async (harness: HarnessId, locked: LockedHarness, provisioning: Provisioning, env: Env) => {
+  const runtime = CAPTURE_ADAPTERS[harness]?.runtime;
+  if (runtime && !Bun.which(runtime, { PATH: env["PATH"] ?? "" }))
+    return check("error", "doctor.noRuntime", { harness, runtime });
   if (locked.source === "system") {
     const version = await pathVersion(harness, env);
     if (version === undefined) return check("error", "doctor.systemMissing", { harness });

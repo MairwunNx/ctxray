@@ -33,3 +33,15 @@ export const codexUserScope = ({ home, env }: UserScope, codexHome: string, runH
     [join(home, ".agents", "skills"), join(runHome, ".agents", "skills")] as const,
   ];
 };
+
+// Gemini CLI: GEMINI.md, the skills, commands, and subagents of its folder, plus the skills in ~/.agents.
+// settings.json stays out: ctxray writes its own and adds the user's MCP servers and hooks to it.
+// Extensions stay out too: they bring MCP servers of their own that would reach the network past ctxray.
+export const geminiUserScope = ({ home, env }: UserScope, geminiDir: string, runHome: string) => {
+  const own = join(env["GEMINI_CLI_HOME"] || home, ".gemini");
+  const names = ["GEMINI.md", "skills", "commands", "agents"];
+  return [
+    ...names.map((name) => [join(own, name), join(geminiDir, name)] as const),
+    [join(home, ".agents", "skills"), join(runHome, ".agents", "skills")] as const,
+  ];
+};

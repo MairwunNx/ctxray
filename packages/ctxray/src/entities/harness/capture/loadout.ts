@@ -56,6 +56,9 @@ const fingerprinted = (segment: Segment, inventory: Inventory): Segment[] => {
   return [...whole, ...cut].map((file) => ({ ...segment, id: file.path, evidence: "fingerprint" }));
 };
 
+// The lines a harness wraps a file in: Claude Code's header, Gemini CLI's frame, OpenCode's header.
+const FRAME = /^(?:Contents of .*|--- (?:End of )?Context from: .* ---|Instructions from: .*)$/gm;
+
 type Duplicate = { path: string; sameAs?: string };
 
 // A file reaches the model twice when the harness sends it twice, or sends two files with the same text.
@@ -69,8 +72,8 @@ const rulesOf = (input: LoadoutInput, provenance: Record<string, Provenance>, du
       duplicates.push({ path: segment.id });
       continue;
     }
-    // The text the file adds: without the harness's header and without `@imports`, which load files of their own.
-    const text = normalise(segment.text.replace(/^Contents of .*\n/, "").replace(/^@\S+\s*$/gm, ""));
+    // The text the file adds: without the harness's frame and without `@imports`, which load files of their own.
+    const text = normalise(segment.text.replace(FRAME, "").replace(/^@\S+\s*$/gm, ""));
     const twin = texts.get(text);
     if (twin !== undefined && text !== "") duplicates.push({ path: segment.id, sameAs: twin });
     texts.set(text, segment.id);

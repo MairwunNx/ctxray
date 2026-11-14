@@ -53,6 +53,8 @@ export type Inventory = {
   ignored?: readonly string[];
   // Codex stops adding AGENTS.md files once their bytes reach this budget.
   budget?: number;
+  // Gemini CLI: the context file names each folder's settings add to GEMINI.md, by folder.
+  contextFiles?: Readonly<Record<string, readonly string[]>>;
 };
 
 export const problem = (

@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { launchClaudeCode } from "../claude-code/launch.ts";
 import { launchCodex } from "../codex/launch.ts";
+import { launchGeminiCli } from "../gemini-cli/launch.ts";
 import type { LaunchContext } from "./model.ts";
 
 const root = mkdtempSync(join(tmpdir(), "ctxray-user-scope-"));
@@ -23,6 +24,12 @@ symlinkSync(join(home, "shared-skills/review"), join(home, ".claude/skills/revie
 write(join(home, ".codex/AGENTS.md"), "codex user rules");
 write(join(home, ".codex/config.toml"), 'model_provider = "openai"');
 write(join(home, ".agents/skills/deploy/SKILL.md"), "---\nname: deploy\n---\n");
+write(join(home, ".gemini/GEMINI.md"), "gemini user rules");
+write(
+  join(home, ".gemini/settings.json"),
+  '{\n  // comments are fine here\n  "security": {"auth": {"selectedType": "oauth-personal"}},\n' +
+    '  "mcpServers": {"fs": {"command": "npx", "args": ["fs"]}},\n  "hooks": {"SessionStart": []}\n}',
+);
 
 let count = 0;
 const contextOf = (inherit: boolean): LaunchContext => {
@@ -53,6 +60,7 @@ test("isolated by default: nothing of the user's reaches the run", async () => {
   const context = contextOf(false);
   await launchClaudeCode("claude", context);
   await launchCodex("codex", context);
+  await launchGeminiCli("gemini", context);
   expect(await Array.fromAsync(new Bun.Glob("**/*.md").scan(context.dirs.home))).toEqual([]);
 });
 
@@ -73,4 +81,18 @@ test("inherit copies Codex's AGENTS.md and ~/.agents skills, and keeps ctxray's 
   expect(readFileSync(join(codexHome, "AGENTS.md"), "utf8")).toBe("codex user rules");
   expect(readFileSync(join(codexHome, "config.toml"), "utf8")).toContain('model_provider = "ctxray"');
   expect(await Bun.file(join(context.dirs.home, ".agents/skills/deploy/SKILL.md")).exists()).toBe(true);
+});
+
+test("inherit gives Gemini CLI the user's GEMINI.md, MCP servers behind the shim, and hooks, never their auth", async () => {
+  const context = {
+    ...contextOf(true),
+    shim: async (name: string, command: readonly string[]) => ["shim", name, ...command],
+  };
+  await launchGeminiCli("gemini", context);
+  const gemini = join(context.dirs.home, ".gemini");
+  expect(readFileSync(join(gemini, "GEMINI.md"), "utf8")).toBe("gemini user rules");
+  const settings = JSON.parse(readFileSync(join(gemini, "settings.json"), "utf8"));
+  expect(settings.security.auth.selectedType).toBe("gemini-api-key");
+  expect(settings.mcpServers).toEqual({ fs: { command: "shim", args: ["fs", "npx", "fs"] } });
+  expect(settings.hooks).toEqual({ SessionStart: [] });
 });

@@ -27,7 +27,7 @@ export const userMcpFile = (harness: HarnessId, { home, env }: UserScope): strin
     case "cursor-ide":
       return join(home, ".cursor", "mcp.json");
     case "gemini-cli":
-      return join(home, ".gemini", "settings.json");
+      return join(env["GEMINI_CLI_HOME"] || home, ".gemini", "settings.json");
     case "opencode":
       return join(xdg, "opencode", "opencode.json");
   }
@@ -47,8 +47,9 @@ const KEYS: Record<HarnessId, string> = {
 // moved from the user's real project to the run's copy. Servers of other projects stay out.
 export type UserMcp = { servers: Record<string, McpEntry>; projects: Record<string, Record<string, McpEntry>> };
 
+// Gemini CLI and OpenCode allow comments in their JSON, the others take plain JSON, which JSONC covers too.
 export const parseUserMcp = (harness: HarnessId, text: string): Record<string, unknown> =>
-  record(harness === "codex" ? Bun.TOML.parse(text) : JSON.parse(text));
+  record(harness === "codex" ? Bun.TOML.parse(text) : Bun.JSONC.parse(text));
 
 export const readUserMcp = async (
   harness: HarnessId,

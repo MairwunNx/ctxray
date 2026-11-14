@@ -20,7 +20,7 @@ const findInstructions = async (project: Project, config: CodexConfig, problems:
       const index = at * names.length + offset;
       const [path, text] = [paths[index] ?? "", texts[index]];
       if (text === undefined) return;
-      if (text.trim() === "") problems.push(problem("lint.empty", "warning", path));
+      if (text.trim() === "") problems.push(problem("lint.empty", "warning", path, { harness: "Codex" }));
       else if (chosen) problems.push(problem("lint.shadowed", "warning", path, { by: chosen.path }));
       else chosen = { path, dir, kind: "agents", imports: [], text };
     });
@@ -38,8 +38,10 @@ const findSkills = async (project: Project, config: CodexConfig, problems: Probl
   return files.map(({ path, dir, folder, frontmatter: { data, body } }) => {
     const name = textOf(data["name"]);
     const description = textOf(data["description"]);
-    if (name === undefined) problems.push(problem("lint.skillField", "error", path, { field: "name" }));
-    if (description === undefined) problems.push(problem("lint.skillField", "error", path, { field: "description" }));
+    if (name === undefined)
+      problems.push(problem("lint.skillField", "error", path, { harness: "Codex", field: "name" }));
+    if (description === undefined)
+      problems.push(problem("lint.skillField", "error", path, { harness: "Codex", field: "description" }));
     const valid = name !== undefined && description !== undefined;
     const listed = valid && !config.disabledSkills(name, join(project.root, path));
     return { name: name ?? folder, path, dir, description: description ?? "", listed, body };

@@ -1,0 +1,11 @@
+{
+  // Gemini CLI reads JSON with comments.
+  "context": { "fileName": ["GEMINI.md", "AGENTS.md"] },
+  "mcpServers": {
+    "probe": { "command": "bun", "args": ["mcp.ts"] },
+    "docs": { "httpUrl": "https://docs.example.com/mcp" },
+    "legacy": { "command": "legacy-mcp" },
+    "broken": { "env": { "A": "1" } }
+  },
+  "mcp": { "excluded": ["legacy"] }
+}

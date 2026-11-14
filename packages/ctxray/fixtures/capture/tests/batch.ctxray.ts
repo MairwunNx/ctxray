@@ -11,7 +11,8 @@ suite("payments rules", { fixture: "../payments" }, () => {
     expect(l.rules).toInclude(always);
   });
 
-  test.wire.each(payments.where({ activation: "path" }))(
+  // The payments package's own instructions: every harness with path rules loads them once the agent works there.
+  test.wire.each(payments.where({ under: "app/src/main/kotlin/payments" }))(
     "{rule.path} attaches on read",
     { requires: ["pathRules"] },
     async ({ rule, session }) => {

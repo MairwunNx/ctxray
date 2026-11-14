@@ -6,6 +6,9 @@ import { resolveClaudeCode } from "./claude-code/resolve.ts";
 import { CODEX_CAPTURE } from "./codex/capture.ts";
 import { discoverCodex } from "./codex/discover.ts";
 import { resolveCodex } from "./codex/resolve.ts";
+import { GEMINI_CLI_CAPTURE } from "./gemini-cli/capture.ts";
+import { discoverGeminiCli } from "./gemini-cli/discover.ts";
+import { resolveGeminiCli } from "./gemini-cli/resolve.ts";
 import type { Inventory } from "./inventory.ts";
 import type { Project } from "./project.ts";
 import type { Scope, StaticLoadout } from "./static-loadout.ts";
@@ -20,10 +23,12 @@ export type StaticAdapter = {
 export const STATIC_ADAPTERS: Partial<Record<HarnessId, StaticAdapter>> = {
   "claude-code": { discover: discoverClaudeCode, resolve: resolveClaudeCode },
   codex: { discover: discoverCodex, resolve: resolveCodex },
+  "gemini-cli": { discover: discoverGeminiCli, resolve: resolveGeminiCli },
 };
 
 // L4–L7: launch the harness against ctxray's proxy and read what it sent.
 export const CAPTURE_ADAPTERS: Partial<Record<HarnessId, CaptureAdapter>> = {
   "claude-code": CLAUDE_CODE_CAPTURE,
   codex: CODEX_CAPTURE,
+  "gemini-cli": GEMINI_CLI_CAPTURE,
 };

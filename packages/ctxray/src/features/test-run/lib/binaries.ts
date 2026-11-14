@@ -44,6 +44,9 @@ export const createBinaries = (config: Config, env: Env, cwd: string, options: B
       install: options.install,
       onProgress: (progress) => options.onInstall(harness, progress),
     });
+    if (located && adapter.runtime && !Bun.which(adapter.runtime, { PATH: env["PATH"] ?? "" })) {
+      fail("capture.noRuntime", { harness, runtime: adapter.runtime });
+    }
     return located?.binary;
   };
   // Failures of the cache and the lockfile read like any other check failure.

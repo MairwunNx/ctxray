@@ -25,7 +25,10 @@ export const readCodexConfig = async (project: Project, problems: Problem[]): Pr
     raw = record(text === undefined ? {} : Bun.TOML.parse(text));
   } catch (error) {
     problems.push(
-      problem("lint.badToml", "error", CONFIG_PATH, { message: error instanceof Error ? error.message : "" }),
+      problem("lint.badToml", "error", CONFIG_PATH, {
+        harness: "Codex",
+        message: error instanceof Error ? error.message : "",
+      }),
     );
   }
   const budget = raw["project_doc_max_bytes"];

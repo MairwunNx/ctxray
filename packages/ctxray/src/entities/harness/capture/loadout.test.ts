@@ -35,6 +35,7 @@ const loadoutOf = async (harness: HarnessId, index: number, files: string[] = []
 
 const READ = ["app/src/main/kotlin/payments/Charge.kt"];
 
+// Claude Code and Codex hold MCP schemas back until the model asks, Gemini CLI sends them inline.
 describe.each<[HarnessId, string[], string[], string[]]>([
   [
     "claude-code",
@@ -48,6 +49,7 @@ describe.each<[HarnessId, string[], string[], string[]]>([
     ],
   ],
   ["codex", ["AGENTS.md", "app/AGENTS.md"], ["android-build", "payouts", "refunds", "release"], []],
+  ["gemini-cli", ["AGENTS.md", "app/AGENTS.md"], ["android-build"], ["app/src/main/kotlin/payments/AGENTS.md"]],
 ])("%s", (harness, rules, skills, later) => {
   test("the first request: rules, project skills, MCP servers, tokens", async () => {
     const loadout = await loadoutOf(harness, 0);
@@ -60,10 +62,11 @@ describe.each<[HarnessId, string[], string[], string[]]>([
       { name: "github", version: "1.0.0" },
       { name: "jira", version: "1.0.0" },
     ]);
+    const deferred = harness !== "gemini-cli";
     expect(loadout.mcp.tools.map((tool) => [tool.name, tool.deferred])).toEqual([
-      ["create_issue", true],
-      ["list_pulls", true],
-      ["search_issues", true],
+      ["create_issue", deferred],
+      ["list_pulls", deferred],
+      ["search_issues", deferred],
     ]);
     expect(loadout.tokens.byMcpServer["jira"]).toBeGreaterThan(30);
     expect(loadout.tokens.total).toBeGreaterThan(5_000);
@@ -88,6 +91,13 @@ test("Claude Code lists project commands with the skills, and ctxray tells them 
 test("Codex ties each AGENTS.md chunk to its file by canary", async () => {
   const loadout = await loadoutOf("codex", 0);
   expect(Object.values(loadout.provenance).map((entry) => entry.evidence)).toEqual(["canary", "canary"]);
+});
+
+test("Gemini CLI names each context file in its frame, and the servers' instructions count for MCP", async () => {
+  const loadout = await loadoutOf("gemini-cli", 0);
+  expect(Object.values(loadout.provenance).map((entry) => entry.evidence)).toEqual(["marker", "marker"]);
+  expect(loadout.system.map((section) => section.id)).toContain("session-context");
+  expect(loadout.tokens.byComponent.mcp).toBeGreaterThan(loadout.tokens.byMcpServer["jira"] ?? 0);
 });
 
 test("a file sent twice, or two files with one text, show up as duplicates", async () => {

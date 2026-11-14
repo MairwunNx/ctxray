@@ -51,6 +51,12 @@
       }
     }
   },
+  "overrides": [
+    {
+      "includes": ["**/.gemini/settings.json"],
+      "json": { "parser": { "allowComments": true } }
+    }
+  ],
   "markdown": {
     "formatter": {
       "enabled": false

@@ -89,5 +89,41 @@
       "jira": ["search_issues"]
     },
     "commands": []
+  },
+  "payments › context budget › gemini-cli@0.68.0 gemini-2.5-flash": {
+    "system": [
+      "prompt",
+      "core-mandates",
+      "available-sub-agents",
+      "available-agent-skills",
+      "hook-context",
+      "primary-workflows",
+      "operational-guidelines",
+      "outside-of-sandbox",
+      "git-repository",
+      "final-reminder",
+      "session-context"
+    ],
+    "rules": {
+      "AGENTS.md": {
+        "activation": "always",
+        "reason": "cwd"
+      },
+      "app/AGENTS.md": {
+        "activation": "always",
+        "reason": "cwd"
+      }
+    },
+    "skills": {
+      "skill-creator": "builtin",
+      "antigravity-support": "builtin",
+      "android-build": "app/.agents/skills/android-build/SKILL.md"
+    },
+    "loaded": [],
+    "mcp": {
+      "github": ["create_issue", "list_pulls"],
+      "jira": ["search_issues"]
+    },
+    "commands": []
   }
 }

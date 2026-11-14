@@ -1,5 +1,5 @@
 import { defineConfig } from "@mairwunnx/ctxray";
 
 export default defineConfig({
-  harnesses: { "claude-code": {}, codex: {} },
+  harnesses: { "claude-code": {}, codex: {}, "gemini-cli": {} },
 });

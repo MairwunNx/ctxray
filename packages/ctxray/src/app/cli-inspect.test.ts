@@ -42,7 +42,7 @@ test("--json prints the Inspection contract", async () => {
   const { code, stdout } = await run(["--json", "--cwd", "app", "--files", "app/src/main/kotlin/payments/Charge.kt"]);
   expect(code).toBe(0);
   const inspection = Inspection.parse(JSON.parse(stdout));
-  expect(inspection.harnesses.map((harness) => harness.cwd)).toEqual(["app", "app"]);
+  expect(new Set(inspection.harnesses.map((harness) => harness.cwd))).toEqual(new Set(["app"]));
   expect(inspection.harnesses[0]?.problems[0]).toMatchObject({ severity: "warning", key: expect.any(String) });
 });
 

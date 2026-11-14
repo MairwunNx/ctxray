@@ -11,14 +11,17 @@ suite("payments", { fixture: "../payments" }, () => {
     expect(l).toMatchLoadoutSnapshot();
   });
 
-  // L5: the mock model reads a file. Claude Code loads the nested CLAUDE.md, Codex has no path rules.
+  // L5: the mock model reads a file. The nested AGENTS.md loads, through CLAUDE.md's import in Claude Code.
+  // Codex has no path rules.
   test.wire("nested instructions load on read", { requires: ["pathRules"] }, async ({ session }) => {
     await session.model.calls("Read", { path: "app/src/main/kotlin/payments/Charge.kt" });
     const next = await session.nextRequest();
-    expect(next.loadout.rules).toInclude("app/src/main/kotlin/payments/CLAUDE.md");
+    expect(next.loadout.rules).toInclude("app/src/main/kotlin/payments/AGENTS.md");
     expect(next).toAgreeWithResolver();
     // The harness's own stream: Claude Code's init event names the MCP servers it connected.
-    const init = (await session.events()).find((event) => (event as { subtype?: string }).subtype === "init");
-    expect((init as { mcp_servers?: unknown[] } | undefined)?.mcp_servers).toHaveLength(2);
+    await expect.on(["claude-code"], async () => {
+      const init = (await session.events()).find((event) => (event as { subtype?: string }).subtype === "init");
+      expect((init as { mcp_servers?: unknown[] } | undefined)?.mcp_servers).toHaveLength(2);
+    });
   });
 });
