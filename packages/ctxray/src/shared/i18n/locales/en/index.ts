@@ -1,4 +1,4 @@
-import type { Message } from "../../catalog.ts";
+import type { Message } from "#shared/i18n/catalog.ts";
 
 // The source of truth: every other locale must hold exactly these keys.
 export const en = {

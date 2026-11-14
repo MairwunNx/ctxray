@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import type { CaptureMode } from "../../shared/contract/index.ts";
+import type { CaptureMode } from "#shared/contract/index.ts";
 import type { Capability } from "./capability.ts";
 import { checkSupport } from "./profile.ts";
 import { PROFILES } from "./profiles.ts";

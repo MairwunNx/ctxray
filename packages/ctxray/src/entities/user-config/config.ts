@@ -1,5 +1,5 @@
-import type { Backend, HarnessId, HarnessSettings, Network, Policy, UserConfig } from "../../shared/contract/index.ts";
-import { type Env, isOn } from "../../shared/infra/index.ts";
+import type { Backend, HarnessId, HarnessSettings, Network, Policy, UserConfig } from "#shared/contract/index.ts";
+import { type Env, isOn } from "#shared/infra/index.ts";
 
 // The config a run works with: every layer merged, defaults filled in, ctxray's env variables applied.
 export type Config = {

@@ -1,4 +1,4 @@
-import type { Env } from "../infra/index.ts";
+import type { Env } from "#shared/infra/index.ts";
 
 export type RendererKind = "ink" | "plain";
 

@@ -1,5 +1,5 @@
-import type { ExitCode } from "../contract/index.ts";
-import type { MessageKey } from "../i18n/index.ts";
+import type { ExitCode } from "#shared/contract/index.ts";
+import type { MessageKey } from "#shared/i18n/index.ts";
 
 export type OptionSpec = {
   readonly type: "boolean" | "string";

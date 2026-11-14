@@ -1,5 +1,5 @@
-import type { MessageKey, Translate } from "../../../shared/i18n/index.ts";
-import { columns, type Span, span, type View } from "../../../shared/render/index.ts";
+import type { MessageKey, Translate } from "#shared/i18n/index.ts";
+import { columns, type Span, span, type View } from "#shared/render/index.ts";
 import type { InitOutcome, InitStep } from "../init.action.ts";
 import { TEST_PATH } from "../templates.ts";
 

@@ -1,7 +1,7 @@
-import type { Values } from "../shared/cli/index.ts";
-import { CATALOGS, languageOf, resolveLocale } from "../shared/i18n/index.ts";
-import { type Env, isCi } from "../shared/infra/index.ts";
-import { chooseRenderer, type RendererKind } from "../shared/render/index.ts";
+import type { Values } from "#shared/cli/index.ts";
+import { CATALOGS, languageOf, resolveLocale } from "#shared/i18n/index.ts";
+import { type Env, isCi } from "#shared/infra/index.ts";
+import { chooseRenderer, type RendererKind } from "#shared/render/index.ts";
 
 export type Settings = {
   readonly lang: string;

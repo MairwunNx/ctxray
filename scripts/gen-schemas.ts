@@ -1,6 +1,6 @@
 // Writes the published JSON Schemas to dist/schemas, where the release picks them up.
 import { mkdir } from "node:fs/promises";
-import { jsonSchemas } from "../packages/ctxray/src/shared/contract/index.ts";
+import { jsonSchemas } from "#ctxray/shared/contract/index.ts";
 
 const dir = "dist/schemas";
 await mkdir(dir, { recursive: true });

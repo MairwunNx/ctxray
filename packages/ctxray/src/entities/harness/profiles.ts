@@ -1,4 +1,4 @@
-import type { HarnessId } from "../../shared/contract/index.ts";
+import type { HarnessId } from "#shared/contract/index.ts";
 import type { HarnessProfile } from "./profile.ts";
 
 // Verdicts of the stage 0 spikes, one harness each. Update them as the harnesses change.

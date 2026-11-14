@@ -1,9 +1,9 @@
-import { DEFAULT_CONFIG } from "../entities/user-config/index.ts";
-import { type OptionSpecs, type ParseError, parseFlags } from "../shared/cli/index.ts";
-import { ExitCode } from "../shared/contract/index.ts";
-import { CATALOGS, createTranslator, DEFAULT_LANG, type Translate } from "../shared/i18n/index.ts";
-import { type Env, isOn } from "../shared/infra/index.ts";
-import { createRenderer } from "../shared/render/index.ts";
+import { DEFAULT_CONFIG } from "#entities/user-config/index.ts";
+import { type OptionSpecs, type ParseError, parseFlags } from "#shared/cli/index.ts";
+import { ExitCode } from "#shared/contract/index.ts";
+import { CATALOGS, createTranslator, DEFAULT_LANG, type Translate } from "#shared/i18n/index.ts";
+import { type Env, isOn } from "#shared/infra/index.ts";
+import { createRenderer } from "#shared/render/index.ts";
 import { COMMANDS } from "./commands.ts";
 import { type Container, createRunInjector } from "./container.ts";
 import { helpView } from "./help.ts";

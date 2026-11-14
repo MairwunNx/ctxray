@@ -1,10 +1,10 @@
 import { createInjector } from "typed-inject";
-import { type Config, createConfigLoader } from "../entities/user-config/index.ts";
-import { createInitAction } from "../features/init/index.ts";
-import { createShowConfigAction } from "../features/show-config/index.ts";
-import type { Translate } from "../shared/i18n/index.ts";
-import type { Env } from "../shared/infra/index.ts";
-import type { Renderer } from "../shared/render/index.ts";
+import { type Config, createConfigLoader } from "#entities/user-config/index.ts";
+import { createInitAction } from "#features/init/index.ts";
+import { createShowConfigAction } from "#features/show-config/index.ts";
+import type { Translate } from "#shared/i18n/index.ts";
+import type { Env } from "#shared/infra/index.ts";
+import type { Renderer } from "#shared/render/index.ts";
 import type { Settings } from "./settings.ts";
 
 export const createContainer = (env: Env, cwd: string) =>

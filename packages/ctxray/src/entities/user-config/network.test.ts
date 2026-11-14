@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import type { Env } from "../../shared/infra/index.ts";
+import type { Env } from "#shared/infra/index.ts";
 import { type Config, finalizeConfig } from "./config.ts";
 import { resolveNetwork } from "./network.ts";
 

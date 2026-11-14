@@ -1,5 +1,5 @@
-import type { Config } from "../../entities/user-config/index.ts";
-import { createRedactor } from "../../shared/redact/index.ts";
+import type { Config } from "#entities/user-config/index.ts";
+import { createRedactor } from "#shared/redact/index.ts";
 
 export type ShownConfig = { readonly files: readonly string[]; readonly json: string };
 

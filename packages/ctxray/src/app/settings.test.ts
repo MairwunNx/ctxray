@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import type { Values } from "../shared/cli/index.ts";
+import type { Values } from "#shared/cli/index.ts";
 import { resolveSettings, type SettingsSources } from "./settings.ts";
 
 const base: SettingsSources = { values: {}, env: {}, tty: true, intlLocale: "en-US" };

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { MessageKey, Params } from "../../shared/i18n/index.ts";
+import type { MessageKey, Params } from "#shared/i18n/index.ts";
 
 export type ConfigProblem = { readonly key: MessageKey; readonly params: Params };
 

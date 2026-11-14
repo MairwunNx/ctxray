@@ -1,4 +1,4 @@
-import type { OptionSpecs } from "../shared/cli/index.ts";
+import type { OptionSpecs } from "#shared/cli/index.ts";
 
 // Every command accepts these.
 export const GLOBAL_OPTIONS: OptionSpecs = {

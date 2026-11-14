@@ -1,6 +1,6 @@
-import type { CommandSpec, OptionSpec, OptionSpecs } from "../shared/cli/index.ts";
-import { CATALOGS, type Translate } from "../shared/i18n/index.ts";
-import { columns, type Line, span, type View } from "../shared/render/index.ts";
+import type { CommandSpec, OptionSpec, OptionSpecs } from "#shared/cli/index.ts";
+import { CATALOGS, type Translate } from "#shared/i18n/index.ts";
+import { columns, type Line, span, type View } from "#shared/render/index.ts";
 import { MANUAL_URL, VERSION } from "./package-info.ts";
 
 // `-h, --help` and `    --lang <lang>`: long names line up whether or not a short one exists.

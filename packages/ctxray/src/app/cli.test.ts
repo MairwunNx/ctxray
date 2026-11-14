@@ -2,7 +2,7 @@ import { afterAll, describe, expect, test } from "bun:test";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { widthOf } from "../shared/render/index.ts";
+import { widthOf } from "#shared/render/index.ts";
 import { runIn } from "./cli.fixture.ts";
 import { VERSION } from "./package-info.ts";
 

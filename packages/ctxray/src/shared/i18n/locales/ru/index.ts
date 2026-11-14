@@ -1,4 +1,4 @@
-import type { Catalog } from "../../catalog-type.ts";
+import type { Catalog } from "#shared/i18n/catalog-type.ts";
 
 export const ru: Catalog = {
   "count.harnesses": {

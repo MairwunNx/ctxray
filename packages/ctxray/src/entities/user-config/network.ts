@@ -1,4 +1,4 @@
-import type { Env } from "../../shared/infra/index.ts";
+import type { Env } from "#shared/infra/index.ts";
 import type { Config } from "./config.ts";
 
 export type NetworkSettings = {

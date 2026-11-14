@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import type { UserConfig } from "../../shared/contract/index.ts";
+import type { UserConfig } from "#shared/contract/index.ts";
 import { deepMerge, mergeConfigs } from "./merge.ts";
 
 describe("deepMerge", () => {

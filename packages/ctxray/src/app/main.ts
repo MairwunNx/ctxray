@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-import { ExitCode } from "../shared/contract/index.ts";
+import { ExitCode } from "#shared/contract/index.ts";
 import { runCli } from "./cli.ts";
 import { createContainer } from "./container.ts";
 import { registerUserModules } from "./user-modules.ts";

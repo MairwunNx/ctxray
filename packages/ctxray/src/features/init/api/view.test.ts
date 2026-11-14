@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
-import { createTranslator } from "../../../shared/i18n/index.ts";
-import { toPlain, widthOf } from "../../../shared/render/index.ts";
+import { createTranslator } from "#shared/i18n/index.ts";
+import { toPlain, widthOf } from "#shared/render/index.ts";
 import type { InitStep } from "../init.action.ts";
 import { initView } from "./view.ts";
 

@@ -1,4 +1,4 @@
-import type { CaptureMode, HarnessId } from "../../shared/contract/index.ts";
+import type { CaptureMode, HarnessId } from "#shared/contract/index.ts";
 import type { Capability } from "./capability.ts";
 
 // What an adapter declares about its harness. The discovery and launch functions join it in later stages.

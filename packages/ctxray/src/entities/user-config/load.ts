@@ -1,6 +1,6 @@
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
-import { POLICY_CHECKS, type Policy, UserConfig } from "../../shared/contract/index.ts";
-import type { Env } from "../../shared/infra/index.ts";
+import { POLICY_CHECKS, type Policy, UserConfig } from "#shared/contract/index.ts";
+import type { Env } from "#shared/infra/index.ts";
 import { type Config, finalizeConfig } from "./config.ts";
 import { mergeConfigs } from "./merge.ts";
 import { ConfigFailure, type ConfigProblem, fail, issueProblem, zodErrors } from "./problem.ts";

@@ -17,6 +17,13 @@
   "exports": {
     ".": "./src/app/public-api.ts"
   },
+  "imports": {
+    "#app/*": "./src/app/*",
+    "#features/*": "./src/features/*",
+    "#entities/*": "./src/entities/*",
+    "#shared/*": "./src/shared/*",
+    "#package.json": "./package.json"
+  },
   "bin": {
     "ctxray": "./src/app/main.ts"
   },

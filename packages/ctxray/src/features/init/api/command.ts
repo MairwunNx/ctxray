@@ -1,7 +1,7 @@
-import type { CommandSpec, Handler } from "../../../shared/cli/index.ts";
-import { ExitCode } from "../../../shared/contract/index.ts";
-import type { Translate } from "../../../shared/i18n/index.ts";
-import type { Renderer } from "../../../shared/render/index.ts";
+import type { CommandSpec, Handler } from "#shared/cli/index.ts";
+import { ExitCode } from "#shared/contract/index.ts";
+import type { Translate } from "#shared/i18n/index.ts";
+import type { Renderer } from "#shared/render/index.ts";
 import type { InitAction } from "../init.action.ts";
 import { initView } from "./view.ts";
 

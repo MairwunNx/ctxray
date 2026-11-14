@@ -39,7 +39,7 @@ One Bun workspace. `packages/ctxray` is the CLI and the npm package `@mairwunnx/
 | `entities/` | Domain logic two or more features reuse: `harness` (adapter contract and one subfolder per harness), `loadout` (diff, snapshots), `lockfile`, `harness-cache`, `user-config`, `trace` |
 | `shared/` | No ctxray domain: `i18n`, `redact`, `tokens`, `stats`, `render` (Ink and plain), `infra` (fs, process, http, env), and `contract` (the versioned Loadout, Result, and Trace schemas every layer reads) |
 
-Imports go only downward: app → features → entities → shared. Never feature → feature, never entity → entity. Use relative imports with the `.ts` extension. No global barrels.
+Imports go only downward: app → features → entities → shared. Never feature → feature, never entity → entity. Imports keep the `.ts` extension. Another slice or layer comes through its `index.ts` by alias: `#shared/i18n/index.ts`, `#entities/user-config/index.ts` (the `imports` map in `packages/ctxray/package.json`, `#ctxray/*` for root scripts). Inside a slice use `./` or one `../`, never `../../`. No global barrels.
 
 Key concepts, all explained in the wiki: the **Loadout** (everything the agent went into a turn with), the **Loadout Stack** L1 Lint, L2 Policy, L3 Resolve, L4 Assemble, L5 Wire, L6 Activate, L7 Scenario, and the capture **modes** a harness adapter declares: `static` (reads files only), `capture` (ctxray launches the harness and records requests through its proxy), `observe` (the user works, ctxray records through hooks).
 

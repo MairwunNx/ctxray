@@ -1,4 +1,4 @@
-import type { Policy, UserConfig } from "../../shared/contract/index.ts";
+import type { Policy, UserConfig } from "#shared/contract/index.ts";
 
 type Plain = Record<string, unknown>;
 
