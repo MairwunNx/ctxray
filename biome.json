@@ -27,6 +27,19 @@
       "preset": "recommended",
       "complexity": {
         "useLiteralKeys": "off"
+      },
+      "style": {
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "patterns": [
+              {
+                "group": ["../../**"],
+                "message": "Import another slice through its alias, like #shared/i18n/index.ts."
+              }
+            ]
+          }
+        }
       }
     }
   },
