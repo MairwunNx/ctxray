@@ -112,6 +112,7 @@ export const createSession = (capture: Capture, scope: CellScope, request: Sessi
       const session = await opened;
       const result = await session.harness.end();
       const egress = session.egress().filter((host) => !session.adapter.probes?.includes(host));
+      await session.close();
       if (egress.length > 0) {
         fail("capture.egress", { harness: scope.harness, hosts: [...new Set(egress)].join(", ") }, [
           { label: "capture.trace", value: session.trace },

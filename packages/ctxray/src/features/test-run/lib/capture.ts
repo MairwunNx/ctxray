@@ -29,18 +29,20 @@ export type OpenSession = {
   adapter: CaptureAdapter;
   model: string;
   trace: string;
-  egress: () => readonly string[]; // connections the harness tried past ctxray during this session
+  egress: () => readonly string[]; // connections this harness tried past ctxray
+  close: () => Promise<void>; // stops the session's egress guard
 };
 
 const PROXY_VARIABLES = ["HTTPS_PROXY", "HTTP_PROXY", "ALL_PROXY", "NO_PROXY"];
 const both = (name: string, value: string) => ({ [name]: value, [name.toLowerCase()]: value });
 
-// The proxy and the egress guard live for the whole run, each harness session gets its own prefix and trace.
+// The proxy lives for the whole run, each harness session gets its own prefix, trace, and egress guard: sessions
+// run side by side, and a guard of their own tells which harness tried to get past ctxray.
 export const createCapture = ({ config, env, self, binaries }: CaptureDeps) => {
   const traceDir = join(tmpdir(), `ctxray-traces-${crypto.randomUUID().slice(0, 8)}`);
   const redactor = createRedactor(config.redact.patterns);
   const network = resolveNetwork(config, env);
-  let resources: Promise<{ proxy: ReturnType<typeof startProxy>; guard: Awaited<ReturnType<typeof startEgressGuard>> }>;
+  let proxy: ReturnType<typeof startProxy> | undefined;
   let count = 0;
   // Remote MCP servers go out the way the user's own tools do: their proxy and their CA certificates.
   let egress: Egress;
@@ -85,17 +87,17 @@ export const createCapture = ({ config, env, self, binaries }: CaptureDeps) => {
     const binary =
       (await binaries(scope.harness)) ??
       fail("capture.notInstalled", { harness: scope.harness, binary: adapter.binary });
-    resources ??= (async () => ({ proxy: startProxy(), guard: await startEgressGuard() }))();
-    const { proxy, guard } = await resources;
+    const server = (proxy ??= startProxy());
+    const guard = await startEgressGuard();
     egress ??= await egressOf(network);
     caFile ??= await caFileOf();
     const trace = join(traceDir, `${scope.harness}-${++count}.jsonl`);
     const writer = createTraceWriter(trace, redactor);
     const conversation = createConversation(writer.write);
-    const prefix = proxy.open(conversation.handler);
+    const prefix = server.open(conversation.handler);
     const settings = config.harnesses[scope.harness];
     const model = settings?.model ?? adapter.defaultModel;
-    const seen = guard.attempts().length;
+    // A harness that fails to start takes its guard down with it.
     const harness = await startSession({
       adapter,
       binary,
@@ -117,23 +119,23 @@ export const createCapture = ({ config, env, self, binaries }: CaptureDeps) => {
       },
       mcp: { self, shimEnv: caFile ? { ...shimEnv, env: { ...shimEnv.env, NODE_EXTRA_CA_CERTS: caFile } } : shimEnv },
       port: { ...conversation, baseUrl: prefix.baseUrl, close: prefix.close },
-      remoteMcp: (target, onMessage) => proxy.openMcp(target, egress, onMessage),
+      remoteMcp: (target, onMessage) => server.openMcp(target, egress, onMessage),
       timeout: 60_000,
       user:
         config.harnesses[scope.harness]?.userScope === "inherit"
           ? { home: env["HOME"] ?? "", env, project: scope.workspace.root }
           : undefined,
+    }).catch(async (error: unknown) => {
+      await guard.stop();
+      throw error;
     });
     // The provider changes the payload too, so it joins the model in the snapshot key: `anthropic/claude-…`.
     const label = settings?.provider ? `${settings.provider}/${model}` : model;
-    return { harness, adapter, model: label, trace, egress: () => guard.attempts().slice(seen) };
+    return { harness, adapter, model: label, trace, egress: guard.attempts, close: guard.stop };
   };
 
   const stop = async (keepTraces: boolean) => {
-    if (resources) {
-      const { proxy, guard } = await resources;
-      await Promise.all([proxy.stop(), guard.stop()]);
-    }
+    await proxy?.stop();
     if (!keepTraces) await rm(traceDir, { recursive: true, force: true });
     for (const copy of copies.values()) {
       await copy.then(({ work }) => rm(dirname(work), { recursive: true, force: true })).catch(() => {});

@@ -55,22 +55,35 @@ const skillsOf = (text: string, work: string): Segment[] => {
   ];
 };
 
+// The session's surroundings: the machine, git status when the tree has changes, past chats. One section, so
+// a clean tree and a changed one name the same pieces.
+const ENVIRONMENT = new Set(["user_info", "git_status", "agent_transcripts"]);
+
 // The first user message: the session's facts, the rules, the skill listing, and the MCP catalogue.
-const contextOf = (text: string, work: string): Segment[] =>
-  [...text.matchAll(BLOCK)].flatMap(([whole, tag = ""]): Segment[] => {
-    if (tag === "rules") return rulesOf(whole, work);
-    if (tag === "agent_skills") return skillsOf(whole, work);
-    if (tag === "mcp_server_catalog") {
-      const servers = [...whole.matchAll(SERVER)].map(([one, name = ""]) => ({
-        component: "mcp" as const,
-        id: name,
-        text: one,
-      }));
-      return [...servers, { component: "system", id: "mcp-catalog", text: whole.replace(SERVER, "") }];
-    }
-    if (tag === "user_query") return [{ component: "messages", id: "user", text: whole }];
-    return [{ component: "system", id: slug(tag), text: whole }];
-  });
+const contextOf = (text: string, work: string): Segment[] => {
+  const blocks = [...text.matchAll(BLOCK)];
+  const environment = blocks.filter(([, tag = ""]) => ENVIRONMENT.has(tag)).map(([whole]) => whole);
+  const rest = blocks.filter(([, tag = ""]) => !ENVIRONMENT.has(tag));
+  return [
+    ...(environment.length > 0
+      ? [{ component: "system" as const, id: "environment", text: environment.join("\n\n") }]
+      : []),
+    ...rest.flatMap(([whole, tag = ""]): Segment[] => {
+      if (tag === "rules") return rulesOf(whole, work);
+      if (tag === "agent_skills") return skillsOf(whole, work);
+      if (tag === "mcp_server_catalog") {
+        const servers = [...whole.matchAll(SERVER)].map(([one, name = ""]) => ({
+          component: "mcp" as const,
+          id: name,
+          text: one,
+        }));
+        return [...servers, { component: "system", id: "mcp-catalog", text: whole.replace(SERVER, "") }];
+      }
+      if (tag === "user_query") return [{ component: "messages", id: "user", text: whole }];
+      return [{ component: "system", id: slug(tag), text: whole }];
+    }),
+  ];
+};
 
 // A read's result: the file, then the rules and skills that apply to it.
 const resultOf = (text: string, work: string): Segment[] => {

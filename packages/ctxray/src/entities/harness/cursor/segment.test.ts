@@ -60,7 +60,7 @@ test("the context message, a read's rules and skills, and the tools", () => {
   expect(segments.map((segment) => `${segment.component} ${segment.id}`)).toEqual([
     "system prompt",
     "system tone-and-style",
-    "system user-info",
+    "system environment",
     "rules AGENTS.md",
     "rules .cursor/rules/db.mdc",
     "system rules-instructions",

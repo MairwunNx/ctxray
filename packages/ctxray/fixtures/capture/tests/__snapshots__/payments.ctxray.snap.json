@@ -56,13 +56,26 @@
     },
     "loaded": [],
     "mcp": {
-      "github": ["create_issue", "list_pulls"],
-      "jira": ["search_issues"]
+      "github": [
+        "create_issue",
+        "list_pulls"
+      ],
+      "jira": [
+        "search_issues"
+      ]
     },
-    "commands": ["changelog"]
+    "commands": [
+      "changelog"
+    ]
   },
   "payments › context budget › codex@0.169.0 gpt-5.5": {
-    "system": ["prompt", "skills-instructions", "permissions-instructions", "agents-md-header", "environment-context"],
+    "system": [
+      "prompt",
+      "skills-instructions",
+      "permissions-instructions",
+      "agents-md-header",
+      "environment-context"
+    ],
     "rules": {
       "AGENTS.md": {
         "activation": "always",
@@ -85,8 +98,13 @@
     },
     "loaded": [],
     "mcp": {
-      "github": ["create_issue", "list_pulls"],
-      "jira": ["search_issues"]
+      "github": [
+        "create_issue",
+        "list_pulls"
+      ],
+      "jira": [
+        "search_issues"
+      ]
     },
     "commands": []
   },
@@ -101,8 +119,7 @@
       "terminal-files-information",
       "task-management",
       "mode-selection",
-      "user-info",
-      "agent-transcripts",
+      "environment",
       "rules-instructions",
       "skills-instructions",
       "mcp-catalog"
@@ -130,8 +147,13 @@
     },
     "loaded": [],
     "mcp": {
-      "github": ["create_issue", "list_pulls"],
-      "jira": ["search_issues"]
+      "github": [
+        "create_issue",
+        "list_pulls"
+      ],
+      "jira": [
+        "search_issues"
+      ]
     },
     "commands": []
   },
@@ -166,8 +188,13 @@
     },
     "loaded": [],
     "mcp": {
-      "github": ["create_issue", "list_pulls"],
-      "jira": ["search_issues"]
+      "github": [
+        "create_issue",
+        "list_pulls"
+      ],
+      "jira": [
+        "search_issues"
+      ]
     },
     "commands": []
   },
@@ -202,8 +229,13 @@
     },
     "loaded": [],
     "mcp": {
-      "github": ["create_issue", "list_pulls"],
-      "jira": ["search_issues"]
+      "github": [
+        "create_issue",
+        "list_pulls"
+      ],
+      "jira": [
+        "search_issues"
+      ]
     },
     "commands": []
   }
