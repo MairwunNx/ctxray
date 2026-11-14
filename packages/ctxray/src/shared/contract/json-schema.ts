@@ -3,6 +3,7 @@ import { RegExpValue, UserConfig } from "./config.ts";
 import { Inspection } from "./inspection.ts";
 import { LoadoutSnapshot } from "./loadout.ts";
 import { Session } from "./session.ts";
+import { Exchange } from "./trace.ts";
 
 const BASE = "https://github.com/MairwunNx/ctxray/releases/latest/download";
 export const CONFIG_SCHEMA_URL = `${BASE}/config.schema.json`;
@@ -13,6 +14,7 @@ const documents = {
   loadout: { schema: LoadoutSnapshot, io: "output" },
   session: { schema: Session, io: "output" },
   inspection: { schema: Inspection, io: "output" },
+  exchange: { schema: Exchange, io: "output" }, // one line of a trace file
 } as const;
 
 export type JsonSchemaDocument = { $id: string; $schema?: string; [key: string]: unknown };

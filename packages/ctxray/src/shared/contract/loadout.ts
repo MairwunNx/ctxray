@@ -14,6 +14,7 @@ export const SystemSection = z.object({
   title: z.string().optional(),
   tokens,
 });
+export type SystemSection = z.infer<typeof SystemSection>;
 
 export const RuleEntry = z.object({
   path: z.string().describe("Path relative to the project root"),
@@ -23,12 +24,22 @@ export const RuleEntry = z.object({
 });
 export type RuleEntry = z.infer<typeof RuleEntry>;
 
-export const SkillEntry = z.object({ name: z.string(), path: z.string(), tokens });
+export const SkillEntry = z.object({
+  name: z.string(),
+  path: z.string().describe("Its SKILL.md relative to the project root, empty for the harness's own skills"),
+  builtin: z.boolean().optional().describe("Shipped with the harness, not found in the project"),
+  tokens,
+});
 export type SkillEntry = z.infer<typeof SkillEntry>;
 
 export const McpServer = z.object({ name: z.string(), version: z.string().optional() });
 export type McpServer = z.infer<typeof McpServer>;
-export const McpTool = z.object({ server: z.string(), name: z.string(), tokens });
+export const McpTool = z.object({
+  server: z.string(),
+  name: z.string(),
+  deferred: z.boolean().optional().describe("Listed by name only: the schema loads when the model asks for it"),
+  tokens: tokens.describe("Tokens of its name, description, and schema, as they load"),
+});
 export type McpTool = z.infer<typeof McpTool>;
 
 export const CommandEntry = z.object({ name: z.string(), path: z.string().optional() });
@@ -37,7 +48,9 @@ export type CommandEntry = z.infer<typeof CommandEntry>;
 export const TokenSummary = z.object({
   total: tokens,
   byComponent: z.partialRecord(Component, tokens),
-  byMcpServer: z.record(z.string(), tokens),
+  byMcpServer: z
+    .record(z.string(), tokens)
+    .describe("What each MCP server costs once its tools load: schemas and instructions, deferred or not"),
   exact: z.boolean().describe("True only when a provider counted the tokens; false for any local estimate"),
   method: z.string().describe("`provider:<api>` or `local:<tokenizer>`"),
 });
