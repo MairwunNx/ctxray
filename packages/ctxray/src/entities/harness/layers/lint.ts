@@ -1,9 +1,11 @@
 import { realpath } from "node:fs/promises";
 import { join } from "node:path";
+import { DEFAULT_LIMITS, MEASURES, type Measure, type ResolvedLimits, type SizeKind } from "#shared/contract/index.ts";
 import { type GlobProblem, globProblem } from "#shared/glob/index.ts";
 import type { MessageKey } from "#shared/i18n/index.ts";
 import { inParallel } from "#shared/infra/index.ts";
 import { findLinks } from "#shared/markdown/index.ts";
+import { countTokens } from "#shared/tokens/index.ts";
 import { type Inventory, type Problem, problem } from "../inventory.ts";
 import { dirOf, joinPath, type Project } from "../project.ts";
 
@@ -57,25 +59,33 @@ const duplicateText = async (project: Project, inventory: Inventory): Promise<Pr
   });
 };
 
-// Sizes past which a file works against its harness. Anthropic's skill guide asks for a SKILL.md under 500
-// lines, and Claude Code warns about an instruction file over 40,000 characters.
-const SKILL_LINES = 500;
-const INSTRUCTION_CHARS = 40_000;
+const measureOf: Record<Measure, (text: string) => number> = {
+  lines: (text) => text.split("\n").length,
+  chars: (text) => text.length,
+  tokens: (text) => countTokens(text),
+};
 
-const lineCount = (text: string) => text.split("\n").length;
-
-const tooLong = (inventory: Inventory): Problem[] => [
-  ...[...inventory.skills, ...inventory.commands].flatMap(({ path, body }) =>
-    lineCount(body) > SKILL_LINES
-      ? [problem("lint.longBody", "warning", path, { lines: lineCount(body), limit: SKILL_LINES })]
-      : [],
-  ),
-  ...inventory.instructions.flatMap(({ path, text }) =>
-    text.length > INSTRUCTION_CHARS
-      ? [problem("lint.longInstructions", "warning", path, { size: text.length, limit: INSTRUCTION_CHARS })]
-      : [],
-  ),
-];
+// The configured size limits: an error over the hard limit, else a warning over the soft one.
+const oversized = (inventory: Inventory, limits: ResolvedLimits): Problem[] => {
+  const items: { kind: SizeKind; path: string; text: string }[] = [
+    ...inventory.skills.map(({ path, body }) => ({ kind: "skill" as const, path, text: body })),
+    ...inventory.commands.map(({ path, body }) => ({ kind: "command" as const, path, text: body })),
+    ...inventory.instructions.map(({ path, text }) => ({ kind: "instruction" as const, path, text })),
+  ];
+  return items.flatMap(({ kind, path, text }) =>
+    MEASURES.flatMap((measure) => {
+      const { warning, error } = limits[kind][measure];
+      if (warning === undefined && error === undefined) return [];
+      const size = measureOf[measure](text);
+      if (error !== undefined && size > error)
+        return [problem(`size.${measure}`, "error", path, { count: size, limit: error })];
+      if (warning !== undefined && size > warning) {
+        return [problem(`size.${measure}`, "warning", path, { count: size, limit: warning })];
+      }
+      return [];
+    }),
+  );
+};
 
 const documents = (inventory: Inventory) => [
   ...inventory.instructions.map(({ path, text }) => ({ path, text })),
@@ -101,11 +111,15 @@ const brokenLinks = async (project: Project, inventory: Inventory): Promise<Prob
   (await inParallel(documents(inventory), (document) => linksOf(project, document))).flat();
 
 // L1: the files are valid. Everything here reads files only and never needs the harness.
-export const lint = async (project: Project, inventory: Inventory): Promise<Problem[]> => [
+export const lint = async (
+  project: Project,
+  inventory: Inventory,
+  limits: ResolvedLimits = DEFAULT_LIMITS,
+): Promise<Problem[]> => [
   ...inventory.problems,
   ...badGlobs(inventory),
   ...skillNames(inventory),
   ...(await duplicateText(project, inventory)),
-  ...tooLong(inventory),
+  ...oversized(inventory, limits),
   ...(await brokenLinks(project, inventory)),
 ];

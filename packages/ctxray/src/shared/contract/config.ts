@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { HarnessId } from "./harness.ts";
+import { Limits } from "./limits.ts";
 import type { Component } from "./loadout.ts";
 
 // Custom issues carry a catalog key in `params.key`, so the CLI shows them in the user's language.
@@ -49,17 +50,13 @@ const TokenLimits = z.strictObject({
 } satisfies Record<Component | "total", unknown>);
 
 // A file may only adjust an inherited policy, like its severity, so "checks something" holds after the merge.
-export const POLICY_CHECKS = ["maxTokens", "maxTokensEach", "denyMcp", "requireMcp", "requireFiles"] as const;
-
-// A limit for every single file of a kind: a rule as it loads, a skill's or command's body as it loads on use.
-const EachLimits = z.strictObject({ rule: limit, skill: limit, command: limit });
+export const POLICY_CHECKS = ["maxTokens", "denyMcp", "requireMcp", "requireFiles"] as const;
 
 export const Policy = z.strictObject({
   id: z.string().min(1).describe("Unique name: a project policy with an inherited id replaces its fields"),
   severity: z.enum(["error", "warning"]).optional().describe("`warning` reports without failing, `error` by default"),
   harnesses: z.array(HarnessId).optional().describe("Harnesses the policy applies to, all by default"),
   maxTokens: TokenLimits.optional().describe("Token limits, in total and per component"),
-  maxTokensEach: EachLimits.optional().describe("Token limits for each rule, skill, and command on its own"),
   denyMcp: z.array(z.string()).optional().describe("MCP servers that must not be configured"),
   requireMcp: z.array(z.string()).optional().describe("MCP servers that must be configured"),
   requireFiles: z.array(z.string()).optional().describe("Files that must exist, relative to the project root"),
@@ -104,6 +101,7 @@ export const UserConfig = z
       .describe("Don't warn when the harnesses of a run get different instructions or skills"),
     policies: z.array(Policy).refine(uniqueIds, issue("config.duplicatePolicy")).optional(),
     redact: z.strictObject({ patterns: z.array(RedactPattern).optional() }).optional(),
+    limits: Limits.optional(),
     reporters: z.array(Reporter).optional(),
     lang: z.string().optional().describe("CLI language: `auto`, `en`, or `ru`"),
     report: z.strictObject({ langs: z.array(z.string()).optional() }).optional(),

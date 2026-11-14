@@ -52,7 +52,9 @@ export const createTestRunAction =
     const capture = createCapture({ config, env, self });
     const context = { root, workspaces, snapshots, capture };
 
-    const results = await runChecks(repository, selection.harnesses, config.policies, selection.layers, {
+    const results = await runChecks(repository, selection.harnesses, selection.layers, {
+      policies: config.policies,
+      limits: config.limits,
       differences,
     });
     results.push(...(await runContextChecks(repository, selection, capture, config.policies, env)));

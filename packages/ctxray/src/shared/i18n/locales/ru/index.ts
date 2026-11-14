@@ -118,11 +118,26 @@ export const ru: Catalog = {
     other:
       "{harness} не видит здесь {count} скилла, и копий у него нет, поэтому ИИ-харнессы получают разные скиллы. Читает только {by}",
   },
-  "lint.longBody":
-    "{lines} строк при рекомендованных {limit} для скилла или команды: разделите его или вынесите детали в файлы со ссылками",
-  "lint.longInstructions": "{size} символов, больше {limit}, после которых Claude Code предупреждает о замедлении",
   "lint.skillFolderName":
     "Скилл называет себя «{name}», а папка у него «{folder}»: Claude Code покажет его как {folder}, Codex и Cursor — как {name}. Назовите папку по имени скилла",
+  "size.lines": {
+    one: "{count} строка при лимите {limit}",
+    few: "{count} строки при лимите {limit}",
+    many: "{count} строк при лимите {limit}",
+    other: "{count} строки при лимите {limit}",
+  },
+  "size.chars": {
+    one: "{count} символ при лимите {limit}",
+    few: "{count} символа при лимите {limit}",
+    many: "{count} символов при лимите {limit}",
+    other: "{count} символа при лимите {limit}",
+  },
+  "size.tokens": {
+    one: "{count} токен при лимите {limit}",
+    few: "{count} токена при лимите {limit}",
+    many: "{count} токенов при лимите {limit}",
+    other: "{count} токена при лимите {limit}",
+  },
   "lint.ruleField": "Claude Code читает в правиле только «paths», «{field}» ничего не делает",
   "lint.tooLarge": "Файл больше {limit}, Claude Code пропускает его целиком",
   "lint.importMissing": "@{target} ссылается на файл, которого нет",
@@ -150,7 +165,6 @@ export const ru: Catalog = {
   "resolve.deadPattern": "Ни один файл репозитория не подходит под {pattern}",
   "policy.needsCapture":
     "Лимит на {component} проверяется только на настоящем прогоне, статически эти токены не известны",
-  "policy.itemOverBudget": "{path}: {tokens} токенов при лимите {limit} на один элемент ({kind})",
   "policy.overBudget": "{component}: {tokens} токенов при лимите {limit}",
   "policy.missingFile": "Нет файла {path}",
   "policy.deniedMcp": "MCP-сервер «{name}» запрещён",

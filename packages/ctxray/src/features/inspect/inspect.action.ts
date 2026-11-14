@@ -14,7 +14,7 @@ import {
   type StaticAdapter,
 } from "#entities/harness/index.ts";
 import type { Config } from "#entities/user-config/index.ts";
-import type { HarnessId } from "#shared/contract/index.ts";
+import type { HarnessId, ResolvedLimits } from "#shared/contract/index.ts";
 import { type InspectedHarness, toInspection } from "./inspection.ts";
 
 export type InspectRequest = {
@@ -58,8 +58,9 @@ const inspectOne = async (
   inventory: Inventory,
   scope: Scope,
   unread: readonly Problem[],
+  limits: ResolvedLimits,
 ): Promise<InspectedHarness> => {
-  const problems = [...(await lint(project, inventory)), ...findDeadRules(project, inventory), ...unread];
+  const problems = [...(await lint(project, inventory, limits)), ...findDeadRules(project, inventory), ...unread];
   return toInspection(adapter.resolve(inventory, scope), inventory, scope, problems.toSorted(byPlace));
 };
 
@@ -88,7 +89,7 @@ export const createInspectAction =
     );
     const harnesses = await Promise.all(
       readable.map(({ id, adapter }, index) =>
-        inspectOne(project, adapter, inventories[index] as Inventory, scope, unread[id] ?? []),
+        inspectOne(project, adapter, inventories[index] as Inventory, scope, unread[id] ?? [], config.limits),
       ),
     );
     return { root, scope, harnesses, unsupported: ids.filter((id) => !STATIC_ADAPTERS[id]) };

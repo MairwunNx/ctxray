@@ -106,11 +106,17 @@ export const en = {
     other:
       "{harness} doesn't see {count} skills here and has no copies of them, so the harnesses get different skills. Only {by} reads them",
   },
-  "lint.longBody":
-    "{lines} lines, past the {limit} a skill or command should stay under: split it, or move details to files it links",
-  "lint.longInstructions": "{size} characters, past the {limit} after which Claude Code warns it slows down",
   "lint.skillFolderName":
     "The skill calls itself “{name}” in a folder named “{folder}”: Claude Code lists it as {folder}, Codex and Cursor as {name}. Name the folder after the skill",
+  "size.lines": { one: "{count} line, over the limit of {limit}", other: "{count} lines, over the limit of {limit}" },
+  "size.chars": {
+    one: "{count} character, over the limit of {limit}",
+    other: "{count} characters, over the limit of {limit}",
+  },
+  "size.tokens": {
+    one: "{count} token, over the limit of {limit}",
+    other: "{count} tokens, over the limit of {limit}",
+  },
   "lint.ruleField": "Claude Code reads only “paths” in a rule, “{field}” does nothing",
   "lint.tooLarge": "The file is over {limit}, so Claude Code skips all of it",
   "lint.importMissing": "@{target} points to a file that doesn't exist",
@@ -137,7 +143,6 @@ export const en = {
   "resolve.deadRule": "No file in the repository matches {patterns}, so the rule never loads",
   "resolve.deadPattern": "No file in the repository matches {pattern}",
   "policy.needsCapture": "The {component} limit needs a real run, a static view doesn't know these tokens",
-  "policy.itemOverBudget": "{path}: {tokens} tokens, past the limit of {limit} for one {kind}",
   "policy.overBudget": "{component}: {tokens} tokens, the limit is {limit}",
   "policy.missingFile": "{path} is missing",
   "policy.deniedMcp": "MCP server “{name}” isn't allowed",

@@ -21,6 +21,16 @@ export {
 } from "./inspection.ts";
 export { CONFIG_SCHEMA_URL, jsonSchemas } from "./json-schema.ts";
 export {
+  DEFAULT_LIMITS,
+  Limits,
+  MEASURES,
+  type Measure,
+  type ResolvedLimits,
+  resolveLimits,
+  SIZE_KINDS,
+  type SizeKind,
+} from "./limits.ts";
+export {
   CommandEntry,
   Component,
   LOADOUT_SCHEMA_VERSION,

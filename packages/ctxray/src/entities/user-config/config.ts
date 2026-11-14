@@ -1,4 +1,13 @@
-import type { Backend, HarnessId, HarnessSettings, Network, Policy, UserConfig } from "#shared/contract/index.ts";
+import {
+  type Backend,
+  type HarnessId,
+  type HarnessSettings,
+  type Network,
+  type Policy,
+  type ResolvedLimits,
+  resolveLimits,
+  type UserConfig,
+} from "#shared/contract/index.ts";
 import { type Env, isOn } from "#shared/infra/index.ts";
 
 // The config a run works with: every layer merged, defaults filled in, ctxray's env variables applied.
@@ -13,6 +22,7 @@ export type Config = {
   readonly ignoreHarnessDifferences: boolean;
   readonly policies: readonly Policy[];
   readonly redact: { readonly patterns: readonly RegExp[] };
+  readonly limits: ResolvedLimits;
   readonly reporters: readonly string[];
   readonly lang: string;
   readonly reportLangs: readonly string[] | undefined;
@@ -37,6 +47,7 @@ export const finalizeConfig = (merged: UserConfig, env: Env, files: readonly str
       isOn(env["CTXRAY_IGNORE_HARNESS_DIFFERENCES"]) || merged.ignoreHarnessDifferences === true,
     policies: merged.policies ?? [],
     redact: { patterns: merged.redact?.patterns ?? [] },
+    limits: resolveLimits(merged.limits),
     reporters: merged.reporters ?? ["console"],
     lang: merged.lang ?? "auto",
     reportLangs: merged.report?.langs,

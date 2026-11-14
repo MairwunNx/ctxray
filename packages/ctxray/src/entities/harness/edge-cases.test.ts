@@ -2,7 +2,7 @@ import { afterAll, describe, expect, test } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
-import type { HarnessId } from "#shared/contract/index.ts";
+import { type HarnessId, resolveLimits } from "#shared/contract/index.ts";
 import { STATIC_ADAPTERS } from "./adapters.ts";
 import { lint } from "./layers/lint.ts";
 import { chainTo, matchingGlob, openProject, parentDirs } from "./project.ts";
@@ -126,5 +126,25 @@ describe("codex", () => {
     const config = { ".codex/config.toml": "project_doc_max_bytes = 20" };
     const { problems } = await analyse("codex", { ...config, "AGENTS.md": top, "a/AGENTS.md": nested });
     expect(problems).toEqual([expected]);
+  });
+});
+
+describe("size limits", () => {
+  const skill = `---\nname: big\ndescription: Big.\n---\n${"Step.\n".repeat(6)}`;
+  test.each<[string, Parameters<typeof resolveLimits>[0], string[]]>([
+    ["the defaults stay quiet on a short skill", undefined, []],
+    ["a soft limit warns", { skill: { lines: { warning: 3 } } }, ["warning size.lines .claude/skills/big/SKILL.md"]],
+    [
+      "a hard limit fails, over the soft one",
+      { skill: { lines: { warning: 3, error: 5 }, tokens: { warning: 2 } } },
+      ["error size.lines .claude/skills/big/SKILL.md", "warning size.tokens .claude/skills/big/SKILL.md"],
+    ],
+    ["a kind turned off says nothing", { skill: false }, []],
+  ])("%s", async (_, limits, expected) => {
+    const opened = await project({ ".claude/skills/big/SKILL.md": skill });
+    const inventory = await STATIC_ADAPTERS["claude-code"]?.discover(opened);
+    if (!inventory) throw new Error("claude-code");
+    const found = await lint(opened, inventory, resolveLimits(limits));
+    expect(found.map((item) => `${item.severity} ${item.key} ${item.path}`)).toEqual(expected);
   });
 });

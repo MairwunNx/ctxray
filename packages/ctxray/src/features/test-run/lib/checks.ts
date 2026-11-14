@@ -8,7 +8,7 @@ import {
   type ReachOptions,
   STATIC_ADAPTERS,
 } from "#entities/harness/index.ts";
-import type { HarnessId, Layer, Policy } from "#shared/contract/index.ts";
+import type { HarnessId, Layer, Policy, ResolvedLimits } from "#shared/contract/index.ts";
 import type { CellResult } from "./run.ts";
 import type { Workspace } from "./scope.ts";
 
@@ -27,12 +27,17 @@ const checkResult = (harness: HarnessId, layer: Layer, check: "lint" | "policy",
 
 // L1 without a single test: the files of every harness parse, link, and name things right. Errors fail it,
 // warnings and dead rules show up under it without failing.
-const lintOne = async (workspace: Workspace, harness: HarnessId, unread: readonly Problem[]): Promise<CellResult> => {
+const lintOne = async (
+  workspace: Workspace,
+  harness: HarnessId,
+  unread: readonly Problem[],
+  limits: ResolvedLimits,
+): Promise<CellResult> => {
   const base = checkResult(harness, "L1", "lint", "");
   if (!STATIC_ADAPTERS[harness]) return { ...base, attempts: 0, status: "skipped", reason: "unavailable" };
   const inventory = await workspace.inventoryOf(harness);
   const problems = [
-    ...(await lint(workspace.project, inventory)),
+    ...(await lint(workspace.project, inventory, limits)),
     ...findDeadRules(workspace.project, inventory),
     ...unread,
   ];
@@ -59,7 +64,7 @@ const policiesOf = async (workspace: Workspace, harness: HarnessId, policies: re
   }
   const inventory = await workspace.inventoryOf(harness);
   const loadout = adapter.resolve(inventory, { cwd: "", files: [] });
-  const outcomes = await checkPolicies(covered, workspace.project, loadout, inventory);
+  const outcomes = await checkPolicies(covered, workspace.project, loadout);
   // A policy with only limits that need a run, like `total`, belongs to the L4 starting context check.
   const here = outcomes.filter((outcome) => outcome.status !== "skipped" || outcome.skipped.length === 0);
   return here.map((outcome): CellResult => {
@@ -74,21 +79,23 @@ const policiesOf = async (workspace: Workspace, harness: HarnessId, policies: re
   });
 };
 
+// What the config says about L1 and L2: the policies, the size limits, and whether harness differences count.
+export type CheckSettings = { policies: readonly Policy[]; limits: ResolvedLimits } & ReachOptions;
+
 export const runChecks = async (
   workspace: Workspace,
   harnesses: readonly HarnessId[],
-  policies: readonly Policy[],
   layers: ReadonlySet<Layer>,
-  reach: ReachOptions = { differences: true },
+  { policies, limits, differences }: CheckSettings,
 ): Promise<CellResult[]> => {
   // What none of the run's harnesses reads is checked across them, then reported under each that misses it.
   const readable = harnesses.filter((harness) => STATIC_ADAPTERS[harness]);
   const inventories: Partial<Record<HarnessId, Inventory>> = Object.fromEntries(
     await Promise.all(readable.map(async (harness) => [harness, await workspace.inventoryOf(harness)])),
   );
-  const unread = await checkReach(workspace.project, inventories, reach);
+  const unread = await checkReach(workspace.project, inventories, { differences });
   const lints = layers.has("L1")
-    ? await Promise.all(harnesses.map((harness) => lintOne(workspace, harness, unread[harness] ?? [])))
+    ? await Promise.all(harnesses.map((harness) => lintOne(workspace, harness, unread[harness] ?? [], limits)))
     : [];
   const checked = layers.has("L2")
     ? await Promise.all(harnesses.map((harness) => policiesOf(workspace, harness, policies)))
