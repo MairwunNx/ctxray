@@ -1,5 +1,16 @@
-export { STATIC_ADAPTERS, type StaticAdapter } from "./adapters.ts";
+export { CAPTURE_ADAPTERS, STATIC_ADAPTERS, type StaticAdapter } from "./adapters.ts";
 export { CAPABILITIES, type Capability } from "./capability.ts";
+export { canariesIn } from "./capture/canary.ts";
+export { buildLoadout, type LoadoutInput } from "./capture/loadout.ts";
+export type { CaptureAdapter, Intent, Segment } from "./capture/model.ts";
+export {
+  HarnessExit,
+  type HarnessSession,
+  type ModelPort,
+  type SessionOptions,
+  type SessionResult,
+  startSession,
+} from "./capture/session.ts";
 export type { Command, Instruction, Inventory, McpDeclaration, Problem, Severity, Skill } from "./inventory.ts";
 export { findDeadRules } from "./layers/dead-rules.ts";
 export { lint } from "./layers/lint.ts";

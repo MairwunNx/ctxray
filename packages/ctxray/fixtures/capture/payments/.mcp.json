@@ -1,0 +1,6 @@
+{
+  "mcpServers": {
+    "github": { "command": "sh", "args": ["-c", "exec bun \"$(git rev-parse --show-toplevel)/mcp/server.ts\" github"] },
+    "jira": { "command": "sh", "args": ["-c", "exec bun \"$(git rev-parse --show-toplevel)/mcp/server.ts\" jira"] }
+  }
+}

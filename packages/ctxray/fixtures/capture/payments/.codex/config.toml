@@ -1,0 +1,7 @@
+[mcp_servers.github]
+command = "sh"
+args = ["-c", "exec bun \"$(git rev-parse --show-toplevel)/mcp/server.ts\" github"]
+
+[mcp_servers.jira]
+command = "sh"
+args = ["-c", "exec bun \"$(git rev-parse --show-toplevel)/mcp/server.ts\" jira"]
