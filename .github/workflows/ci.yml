@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  # The autopilot dispatches CI after its own commit: pushes made with GITHUB_TOKEN start no workflow.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  biome:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bunx biome ci .
+
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - name: Typecheck
+        run: bun run typecheck
+      - name: File size
+        run: bun scripts/check-file-size.ts
+      - name: Test
+        run: bun test
+
+  # Biome failed: Claude fixes what Biome reports and commits to the same branch, once.
+  autopilot:
+    needs: biome
+    if: >-
+      always() && needs.biome.result == 'failure' &&
+      (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+    uses: ./.github/workflows/autopilot-biome.yml
+    with:
+      branch: ${{ github.head_ref || github.ref_name }}
+    secrets: inherit
+    permissions:
+      contents: write
+      actions: write
