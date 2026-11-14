@@ -8,7 +8,7 @@ import type {
   RuleEntry,
   SkillEntry,
 } from "#shared/contract/index.ts";
-import { countTokens, LOCAL_METHOD } from "#shared/tokens/index.ts";
+import { counterFor, type TokenCounter } from "#shared/tokens/index.ts";
 
 // Where the agent starts and which files it works with, both relative to the project root.
 export type Scope = { cwd: string; files: readonly string[] };
@@ -34,10 +34,15 @@ export type StaticLoadout = {
 // The listing line both harnesses show the model for a skill or a command.
 export const listingLine = (name: string, description: string): string => `- ${name}: ${description}`;
 
-export const createRules = () => {
+// The tokenizer for a harness's model family (ADR 0012): Gemma's vocabulary for Gemini CLI, o200k for the rest.
+export const tokenCounterOf = (harness: HarnessId): TokenCounter =>
+  counterFor(harness === "gemini-cli" ? "google" : "other");
+
+export const createRules = (counter: TokenCounter = tokenCounterOf("claude-code")) => {
   const rules: RuleEntry[] = [];
   const add = (path: string, activation: Activation, reason: string, text: string) => {
-    if (!rules.some((rule) => rule.path === path)) rules.push({ path, activation, reason, tokens: countTokens(text) });
+    if (!rules.some((rule) => rule.path === path))
+      rules.push({ path, activation, reason, tokens: counter.count(text) });
   };
   return { rules, add };
 };
@@ -52,6 +57,7 @@ export const withTokens = (
   parts: Parts,
   commandLines: readonly string[],
   calibration: Calibration = {},
+  counter: TokenCounter = tokenCounterOf(parts.harness),
 ): StaticLoadout => ({
   ...parts,
   tokens: {
@@ -59,9 +65,9 @@ export const withTokens = (
     byComponent: {
       rules: sum(parts.rules),
       skills: sum(parts.skills.listed),
-      commands: countTokens(commandLines.join("\n")),
+      commands: counter.count(commandLines.join("\n")),
     },
     exact: false,
-    method: LOCAL_METHOD,
+    method: counter.method,
   },
 });

@@ -4,8 +4,6 @@ import type {
   Component,
   HarnessInfo,
   LoadoutSnapshot,
-  McpServer,
-  McpTool,
   Provenance,
   RuleEntry,
   SkillEntry,
@@ -13,10 +11,11 @@ import type {
 } from "#shared/contract/index.ts";
 import { LOADOUT_SCHEMA_VERSION } from "#shared/contract/index.ts";
 import type { ServerRecord } from "#shared/mcp-shim/index.ts";
-import { countTokens, LOCAL_METHOD } from "#shared/tokens/index.ts";
+import type { TokenCounter } from "#shared/tokens/index.ts";
 import type { Inventory } from "../inventory.ts";
-import type { StaticLoadout } from "../static-loadout.ts";
+import { type StaticLoadout, tokenCounterOf } from "../static-loadout.ts";
 import { normalise, withoutCanaries } from "./canary.ts";
+import { mcpOf } from "./loadout-mcp.ts";
 import type { Segment } from "./model.ts";
 import { projectPath } from "./sections.ts";
 
@@ -37,7 +36,9 @@ const pathOf = (segment: Segment, input: LoadoutInput) => {
   return candidates.find((path) => input.predicted.rules.some((rule) => rule.path === path)) ?? segment.id;
 };
 
-const tokensOf = (segment: Segment) => countTokens(withoutCanaries(segment.text));
+// The harness's tokenizer: Gemma's vocabulary for Gemini CLI, o200k for the rest (ADR 0012).
+export type Count = TokenCounter["count"];
+const tokensOf = (segment: Segment, count: Count) => count(withoutCanaries(segment.text));
 
 // Enough text that a file starting with it is that file, not a coincidence.
 const PREFIX = 200;
@@ -62,7 +63,12 @@ const FRAME = /^(?:Contents of .*|--- (?:End of )?Context from: .* ---|Instructi
 type Duplicate = { path: string; sameAs?: string };
 
 // A file reaches the model twice when the harness sends it twice, or sends two files with the same text.
-const rulesOf = (input: LoadoutInput, provenance: Record<string, Provenance>, duplicates: Duplicate[]): RuleEntry[] => {
+const rulesOf = (
+  input: LoadoutInput,
+  provenance: Record<string, Provenance>,
+  duplicates: Duplicate[],
+  count: Count,
+): RuleEntry[] => {
   const rules: RuleEntry[] = [];
   const texts = new Map<string, string>();
   const segments = input.segments.filter((segment) => segment.component === "rules");
@@ -80,13 +86,13 @@ const rulesOf = (input: LoadoutInput, provenance: Record<string, Provenance>, du
     const predicted = input.predicted.rules.find((rule) => rule.path === segment.id);
     const activation = predicted?.activation ?? (input.first ? "always" : "path");
     const reason = predicted?.reason ?? "observed";
-    rules.push({ path: segment.id, activation, reason, tokens: tokensOf(segment) });
+    rules.push({ path: segment.id, activation, reason, tokens: tokensOf(segment, count) });
     provenance[`rule:${segment.id}`] = { source: segment.id, reason, evidence: segment.evidence ?? "marker" };
   }
   return rules;
 };
 
-const skillsOf = (input: LoadoutInput) => {
+const skillsOf = (input: LoadoutInput, count: Count) => {
   const { inventory, segments, work } = input;
   const sourceOf = (segment: Segment) => (segment.source ? projectPath(work, segment.source) : undefined);
   const isCommand = (name: string) =>
@@ -101,7 +107,11 @@ const skillsOf = (input: LoadoutInput) => {
       (one) => one.path === sourceOf(segment) || posix.dirname(one.path) === id || (!segment.source && one.name === id),
     );
     if (segment.id.startsWith("loaded:")) {
-      loaded.push({ name: skill?.name ?? posix.basename(id), path: skill?.path ?? id, tokens: tokensOf(segment) });
+      loaded.push({
+        name: skill?.name ?? posix.basename(id),
+        path: skill?.path ?? id,
+        tokens: tokensOf(segment, count),
+      });
     } else if (isCommand(id)) {
       commands.push({ name: id, path: inventory.commands.find((command) => command.name === id)?.path });
     } else {
@@ -111,68 +121,35 @@ const skillsOf = (input: LoadoutInput) => {
       const same = twin && inventory.skills.find((one) => one.path === twin.path)?.dir === skill?.dir;
       const path = (same ? twin?.path : skill?.path) ?? "";
       const builtin = skill === undefined;
-      listed.push({ name: id, path, ...(builtin && { builtin }), tokens: tokensOf(segment) });
+      listed.push({ name: id, path, ...(builtin && { builtin }), tokens: tokensOf(segment, count) });
     }
   }
   return { listed, loaded, commands };
 };
 
-const mcpOf = (input: LoadoutInput) => {
-  const wire = input.segments.filter((segment) => segment.component === "mcp");
-  const names = new Set([...wire.map((segment) => segment.id.split("/")[0] as string), ...Object.keys(input.servers)]);
-  const servers: McpServer[] = [...names].sort().map((name) => {
-    const version = input.servers[name]?.info?.version;
-    return version ? { name, version } : { name };
-  });
-  const tools: McpTool[] = [];
-  const byMcpServer: Record<string, number> = {};
-  for (const { name } of servers) {
-    const record = input.servers[name];
-    const inline = (tool: string) => wire.some((segment) => segment.id === `${name}/${tool}` && !segment.deferred);
-    const schemas = record?.tools ?? [];
-    for (const schema of schemas) {
-      tools.push({
-        server: name,
-        name: schema.name,
-        deferred: !inline(schema.name),
-        tokens: countTokens(JSON.stringify(schema)),
-      });
-    }
-    for (const segment of wire.filter((one) => one.id.startsWith(`${name}/`))) {
-      const tool = segment.id.slice(name.length + 1);
-      if (!tools.some((known) => known.server === name && known.name === tool)) {
-        tools.push({ server: name, name: tool, deferred: segment.deferred === true, tokens: tokensOf(segment) });
-      }
-    }
-    const instructions = record?.instructions ? countTokens(record.instructions) : 0;
-    byMcpServer[name] = tools
-      .filter((tool) => tool.server === name)
-      .reduce((sum, tool) => sum + tool.tokens, instructions);
-  }
-  return { servers, tools, byMcpServer };
-};
-
-const systemOf = (segments: readonly Segment[]): SystemSection[] => {
+const systemOf = (segments: readonly Segment[], count: Count): SystemSection[] => {
   const sections: SystemSection[] = [];
   for (const segment of segments.filter((one) => one.component === "system")) {
     const taken = sections.filter((section) => section.id === segment.id || section.id.startsWith(`${segment.id}#`));
     const id = taken.length === 0 ? segment.id : `${segment.id}#${taken.length + 1}`;
-    sections.push({ id, tokens: tokensOf(segment) });
+    sections.push({ id, tokens: tokensOf(segment, count) });
   }
   return sections;
 };
 
 // What the harness really sent, as a Loadout: the segments of one request, tied to the project's files.
 export const buildLoadout = (input: LoadoutInput): LoadoutSnapshot => {
+  const counter = tokenCounterOf(input.harness.name);
+  const { count } = counter;
   const provenance: Record<string, Provenance> = {};
   const duplicates: Duplicate[] = [];
-  const rules = rulesOf(input, provenance, duplicates);
-  const { listed, loaded, commands } = skillsOf(input);
-  const mcp = mcpOf(input);
+  const rules = rulesOf(input, provenance, duplicates, count);
+  const { listed, loaded, commands } = skillsOf(input, count);
+  const mcp = mcpOf(input, count);
   const byComponent: Partial<Record<Component, number>> = {};
   let total = 0;
   for (const segment of input.segments) {
-    const tokens = tokensOf(segment);
+    const tokens = tokensOf(segment, count);
     total += tokens;
     if (segment.component !== "messages")
       byComponent[segment.component] = (byComponent[segment.component] ?? 0) + tokens;
@@ -181,12 +158,12 @@ export const buildLoadout = (input: LoadoutInput): LoadoutSnapshot => {
     schemaVersion: LOADOUT_SCHEMA_VERSION,
     harness: input.harness,
     mode: "capture",
-    system: systemOf(input.segments),
+    system: systemOf(input.segments, count),
     rules,
     skills: { listed, loaded },
     mcp: { servers: mcp.servers, tools: mcp.tools },
     commands,
-    tokens: { total, byComponent, byMcpServer: mcp.byMcpServer, exact: false, method: LOCAL_METHOD },
+    tokens: { total, byComponent, byMcpServer: mcp.byMcpServer, exact: false, method: counter.method },
     provenance,
     ...(duplicates.length > 0 && { duplicates }),
   };

@@ -1,7 +1,13 @@
-import { countTokens } from "#shared/tokens/index.ts";
 import type { Instruction, Inventory } from "../inventory.ts";
 import { chainTo, isInside, joinPath, parentDirs } from "../project.ts";
-import { createRules, listingLine, type Scope, type StaticLoadout, withTokens } from "../static-loadout.ts";
+import {
+  createRules,
+  listingLine,
+  type Scope,
+  type StaticLoadout,
+  tokenCounterOf,
+  withTokens,
+} from "../static-loadout.ts";
 import { DEFAULT_CONTEXT_FILE } from "./discover.ts";
 
 // Emulates Gemini CLI 0.68 (ADR 0007): context files from the git root down to the cwd load at launch, sorted
@@ -9,7 +15,8 @@ import { DEFAULT_CONTEXT_FILE } from "./discover.ts";
 // tool's result. Settings, skills, and commands come only from the cwd's own `.gemini/` and `.agents/`.
 export const resolveGeminiCli = (inventory: Inventory, { cwd, files }: Scope): StaticLoadout => {
   const names = [DEFAULT_CONTEXT_FILE, ...(inventory.contextFiles?.[cwd] ?? [])];
-  const { rules, add: addRule } = createRules();
+  const counter = tokenCounterOf("gemini-cli");
+  const { rules, add: addRule } = createRules(counter);
   const byPath = new Map(inventory.instructions.map((file) => [file.path, file]));
   const add = (instruction: Instruction, activation: "always" | "path", reason: string) => {
     addRule(instruction.path, activation, reason, instruction.text);
@@ -41,7 +48,7 @@ export const resolveGeminiCli = (inventory: Inventory, { cwd, files }: Scope): S
         listed: skills.map((skill) => ({
           name: skill.name,
           path: skill.path,
-          tokens: countTokens(listingLine(skill.name, skill.description)),
+          tokens: counter.count(listingLine(skill.name, skill.description)),
         })),
         loaded: [],
       },
@@ -55,5 +62,7 @@ export const resolveGeminiCli = (inventory: Inventory, { cwd, files }: Scope): S
       commands: inventory.commands.filter((command) => command.dir === cwd).map(({ name, path }) => ({ name, path })),
     },
     [],
+    {},
+    counter,
   );
 };

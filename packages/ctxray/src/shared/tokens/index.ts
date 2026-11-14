@@ -1,1 +1,1 @@
-export { countTokens, LOCAL_METHOD } from "./count.ts";
+export { counterFor, countTokens, GEMMA_METHOD, LOCAL_METHOD, type TokenCounter } from "./count.ts";

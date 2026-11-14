@@ -29,6 +29,7 @@
     "ctxray": "./src/app/main.ts"
   },
   "dependencies": {
+    "@huggingface/tokenizers": "0.2.0",
     "braces": "3.0.3",
     "elysia": "1.4.32",
     "gpt-tokenizer": "4.1.2",

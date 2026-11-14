@@ -15,7 +15,7 @@ const Threshold = z.strictObject({
 const KindLimits = z.strictObject({
   lines: Threshold.optional(),
   chars: Threshold.optional(),
-  tokens: Threshold.optional().describe("Counted with the local o200k tokenizer, as everywhere in ctxray"),
+  tokens: Threshold.optional().describe("Counted with the local o200k tokenizer, whatever the harness"),
 });
 
 export const Limits = z
