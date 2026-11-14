@@ -1,0 +1,5 @@
+---
+globs: src/**/*.ts
+---
+
+Prefer type aliases over interfaces.

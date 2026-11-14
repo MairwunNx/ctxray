@@ -34,6 +34,7 @@ const definition = (kind: Kind, options: TestOptions = {}, name = "budget"): Tes
 
 const ALL: Selection = {
   harnesses: [],
+  experimental: new Set(),
   backend: { kind: "mock", name: undefined },
   layers: new Set(LAYERS),
   filter: undefined,
@@ -64,7 +65,13 @@ describe("decide", () => {
       {},
       { run: false, reason: "unsupported", missing: ["pathRules"] },
     ],
-    ["L3 without a static adapter", definition("resolve"), "cursor-ide", {}, { run: false, reason: "unavailable" }],
+    [
+      "L3 without a static adapter",
+      definition("resolve"),
+      "claude-code-desktop",
+      {},
+      { run: false, reason: "unavailable" },
+    ],
     ["L4 launches Claude Code on the mock", definition("assemble"), "claude-code", {}, { run: true }],
     [
       "L4 on replay comes later",
@@ -80,6 +87,20 @@ describe("decide", () => {
       "cursor-ide",
       {},
       { run: false, reason: "unsupported", missing: ["mode:capture"] },
+    ],
+    [
+      "Cursor CLI's capture waits for the config to turn it on",
+      definition("wire"),
+      "cursor-cli",
+      {},
+      { run: false, reason: "unsupported", missing: ["mode:capture"] },
+    ],
+    [
+      "Cursor CLI's capture once the config turns it on",
+      definition("wire"),
+      "cursor-cli",
+      { experimental: new Set(["cursor-cli"] as const) },
+      { run: true },
     ],
   ])("%s", (_, test, harness, selection, expected) => {
     expect(decide(test, harness, { ...ALL, ...selection })).toEqual(expected);

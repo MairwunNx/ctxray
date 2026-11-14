@@ -48,6 +48,21 @@ export const opencodeUserScope = ({ home, env }: UserScope, runHome: string) => 
   ];
 };
 
+// Cursor CLI: the skills, rules, and commands of ~/.cursor, and the skill folders of the other harnesses it reads
+// too. mcp.json stays out: ctxray writes its own with the user's servers behind ctxray, and so do the hooks,
+// which could reach the network past it.
+export const cursorUserScope = ({ home }: UserScope, runHome: string) => {
+  const names = [
+    ".cursor/skills",
+    ".cursor/rules",
+    ".cursor/commands",
+    ".agents/skills",
+    ".claude/skills",
+    ".codex/skills",
+  ];
+  return names.map((name) => [join(home, name), join(runHome, name)] as const);
+};
+
 // Gemini CLI: GEMINI.md, the skills, commands, and subagents of its folder, plus the skills in ~/.agents.
 // settings.json stays out: ctxray writes its own and adds the user's MCP servers and hooks to it.
 // Extensions stay out too: they bring MCP servers of their own that would reach the network past ctxray.

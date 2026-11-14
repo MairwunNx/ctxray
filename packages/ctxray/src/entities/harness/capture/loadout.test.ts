@@ -35,7 +35,8 @@ const loadoutOf = async (harness: HarnessId, index: number, files: string[] = []
 
 const READ = ["app/src/main/kotlin/payments/Charge.kt"];
 
-// Claude Code and Codex hold MCP schemas back until the model asks, Gemini CLI and OpenCode send them inline.
+// Claude Code and Codex hold MCP schemas back until the model asks, Cursor sends tool names only, Gemini CLI
+// and OpenCode send the schemas inline.
 describe.each<[HarnessId, string[], string[], string[]]>([
   [
     "claude-code",
@@ -51,6 +52,12 @@ describe.each<[HarnessId, string[], string[], string[]]>([
   ["codex", ["AGENTS.md", "app/AGENTS.md"], ["android-build", "payouts", "refunds", "release"], []],
   ["gemini-cli", ["AGENTS.md", "app/AGENTS.md"], ["android-build"], ["app/src/main/kotlin/payments/AGENTS.md"]],
   [
+    "cursor-cli",
+    ["app/CLAUDE.md", "app/AGENTS.md", "CLAUDE.md", "AGENTS.md"],
+    ["android-build"],
+    ["app/src/main/kotlin/payments/AGENTS.md", "app/src/main/kotlin/payments/CLAUDE.md"],
+  ],
+  [
     "opencode",
     ["app/AGENTS.md", "AGENTS.md"],
     ["android-build", "payouts", "refunds", "release"],
@@ -63,12 +70,13 @@ describe.each<[HarnessId, string[], string[], string[]]>([
     expect(loadout.rules.every((rule) => rule.activation === "always" && rule.tokens > 0)).toBe(true);
     const own = loadout.skills.listed.filter((skill) => !skill.builtin);
     expect(own.map((skill) => skill.name).sort()).toEqual(skills);
-    expect(loadout.skills.listed.some((skill) => skill.builtin)).toBe(true);
+    // Cursor ships no skills of its own.
+    expect(loadout.skills.listed.some((skill) => skill.builtin)).toBe(harness !== "cursor-cli");
     expect(loadout.mcp.servers).toEqual([
       { name: "github", version: "1.0.0" },
       { name: "jira", version: "1.0.0" },
     ]);
-    const deferred = harness === "claude-code" || harness === "codex";
+    const deferred = harness === "claude-code" || harness === "codex" || harness === "cursor-cli";
     expect(loadout.mcp.tools.map((tool) => [tool.name, tool.deferred])).toEqual([
       ["create_issue", deferred],
       ["list_pulls", deferred],

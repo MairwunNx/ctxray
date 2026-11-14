@@ -32,6 +32,10 @@ export const HarnessSettings = z.strictObject({
     .enum(["isolated", "inherit"])
     .optional()
     .describe("`inherit` lets your own user-level rules, skills, and settings into the run"),
+  experimental: z
+    .boolean()
+    .optional()
+    .describe("Turn on modes that rest on undocumented builds, like Cursor CLI's capture through its local build"),
 });
 export type HarnessSettings = z.output<typeof HarnessSettings>;
 

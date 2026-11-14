@@ -32,6 +32,8 @@ const stable = (
   return JSON.parse(
     JSON.stringify({ ...exchange, headers: {} })
       .replaceAll(work, "<work>")
+      // Cursor names a project's folders after its path: `private-var-folders-…-work`.
+      .replaceAll(work.replace(/^\//, "").replace(/[^a-zA-Z0-9]/g, "-"), "<work-slug>")
       .replaceAll(home, "<home>")
       .replaceAll(root, "<run>")
       .replaceAll(install, "<harness>"),
@@ -92,4 +94,7 @@ for (const harness of wanted as HarnessId[]) {
 }
 await proxy.stop();
 await guard.stop();
-if (guard.attempts().length > 0) throw new Error(`egress: ${guard.attempts().join(", ")}`);
+// Hosts a harness reaches for on its own and runs fine without, like Cursor's telemetry, don't count.
+const probes = new Set(Object.values(CAPTURE_ADAPTERS).flatMap((adapter) => adapter?.probes ?? []));
+const leaks = guard.attempts().filter((host) => !probes.has(host));
+if (leaks.length > 0) throw new Error(`egress: ${leaks.join(", ")}`);

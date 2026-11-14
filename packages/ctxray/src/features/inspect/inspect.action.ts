@@ -3,6 +3,7 @@ import { relative, resolve, sep } from "node:path";
 import {
   checkFiles,
   checkReach,
+  DEFAULT_HARNESSES,
   type FileCheckSettings,
   findRoot,
   type Inventory,
@@ -42,12 +43,11 @@ const isFolder = (path: string) =>
     () => false,
   );
 
-const STATIC = Object.keys(STATIC_ADAPTERS) as HarnessId[];
-
-// The flag wins, then the harnesses the config tests, then every harness ctxray can read.
+// The flag wins, then the harnesses the config tests, then every harness ctxray can read, the editors that read
+// their CLI's files left out.
 const chooseHarnesses = (request: InspectRequest, config: Config): readonly HarnessId[] => {
   const configured = Object.keys(config.harnesses) as HarnessId[];
-  return request.harnesses ?? (configured.length > 0 ? configured : STATIC);
+  return request.harnesses ?? (configured.length > 0 ? configured : DEFAULT_HARNESSES);
 };
 
 const byPlace = (a: Problem, b: Problem) => a.path.localeCompare(b.path) || (a.line ?? 0) - (b.line ?? 0);

@@ -1,4 +1,4 @@
-import { CAPTURE_ADAPTERS, type Finding, STATIC_ADAPTERS } from "#entities/harness/index.ts";
+import { CAPTURE_ADAPTERS, type Finding } from "#entities/harness/index.ts";
 import type { Component, HarnessId, Policy } from "#shared/contract/index.ts";
 import { toFailure } from "./attempt.ts";
 import type { Binaries } from "./binaries.ts";
@@ -6,7 +6,7 @@ import type { Capture } from "./capture.ts";
 import type { CapturedLoadout } from "./captured.ts";
 import type { CellResult } from "./run.ts";
 import type { Workspace } from "./scope.ts";
-import type { Selection } from "./selection.ts";
+import { launches, type Selection } from "./selection.ts";
 import { createSession } from "./session.ts";
 
 const base = (harness: HarnessId): CellResult => ({
@@ -105,7 +105,7 @@ export const runContextChecks = async (
 ): Promise<CellResult[]> => {
   if (!selection.layers.has("L4") || selection.backend.kind !== "mock") return [];
   const results: CellResult[] = [];
-  for (const harness of selection.harnesses.filter((id) => STATIC_ADAPTERS[id] && CAPTURE_ADAPTERS[id])) {
+  for (const harness of selection.harnesses.filter((id) => launches(id, selection))) {
     results.push(await checkOne(workspace, harness, capture, policies, binaries));
   }
   return results;

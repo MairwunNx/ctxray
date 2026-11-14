@@ -90,6 +90,51 @@
     },
     "commands": []
   },
+  "payments › context budget › cursor-cli@2026.11.13-eacade1 claude-sonnet-5-5": {
+    "system": [
+      "prompt",
+      "tone-and-style",
+      "tool-calling",
+      "making-code-changes",
+      "citing-code",
+      "inline-line-numbers",
+      "terminal-files-information",
+      "task-management",
+      "mode-selection",
+      "user-info",
+      "agent-transcripts",
+      "rules-instructions",
+      "skills-instructions",
+      "mcp-catalog"
+    ],
+    "rules": {
+      "app/CLAUDE.md": {
+        "activation": "always",
+        "reason": "cwd"
+      },
+      "app/AGENTS.md": {
+        "activation": "always",
+        "reason": "cwd"
+      },
+      "CLAUDE.md": {
+        "activation": "always",
+        "reason": "cwd"
+      },
+      "AGENTS.md": {
+        "activation": "always",
+        "reason": "cwd"
+      }
+    },
+    "skills": {
+      "android-build": "app/.agents/skills/android-build/SKILL.md"
+    },
+    "loaded": [],
+    "mcp": {
+      "github": ["create_issue", "list_pulls"],
+      "jira": ["search_issues"]
+    },
+    "commands": []
+  },
   "payments › context budget › gemini-cli@0.68.0 gemini-2.5-flash": {
     "system": [
       "prompt",

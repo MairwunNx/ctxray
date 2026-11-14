@@ -26,10 +26,22 @@ const harness = (result: InspectResult, id: HarnessId) => {
 
 describe("which harnesses", () => {
   test.each<[string, InspectRequest, Partial<Record<HarnessId, object>>, HarnessId[], HarnessId[]]>([
-    ["every readable one without a config", {}, {}, ["claude-code", "codex", "gemini-cli", "opencode"], []],
+    [
+      "every readable one without a config",
+      {},
+      {},
+      ["claude-code", "codex", "gemini-cli", "opencode", "cursor-cli"],
+      [],
+    ],
     ["the configured ones", {}, { codex: {} }, ["codex"], []],
     ["the flag over the config", { harnesses: ["claude-code"] }, { codex: {} }, ["claude-code"], []],
-    ["unreadable ones as unsupported", { harnesses: ["cursor-ide", "codex"] }, {}, ["codex"], ["cursor-ide"]],
+    [
+      "unreadable ones as unsupported",
+      { harnesses: ["claude-code-desktop", "codex"] },
+      {},
+      ["codex"],
+      ["claude-code-desktop"],
+    ],
   ])("%s", async (_, request, configured, shown, unsupported) => {
     const result = await inspect(request, configured);
     expect(result.harnesses.map((inspected) => inspected.harness)).toEqual(shown);

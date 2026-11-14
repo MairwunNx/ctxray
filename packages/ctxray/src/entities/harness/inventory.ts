@@ -1,4 +1,4 @@
-import type { HarnessId } from "#shared/contract/index.ts";
+import type { Activation, HarnessId } from "#shared/contract/index.ts";
 import type { MessageKey } from "#shared/i18n/index.ts";
 
 export type Severity = "error" | "warning";
@@ -20,6 +20,9 @@ export type Instruction = {
   kind: "memory" | "local" | "agents" | "rule" | "import";
   // A rule with globs loads only for matching files, relative to `dir`.
   globs?: readonly string[];
+  // How the harness picks a rule its frontmatter describes, like Cursor's `alwaysApply` and `description`.
+  activation?: Activation;
+  description?: string;
   // Files it pulls in with `@path`, relative to the root.
   imports: readonly string[];
   text: string;

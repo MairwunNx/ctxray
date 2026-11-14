@@ -5,6 +5,7 @@ import { KIND_LAYERS, type TestDefinition } from "./model.ts";
 // What this run covers: test × harness × backend, cut down by layer and name.
 export type Selection = {
   harnesses: readonly HarnessId[];
+  experimental: ReadonlySet<HarnessId>; // harnesses whose config turns on their experimental modes
   backend: { kind: Backend; name: string | undefined }; // `name` when the config's `backends` named it
   layers: ReadonlySet<Layer>;
   filter: string | undefined;
@@ -24,6 +25,13 @@ export const parseLayers = (text: string): Set<Layer> | undefined => {
   return picked;
 };
 
+// Whether ctxray launches the harness in this run: it has both adapters and capture is one of its modes, an
+// experimental one only when the config turns it on.
+export const launches = (harness: HarnessId, selection: Pick<Selection, "experimental">) =>
+  Boolean(CAPTURE_ADAPTERS[harness] && STATIC_ADAPTERS[harness]) &&
+  checkSupport(PROFILES[harness], { requires: [], mode: "capture", experimental: selection.experimental.has(harness) })
+    .supported;
+
 export type Decision = { run: true } | { run: false; reason: SkipReason; missing?: readonly string[] };
 
 export const fullName = (definition: Pick<TestDefinition, "suites" | "name">) =>
@@ -42,12 +50,11 @@ export const decide = (definition: TestDefinition, harness: HarnessId, selection
   const support = checkSupport(PROFILES[harness], {
     requires: definition.options.requires ?? [],
     mode,
-    experimental: false,
+    experimental: selection.experimental.has(harness),
   });
   if (!support.supported) return { run: false, reason: "unsupported", missing: support.missing };
   if (layer === "L3") return STATIC_ADAPTERS[harness] ? { run: true } : { run: false, reason: "unavailable" };
-  const launches = layer === "L4" || layer === "L5";
-  if (launches && CAPTURE_ADAPTERS[harness] && STATIC_ADAPTERS[harness] && selection.backend.kind === "mock") {
+  if ((layer === "L4" || layer === "L5") && launches(harness, selection) && selection.backend.kind === "mock") {
     return { run: true };
   }
   return { run: false, reason: "unavailable" };

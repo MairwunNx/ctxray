@@ -1,0 +1,5 @@
+---
+alwaysApply: yes
+---
+
+Cursor reads yes as a string, so this rule waits for the user.

@@ -1,0 +1,6 @@
+{
+  "mcpServers": {
+    "probe": { "command": "bun", "args": ["mcp.ts"] },
+    "broken": { "env": {} }
+  }
+}

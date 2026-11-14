@@ -79,6 +79,29 @@
         }
       }
     },
+    "cursor-cli": {
+      "source": "registry",
+      "range": "latest",
+      "version": "2026.11.13-eacade1",
+      "platforms": {
+        "darwin-arm64": {
+          "package": "https://downloads.cursor.com/lab/2026.11.13-eacade1/darwin/arm64/agent-cli-local-package.tar.gz",
+          "integrity": "sha256-6UW+AGUVsPO5qgbC0GuXJ74THXRxmDzSW5/XNWqJy54="
+        },
+        "darwin-x64": {
+          "package": "https://downloads.cursor.com/lab/2026.11.13-eacade1/darwin/x64/agent-cli-local-package.tar.gz",
+          "integrity": "sha256-8KOlat3kByZxwjH5Qt7FmRiSzpuQCSsCKQZmOiAfxP8="
+        },
+        "linux-x64-glibc": {
+          "package": "https://downloads.cursor.com/lab/2026.11.13-eacade1/linux/x64/agent-cli-local-package.tar.gz",
+          "integrity": "sha256-CcTBdzgkM8KjUlcTSSw5t4KkXZ6Z0DT37anKNllw6hg="
+        },
+        "linux-arm64-glibc": {
+          "package": "https://downloads.cursor.com/lab/2026.11.13-eacade1/linux/arm64/agent-cli-local-package.tar.gz",
+          "integrity": "sha256-R87BPRqu/wa58n4jQA64hBy/PkSEy0zN83kVpCGmxIY="
+        }
+      }
+    },
     "gemini-cli": {
       "source": "registry",
       "range": "0.68.0",

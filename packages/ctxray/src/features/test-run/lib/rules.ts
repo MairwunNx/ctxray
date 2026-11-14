@@ -70,8 +70,8 @@ const toRule = (
 export const rulesOf = (project: Project, inventory: Inventory): Rule[] => {
   const files = project.files.toSorted();
   return [
-    ...inventory.instructions.map(({ path, dir, globs }) =>
-      toRule(files, path, dir, globs ? "path" : "always", globs ?? []),
+    ...inventory.instructions.map(({ path, dir, globs, activation }) =>
+      toRule(files, path, dir, activation ?? (globs ? "path" : "always"), globs ?? []),
     ),
     ...inventory.skills.map(({ path, dir, listed, globs }) =>
       toRule(files, path, dir, listed ? "intent" : "manual", globs ?? []),

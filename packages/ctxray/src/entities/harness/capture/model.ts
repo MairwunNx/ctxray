@@ -39,6 +39,9 @@ export type CaptureAdapter = {
   defaultModel: string; // pinned: the model changes the payload (ADR 0013)
   sandboxesItself?: boolean; // runs the agent's commands in a sandbox of its own
   runtime?: string; // an interpreter it needs on PATH, like Node for Gemini CLI's script
+  // `host:port` it reaches for on its own and runs fine without. The egress guard still refuses them, the run
+  // only stops counting them as a leak.
+  probes?: readonly string[];
   version: (binary: string, env: Record<string, string>) => Promise<string>;
   launch: (binary: string, context: LaunchContext, inventory: Inventory) => Promise<Launch>;
   call: (intent: Intent, work: string, request: Exchange) => ToolCall;

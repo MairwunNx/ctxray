@@ -1,4 +1,4 @@
-export { CAPTURE_ADAPTERS, STATIC_ADAPTERS, type StaticAdapter } from "./adapters.ts";
+export { CAPTURE_ADAPTERS, DEFAULT_HARNESSES, STATIC_ADAPTERS, type StaticAdapter } from "./adapters.ts";
 export { CAPABILITIES, type Capability } from "./capability.ts";
 export { canariesIn } from "./capture/canary.ts";
 export { canaryFiles, createCopy, type ProjectCopy } from "./capture/copy.ts";

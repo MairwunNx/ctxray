@@ -1,4 +1,4 @@
-import { STATIC_ADAPTERS } from "#entities/harness/index.ts";
+import { DEFAULT_HARNESSES } from "#entities/harness/index.ts";
 import type { Config } from "#entities/user-config/index.ts";
 import type { Values } from "#shared/cli/index.ts";
 import { Backend, HarnessId } from "#shared/contract/index.ts";
@@ -25,9 +25,7 @@ export const chooseSelection = (values: Values, env: Env, config: Config): Selec
     return { key: "error.unknownHarness", params: { name: unknown, known: HarnessId.options.join(", ") } };
   }
   const configured = Object.keys(config.harnesses) as HarnessId[];
-  const harnesses =
-    (ids as HarnessId[] | undefined) ??
-    (configured.length > 0 ? configured : (Object.keys(STATIC_ADAPTERS) as HarnessId[]));
+  const harnesses = (ids as HarnessId[] | undefined) ?? (configured.length > 0 ? configured : DEFAULT_HARNESSES);
 
   // A backend is a kind, or a name the config gave one: `--backend pr` with `backends: { pr: "replay" }`.
   const name = text(values["backend"]) ?? text(env["CTXRAY_BACKEND"]) ?? "mock";
@@ -41,8 +39,10 @@ export const chooseSelection = (values: Values, env: Env, config: Config): Selec
   const layers = layerText === undefined ? new Set(LAYERS) : parseLayers(layerText);
   if (!layers) return { key: "test.badLayer", params: { value: layerText ?? "" } };
 
+  const experimental = configured.filter((id) => config.harnesses[id]?.experimental === true);
   return {
     harnesses: [...new Set(harnesses)],
+    experimental: new Set(experimental),
     backend: { kind, name: kind === name ? undefined : name },
     layers,
     filter: text(values["filter"]),

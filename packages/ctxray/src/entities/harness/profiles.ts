@@ -43,6 +43,7 @@ export const PROFILES: Record<HarnessId, HarnessProfile> = {
   "cursor-ide": {
     id: "cursor-ide",
     title: "Cursor",
+    twin: "cursor-cli",
     modes: ["static", "observe"],
     experimentalModes: [],
     capabilities: ["skills", "pathRules", "intentRules", "mcp", "hooks"],
@@ -50,6 +51,7 @@ export const PROFILES: Record<HarnessId, HarnessProfile> = {
   "claude-code-desktop": {
     id: "claude-code-desktop",
     title: "Claude Code Desktop",
+    twin: "claude-code",
     modes: ["static", "observe"],
     experimentalModes: [],
     capabilities: ["skills", "pathRules", "mcp", "hooks"],
