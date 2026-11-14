@@ -1,6 +1,7 @@
 import { createInjector } from "typed-inject";
 import { type Config, createConfigLoader } from "../entities/user-config/index.ts";
 import { createInitAction } from "../features/init/index.ts";
+import { createShowConfigAction } from "../features/show-config/index.ts";
 import type { Translate } from "../shared/i18n/index.ts";
 import type { Env } from "../shared/infra/index.ts";
 import type { Renderer } from "../shared/render/index.ts";
@@ -26,5 +27,6 @@ export const createRunInjector = (
     .provideValue("settings", settings)
     .provideValue("t", t)
     .provideValue("renderer", renderer)
-    .provideValue("config", config);
+    .provideValue("config", config)
+    .provideFactory("showConfigAction", createShowConfigAction);
 export type RunInjector = ReturnType<typeof createRunInjector>;

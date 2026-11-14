@@ -45,6 +45,13 @@ jobs:
           ./dist/ctxray --version
           script -qec "env -u CI -u GITHUB_ACTIONS ./dist/ctxray --help" /dev/null | tee help.log
           grep -qF $'\e[?2026h' help.log
+      # The config init writes imports @mairwunnx/ctxray. Outside the repository only the binary can serve it.
+      - name: Smoke test the config
+        run: |
+          cd "$(mktemp -d)"
+          "$GITHUB_WORKSPACE/dist/ctxray" init
+          "$GITHUB_WORKSPACE/dist/ctxray" config | tee config.log
+          grep -qF '"claude-code": {}' config.log
 
   # Biome failed: Claude fixes what Biome reports and commits to the same branch, once.
   autopilot:
