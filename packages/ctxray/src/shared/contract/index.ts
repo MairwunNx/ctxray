@@ -33,4 +33,5 @@ export {
   SystemSection,
   TokenSummary,
 } from "./loadout.ts";
+export { Layer, SkipReason, TestStatus } from "./result.ts";
 export { SESSION_SCHEMA_VERSION, Session, Turn } from "./session.ts";
