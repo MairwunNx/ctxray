@@ -1,8 +1,11 @@
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { $ } from "bun";
+import { routeAll } from "../capture/mcp-route.ts";
 import type { LaunchContext } from "../capture/model.ts";
+import { readUserMcp } from "../capture/user-mcp.ts";
 import { codexUserScope, copyUserScope } from "../capture/user-scope.ts";
+import { tomlTable } from "./toml.ts";
 
 const toml = (value: unknown) => JSON.stringify(value);
 
@@ -59,11 +62,24 @@ const serverOverrides = async ({ dirs, shim, remote }: LaunchContext): Promise<s
   return overrides;
 };
 
+// userScope inherit: the user's skills, AGENTS.md, and hooks, and their MCP servers behind ctxray as tables
+// of the run's config.toml. A project server of the same name wins, as it does in Codex.
+const userServers = async (context: LaunchContext) => {
+  const { user } = context;
+  if (!user) return "";
+  const codexHome = join(context.dirs.home, ".codex");
+  await copyUserScope(codexUserScope(user, codexHome, context.dirs.home));
+  const { servers } = await readUserMcp("codex", user, { from: user.project, to: context.dirs.work });
+  const routed = await routeAll(context, servers);
+  return Object.entries(routed)
+    .map(([name, entry]) => tomlTable(["mcp_servers", name], { ...entry, default_tools_approval_mode: "approve" }))
+    .join("\n");
+};
+
 export const launchCodex = async (binary: string, context: LaunchContext) => {
   const codexHome = join(context.dirs.home, ".codex");
   await mkdir(codexHome, { recursive: true });
-  if (context.user) await copyUserScope(codexUserScope(context.user, codexHome, context.dirs.home));
-  await Bun.write(join(codexHome, "config.toml"), configOf(context));
+  await Bun.write(join(codexHome, "config.toml"), configOf(context) + (await userServers(context)));
   return {
     command: [
       binary,

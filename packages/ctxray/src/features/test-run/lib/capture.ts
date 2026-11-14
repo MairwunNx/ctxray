@@ -117,7 +117,10 @@ export const createCapture = ({ config, env, self, binaries }: CaptureDeps) => {
       port: { ...conversation, baseUrl: prefix.baseUrl, close: prefix.close },
       remoteMcp: (target, onMessage) => proxy.openMcp(target, egress, onMessage),
       timeout: 60_000,
-      user: config.harnesses[scope.harness]?.userScope === "inherit" ? { home: env["HOME"] ?? "", env } : undefined,
+      user:
+        config.harnesses[scope.harness]?.userScope === "inherit"
+          ? { home: env["HOME"] ?? "", env, project: scope.workspace.root }
+          : undefined,
     });
     return { harness, adapter, model, trace, egress: () => guard.attempts().slice(seen) };
   };

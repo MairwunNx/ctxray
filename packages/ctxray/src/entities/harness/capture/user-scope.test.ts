@@ -45,7 +45,7 @@ const contextOf = (inherit: boolean): LaunchContext => {
     env: {},
     shim: async (_, command) => [...command],
     remote: (_, url) => url,
-    user: inherit ? { home, env: {} } : undefined,
+    user: inherit ? { home, env: {}, project: join(root, "project") } : undefined,
   };
 };
 
