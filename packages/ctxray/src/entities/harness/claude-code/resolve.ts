@@ -37,7 +37,7 @@ export const resolveClaudeCode = (inventory: Inventory, { cwd, files }: Scope): 
   for (const file of files) {
     for (const dir of parentDirs(file).filter((dir) => below.includes(dir))) load(dir, "path", `nested:${file}`);
   }
-  const reachable = new Set([...chain, ...below]);
+  const reachable = new Set(chain).union(new Set(below));
   for (const rule of instructions.filter((file) => file.globs && reachable.has(file.dir))) {
     const hit = files.map((file) => matchingGlob(rule.globs ?? [], rule.dir, file)).find((glob) => glob !== undefined);
     if (hit !== undefined) add(rule, "path", `glob:${hit}`);

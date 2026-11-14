@@ -51,18 +51,18 @@ export const checkPolicies = async (
   project: Project,
   loadout: StaticLoadout,
 ): Promise<PolicyOutcome[]> => {
-  const servers = loadout.mcp.servers.map((server) => server.name);
+  const servers = new Set(loadout.mcp.servers.map((server) => server.name));
   const outcomes: PolicyOutcome[] = [];
   for (const policy of policies) {
     if (policy.harnesses && !policy.harnesses.includes(loadout.harness)) continue;
     const tokens = tokenChecks(policy.maxTokens, loadout);
     const failures = [
-      ...(policy.denyMcp ?? [])
-        .filter((name) => servers.includes(name))
-        .map((name): Finding => ({ key: "policy.deniedMcp", params: { name } })),
-      ...(policy.requireMcp ?? [])
-        .filter((name) => !servers.includes(name))
-        .map((name): Finding => ({ key: "policy.missingMcp", params: { name } })),
+      ...[...new Set(policy.denyMcp).intersection(servers)].map(
+        (name): Finding => ({ key: "policy.deniedMcp", params: { name } }),
+      ),
+      ...[...new Set(policy.requireMcp).difference(servers)].map(
+        (name): Finding => ({ key: "policy.missingMcp", params: { name } }),
+      ),
       ...(await missingFiles(project, policy.requireFiles ?? [])),
       ...tokens.failures,
     ];
