@@ -15,6 +15,8 @@ export type Session = {
     calls: (tool: string, input?: Record<string, unknown>) => Promise<void>;
     says: (text: string) => Promise<void>;
   };
+  // The harness's own events: Claude Code's stream-json, Codex's --json. The session must have started.
+  events: () => Promise<readonly unknown[]>;
   end: () => Promise<void>;
 };
 
@@ -101,6 +103,7 @@ export const createSession = (capture: Capture, scope: CellScope, request: Sessi
       },
       says: (text) => answer({ text }),
     },
+    events: async () => (await open()).harness.events(),
     end: async () => {
       if (ended || !opened) return;
       ended = true;

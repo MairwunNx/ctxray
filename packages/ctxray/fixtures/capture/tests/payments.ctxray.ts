@@ -17,5 +17,8 @@ suite("payments", { fixture: "../payments" }, () => {
     const next = await session.nextRequest();
     expect(next.loadout.rules).toInclude("app/src/main/kotlin/payments/CLAUDE.md");
     expect(next).toAgreeWithResolver();
+    // The harness's own stream: Claude Code's init event names the MCP servers it connected.
+    const init = (await session.events()).find((event) => (event as { subtype?: string }).subtype === "init");
+    expect((init as { mcp_servers?: unknown[] } | undefined)?.mcp_servers).toHaveLength(2);
   });
 });

@@ -50,6 +50,7 @@ export type HarnessSession = {
   version: string;
   request: (position: number) => Promise<Exchange>; // waits for the turn, fails when the harness gives up
   servers: () => Promise<Record<string, ServerRecord>>; // what each MCP server told the harness so far
+  events: () => readonly unknown[]; // the harness's own JSON events so far
   say: (position: number, intent: Intent | Step) => Promise<void>;
   end: () => Promise<SessionResult>;
 };
@@ -90,8 +91,27 @@ export const startSession = async (options: SessionOptions): Promise<HarnessSess
     stdout: "pipe",
     stderr: "pipe",
   });
-  const output = Promise.all([new Response(child.stdout).text(), new Response(child.stderr).text()]).then(
-    ([stdout, stderr]) => `${stdout}\n${stderr}`,
+  // Headless harnesses print JSON events, one per line: Claude Code's stream-json, Codex's --json.
+  const lines: string[] = [];
+  const events: unknown[] = [];
+  const reading = (async () => {
+    const decoder = new TextDecoder();
+    let rest = "";
+    for await (const chunk of child.stdout) {
+      rest += decoder.decode(chunk, { stream: true });
+      for (let end = rest.indexOf("\n"); end !== -1; end = rest.indexOf("\n")) {
+        const line = rest.slice(0, end);
+        rest = rest.slice(end + 1);
+        lines.push(line);
+        try {
+          events.push(JSON.parse(line));
+        } catch {}
+      }
+    }
+    if (rest !== "") lines.push(rest);
+  })();
+  const output = Promise.all([reading, new Response(child.stderr).text()]).then(
+    ([, stderr]) => `${lines.join("\n")}\n${stderr}`,
   );
   const exited = child.exited.then(async (code) => new HarnessExit(code, tail(await output)));
 
@@ -120,6 +140,7 @@ export const startSession = async (options: SessionOptions): Promise<HarnessSess
     version,
     request,
     servers,
+    events: () => events,
     say: async (position, said) => {
       const step = "tool" in said ? { call: adapter.call(said, dirs.work, await request(position)) } : said;
       port.answer(position, step);
