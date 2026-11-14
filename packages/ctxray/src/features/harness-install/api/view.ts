@@ -1,22 +1,9 @@
-import type { Progress } from "#entities/harness-cache/index.ts";
-import type { HarnessId } from "#shared/contract/index.ts";
 import type { Translate } from "#shared/i18n/index.ts";
 import { columns, span, type View } from "#shared/render/index.ts";
 import type { LockChange } from "../add.action.ts";
 import type { InstallOutcome, InstallResult } from "../install.action.ts";
 import type { ListedHarness } from "../list.action.ts";
 import { bytes, lockedText, seconds } from "./format.ts";
-
-export const progressView = (harness: HarnessId, progress: Progress, t: Translate): View => {
-  if (progress.phase === "waiting") return [[span(` ${t("harness.waiting", { harness })}`, "muted")]];
-  if (progress.phase === "unpack") return [[span(` ${t("harness.unpacking", { harness })}`, "muted")]];
-  const { done, total } = progress;
-  const part =
-    total === undefined
-      ? bytes(done, t)
-      : `${Math.floor((done / total) * 100)}%  ${bytes(done, t)} / ${bytes(total, t)}`;
-  return [[span(` ${t("harness.downloading", { harness })}  `), span(part, "muted")]];
-};
 
 export const addView = (lockPath: string, changes: readonly LockChange[], t: Translate): View => [
   ...columns(

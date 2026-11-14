@@ -224,7 +224,8 @@ export const en = {
   "expect.noNot": "{matcher} has no .not form",
   "expect.notLoadout": "toMatchLoadoutSnapshot() takes a loadout from resolve() or assemble(), not {received}",
   "capture.noAdapter": "ctxray can't launch {harness} yet",
-  "capture.notInstalled": "{harness} isn't installed: ctxray found no `{binary}` on PATH",
+  "capture.notInstalled":
+    "{harness} isn't installed: ctxray.lock doesn't pin it and PATH has no `{binary}`. Pin it with `ctxray harness add {harness}`",
   "capture.exited": "{harness} stopped before the test was done (exit code {code})",
   "capture.output": "Output",
   "capture.trace": "Trace",
@@ -319,4 +320,5 @@ export const en = {
   "cache.total": { one: "{count} build, {size}", other: "{count} builds, {size}" },
   "cache.nothingToPrune": "Nothing to prune: every build was used recently or ctxray.lock pins it",
   "cache.pruned": { one: "Removed {count} build, freed {size}", other: "Removed {count} builds, freed {size}" },
+  "option.noInstall": "Don't install a pinned harness the cache lacks, fail instead",
 } as const satisfies Record<string, Message>;

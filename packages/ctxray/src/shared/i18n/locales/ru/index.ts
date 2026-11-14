@@ -260,7 +260,8 @@ export const ru: Catalog = {
   "expect.noNot": "У {matcher} нет формы .not",
   "expect.notLoadout": "toMatchLoadoutSnapshot() принимает loadout из resolve() или assemble(), а не {received}",
   "capture.noAdapter": "ctxray пока не умеет запускать {harness}",
-  "capture.notInstalled": "{harness} не установлен: в PATH нет `{binary}`",
+  "capture.notInstalled":
+    "{harness} не установлен: в ctxray.lock его нет, а в PATH нет `{binary}`. Закрепите его через `ctxray harness add {harness}`",
   "capture.exited": "{harness} завершился раньше теста (код выхода {code})",
   "capture.output": "Вывод",
   "capture.trace": "Трейс",
@@ -368,4 +369,5 @@ export const ru: Catalog = {
     many: "Удалено {count} сборок, освобождено {size}",
     other: "Удалено {count} сборки, освобождено {size}",
   },
+  "option.noInstall": "Не ставить закреплённый харнесс, которого нет в кеше, а падать",
 };

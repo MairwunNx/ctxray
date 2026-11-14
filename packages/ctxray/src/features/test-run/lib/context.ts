@@ -1,7 +1,7 @@
 import { CAPTURE_ADAPTERS, type Finding, STATIC_ADAPTERS } from "#entities/harness/index.ts";
 import type { Component, HarnessId, Policy } from "#shared/contract/index.ts";
-import type { Env } from "#shared/infra/index.ts";
 import { toFailure } from "./attempt.ts";
+import type { Binaries } from "./binaries.ts";
 import type { Capture } from "./capture.ts";
 import type { CapturedLoadout } from "./captured.ts";
 import type { CellResult } from "./run.ts";
@@ -49,10 +49,15 @@ const checkOne = async (
   harness: HarnessId,
   capture: Capture,
   policies: readonly Policy[],
-  env: Env,
+  binaries: Binaries,
 ): Promise<CellResult> => {
   const adapter = CAPTURE_ADAPTERS[harness];
-  if (!adapter || !Bun.which(adapter.binary, { PATH: env["PATH"] ?? "" })) {
+  const started = performance.now();
+  const binary = adapter && (await binaries(harness).catch((error: unknown) => error));
+  if (binary !== undefined && typeof binary !== "string") {
+    return { ...base(harness), status: "failed", failure: toFailure(binary), duration: performance.now() - started };
+  }
+  if (!adapter || binary === undefined) {
     return {
       ...base(harness),
       status: "skipped",
@@ -61,7 +66,6 @@ const checkOne = async (
       attempts: 0,
     };
   }
-  const started = performance.now();
   const scope = { harness, workspace, inventory: await workspace.inventoryOf(harness), snapshot: () => {} };
   const session = createSession(capture, scope);
   try {
@@ -97,12 +101,12 @@ export const runContextChecks = async (
   selection: Selection,
   capture: Capture,
   policies: readonly Policy[],
-  env: Env,
+  binaries: Binaries,
 ): Promise<CellResult[]> => {
   if (!selection.layers.has("L4") || selection.backend.kind !== "mock") return [];
   const results: CellResult[] = [];
   for (const harness of selection.harnesses.filter((id) => STATIC_ADAPTERS[id] && CAPTURE_ADAPTERS[id])) {
-    results.push(await checkOne(workspace, harness, capture, policies, env));
+    results.push(await checkOne(workspace, harness, capture, policies, binaries));
   }
   return results;
 };

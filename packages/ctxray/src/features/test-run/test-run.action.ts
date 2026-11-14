@@ -1,9 +1,12 @@
 import { realpath } from "node:fs/promises";
 import { relative, sep } from "node:path";
 import { findRoot } from "#entities/harness/index.ts";
+import type { Progress as CacheProgress } from "#entities/harness-cache/index.ts";
 import type { Config } from "#entities/user-config/index.ts";
-import type { Env } from "#shared/infra/index.ts";
+import type { HarnessId } from "#shared/contract/index.ts";
+import { type Env, isCi } from "#shared/infra/index.ts";
 import { type Failure, toFailure } from "./lib/attempt.ts";
+import { createBinaries } from "./lib/binaries.ts";
 import { createCapture } from "./lib/capture.ts";
 import { runChecks } from "./lib/checks.ts";
 import { collectFile, findTestFiles, installedVersion } from "./lib/collect.ts";
@@ -18,6 +21,8 @@ export type TestRunRequest = {
   updateSnapshots: boolean;
   differences?: boolean; // warn when the harnesses get different instructions, true by default
   errorOnWarnings?: boolean; // --error-on-warnings, over the config
+  frozen?: boolean; // --frozen, on by itself in CI: ctxray.lock must match the config
+  install?: boolean; // false with --no-install: a harness missing from the cache fails instead
 };
 
 export type TestRunResult = {
@@ -31,12 +36,14 @@ export type TestRunResult = {
 };
 
 export type Progress = (done: number, total: number, current: string | undefined) => void;
+export type InstallProgress = (harness: HarnessId, progress: CacheProgress) => void;
 
 export const createTestRunAction =
   (config: Config, cwd: string, version: string, env: Env, self: readonly string[]) =>
   async (
-    { selection, updateSnapshots, differences = true, errorOnWarnings = false }: TestRunRequest,
+    { selection, updateSnapshots, differences = true, errorOnWarnings = false, ...request }: TestRunRequest,
     progress: Progress = () => {},
+    onInstall: InstallProgress = () => {},
   ): Promise<TestRunResult> => {
     const started = performance.now();
     const here = await realpath(cwd);
@@ -50,7 +57,12 @@ export const createTestRunAction =
     for (const file of files) collected.push(await collectFile(file, run));
     const definitions = collected.flatMap((file) => file.tests);
     const snapshots = createSnapshots(updateSnapshots);
-    const capture = createCapture({ config, env, self });
+    const binaries = createBinaries(config, env, cwd, {
+      frozen: request.frozen === true || isCi(env),
+      install: request.install !== false,
+      onInstall,
+    });
+    const capture = createCapture({ config, env, self, binaries });
     const context = { root, workspaces, snapshots, capture };
 
     const results = await runChecks(repository, selection.harnesses, selection.layers, {
@@ -59,7 +71,7 @@ export const createTestRunAction =
       limits: config.limitsInput,
       differences,
     });
-    results.push(...(await runContextChecks(repository, selection, capture, config.policies, env)));
+    results.push(...(await runContextChecks(repository, selection, capture, config.policies, binaries)));
     const total = definitions.length * selection.harnesses.length;
     let done = 0;
     for (const definition of definitions) {

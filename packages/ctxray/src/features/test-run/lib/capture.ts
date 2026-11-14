@@ -15,10 +15,11 @@ import { type Config, egressOf, resolveNetwork } from "#entities/user-config/ind
 import type { HarnessId } from "#shared/contract/index.ts";
 import type { Egress, Env } from "#shared/infra/index.ts";
 import { createRedactor } from "#shared/redact/index.ts";
+import type { Binaries } from "./binaries.ts";
 import { fail } from "./failure.ts";
 import type { CellScope } from "./scope.ts";
 
-export type CaptureDeps = { config: Config; env: Env; self: readonly string[] };
+export type CaptureDeps = { config: Config; env: Env; self: readonly string[]; binaries: Binaries };
 
 export type OpenRequest = { cwd: string; prompt: string };
 
@@ -35,7 +36,7 @@ const PROXY_VARIABLES = ["HTTPS_PROXY", "HTTP_PROXY", "ALL_PROXY", "NO_PROXY"];
 const both = (name: string, value: string) => ({ [name]: value, [name.toLowerCase()]: value });
 
 // The proxy and the egress guard live for the whole run, each harness session gets its own prefix and trace.
-export const createCapture = ({ config, env, self }: CaptureDeps) => {
+export const createCapture = ({ config, env, self, binaries }: CaptureDeps) => {
   const traceDir = join(tmpdir(), `ctxray-traces-${crypto.randomUUID().slice(0, 8)}`);
   const redactor = createRedactor(config.redact.patterns);
   const network = resolveNetwork(config, env);
@@ -73,7 +74,7 @@ export const createCapture = ({ config, env, self }: CaptureDeps) => {
   const open = async (scope: CellScope, { cwd, prompt }: OpenRequest): Promise<OpenSession> => {
     const adapter = CAPTURE_ADAPTERS[scope.harness] ?? fail("capture.noAdapter", { harness: scope.harness });
     const binary =
-      Bun.which(adapter.binary, { PATH: env["PATH"] ?? "" }) ??
+      (await binaries(scope.harness)) ??
       fail("capture.notInstalled", { harness: scope.harness, binary: adapter.binary });
     resources ??= (async () => ({ proxy: startProxy(), guard: await startEgressGuard() }))();
     const { proxy, guard } = await resources;

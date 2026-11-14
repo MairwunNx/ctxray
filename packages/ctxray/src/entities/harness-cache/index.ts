@@ -11,6 +11,7 @@ export {
 export { type CachedBuild, listCache, type PruneOptions, pruneCache } from "./inventory.ts";
 export { DEFAULT_REGISTRY, type RegistrySetup, readRegistrySetup } from "./npmrc.ts";
 export { archiveSource, packHarnesses, registrySource } from "./pack.ts";
+export { progressView } from "./progress-view.ts";
 export {
   type Located,
   type LocateOptions,

@@ -1,5 +1,5 @@
 import { relative } from "node:path";
-import { ProvisionFailure } from "#entities/harness-cache/index.ts";
+import { ProvisionFailure, progressView } from "#entities/harness-cache/index.ts";
 import { LockfileFailure } from "#entities/lockfile/index.ts";
 import { CONFIG_OPTION } from "#entities/user-config/index.ts";
 import type { CommandSpec, Handler, Values } from "#shared/cli/index.ts";
@@ -11,7 +11,7 @@ import type { HarnessInstallAction } from "../install.action.ts";
 import { harnessIdOf } from "../lib/context.ts";
 import type { HarnessListAction } from "../list.action.ts";
 import type { HarnessPackAction } from "../pack.action.ts";
-import { addView, installView, listView, packView, progressView } from "./view.ts";
+import { addView, installView, listView, packView } from "./view.ts";
 
 export const harnessSpec: CommandSpec = {
   name: "harness",

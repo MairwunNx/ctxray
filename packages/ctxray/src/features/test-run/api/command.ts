@@ -1,3 +1,4 @@
+import { progressView } from "#entities/harness-cache/index.ts";
 import { CONFIG_OPTION, type Config } from "#entities/user-config/index.ts";
 import type { CommandSpec, Handler } from "#shared/cli/index.ts";
 import { ExitCode } from "#shared/contract/index.ts";
@@ -24,6 +25,8 @@ export const testSpec: CommandSpec = {
     "update-snapshots": { type: "boolean", short: "u", summary: "option.updateSnapshots" },
     "ignore-harness-differences": { type: "boolean", summary: "option.ignoreHarnessDifferences" },
     "error-on-warnings": { type: "boolean", summary: "option.errorOnWarnings" },
+    frozen: { type: "boolean", summary: "option.frozen" },
+    "no-install": { type: "boolean", summary: "option.noInstall" },
     config: CONFIG_OPTION,
   },
   usesConfig: true,
@@ -54,6 +57,8 @@ export const createTestCommand =
         updateSnapshots: values["update-snapshots"] === true,
         differences: values["ignore-harness-differences"] !== true && !config.ignoreHarnessDifferences,
         errorOnWarnings: values["error-on-warnings"] === true,
+        frozen: values["frozen"] === true,
+        install: values["no-install"] !== true,
       },
       (done, total, current) =>
         renderer.live(
@@ -61,6 +66,7 @@ export const createTestCommand =
             ? undefined
             : [[span(` ${t("test.progress", { done, total })}  `), span(current, "muted")]],
         ),
+      (harness, progress) => renderer.live(progressView(harness, progress, t)),
     );
     // Failures quote the user's files and values, so they pass the same redaction as any other output.
     const redactor = createRedactor(config.redact.patterns);
