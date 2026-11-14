@@ -65,7 +65,9 @@ export const createHarnessInstallAction =
         source,
         (progress) => onProgress(harness, progress),
       );
-      result.outcomes.push({ harness, kind: "install", installed, duration: performance.now() - started });
+      // Another process may have installed it while this one waited.
+      const kind = installed.fresh ? "install" : "cache";
+      result.outcomes.push({ harness, kind, installed, duration: performance.now() - started });
     }
     return result;
   };

@@ -70,6 +70,7 @@ describe("the harness cache", () => {
     );
     const installed = await Promise.all(runs);
     expect(new Set(installed.map((one) => one.dir)).size).toBe(1);
+    expect(installed.filter((one) => one.fresh).length).toBe(1);
     expect(fake.downloads.length - before).toBe(1);
     expect(waits.length).toBeGreaterThan(0);
     expect((await listCache(dirs)).map((build) => build.version)).toEqual(["2.1.311"]);

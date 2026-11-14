@@ -23,6 +23,7 @@ export type Installed = Manifest & {
   dir: string;
   binary: string; // absolute
   shared: boolean; // found in a read-only cache layer
+  fresh?: boolean; // this process downloaded it, rather than finding it
 };
 
 export type Progress =
@@ -127,9 +128,10 @@ export const createHarnessCache = (dirs: CacheDirs) => {
       } finally {
         await rm(tmp, { recursive: true, force: true });
       }
-      return (
-        (await find(harness, locked, platform)) ?? fail("provision.noBinary", { package: build.package, bin: final })
-      );
+      const installed = await find(harness, locked, platform);
+      return installed
+        ? { ...installed, fresh: true }
+        : fail("provision.noBinary", { package: build.package, bin: final });
     };
     return withFileLock(`${final}.lock`, work, { onWait: () => onProgress({ phase: "waiting" }) });
   };
