@@ -85,11 +85,12 @@ The [wiki](https://github.com/MairwunNx/ctxray/wiki) holds the manual. It grows 
 ## Related projects
 
 - **[Feature-Action Architecture](https://github.com/MairwunNx/Feature-Action-Architecture)** – the architecture ctxray's code follows.
+- **[Allay AI](https://allay.chat)** – an AI helper for Minecraft servers that answers players from their real game.
 
 ## Content disclosures
 
 - 🤖 **AI-generated code.** AI agents wrote much of the code.
 - 📡 **No telemetry.** ctxray sends nothing about you anywhere. It talks only to the model provider or gateway you set up, and only in tests that launch an agent.
-- Free under the MIT license. No ads.
+- Free under the MIT license.
 
 > 🫡 Made by Pavel Erokhin (Павел Ерохин), aka mairwunnx.
