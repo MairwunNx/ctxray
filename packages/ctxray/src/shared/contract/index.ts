@@ -52,6 +52,14 @@ export {
   SystemSection,
   TokenSummary,
 } from "./loadout.ts";
+export {
+  LOCKFILE_NAME,
+  LOCKFILE_VERSION,
+  LockedHarness,
+  LockedPackage,
+  Lockfile,
+  type RegistryHarness,
+} from "./lockfile.ts";
 export { Layer, SkipReason, TestStatus } from "./result.ts";
 export { SESSION_SCHEMA_VERSION, Session, Turn } from "./session.ts";
 export { Exchange, type Json, Protocol, type Step, type ToolCall, TRACE_SCHEMA_VERSION } from "./trace.ts";

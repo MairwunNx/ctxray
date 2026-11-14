@@ -2,6 +2,7 @@ import { z } from "zod";
 import { RegExpValue, UserConfig } from "./config.ts";
 import { Inspection } from "./inspection.ts";
 import { LoadoutSnapshot } from "./loadout.ts";
+import { Lockfile } from "./lockfile.ts";
 import { Session } from "./session.ts";
 import { Exchange } from "./trace.ts";
 
@@ -15,6 +16,7 @@ const documents = {
   session: { schema: Session, io: "output" },
   inspection: { schema: Inspection, io: "output" },
   exchange: { schema: Exchange, io: "output" }, // one line of a trace file
+  lockfile: { schema: Lockfile, io: "output" },
 } as const;
 
 export type JsonSchemaDocument = { $id: string; $schema?: string; [key: string]: unknown };

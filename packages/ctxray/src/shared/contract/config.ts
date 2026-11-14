@@ -72,6 +72,11 @@ export const Network = z.strictObject({
   noProxy: z.array(z.string()).optional().describe("Hosts that skip the proxy, overrides NO_PROXY"),
   ca: z.array(z.string()).optional().describe("PEM files with extra CA certificates, relative to this config"),
   systemCa: z.boolean().optional().describe("Trust the system certificate store too"),
+  registry: z
+    .string()
+    .url()
+    .optional()
+    .describe("npm registry harnesses install from, overrides .npmrc and NPM_CONFIG_REGISTRY"),
 });
 export type Network = z.output<typeof Network>;
 
