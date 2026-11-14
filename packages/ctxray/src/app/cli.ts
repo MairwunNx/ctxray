@@ -76,8 +76,12 @@ export const runCli = async (args: readonly string[], io: Io, container: Contain
   }
 
   const specs = COMMANDS.map((candidate) => candidate.spec);
-  const renderer = await createRenderer(settings.renderer, io.stdout);
-  const run = createRunInjector(container, settings, t, renderer, config);
+  // Disposed in reverse on every way out: the run's injector first, then the renderer it prints through.
+  await using stack = new AsyncDisposableStack();
+  const renderer = stack.adopt(await createRenderer(settings.renderer, io.stdout), (opened) => opened.close());
+  const run = stack.adopt(createRunInjector(container, settings, t, renderer, config), (injector) =>
+    injector.dispose(),
+  );
   try {
     if (!command || values["help"] === true) {
       renderer.print(helpView(t, specs, GLOBAL_OPTIONS, command?.spec));
@@ -88,8 +92,5 @@ export const runCli = async (args: readonly string[], io: Io, container: Contain
     say(t("error.internal", { message: error instanceof Error ? (error.stack ?? error.message) : String(error) }));
     say(t("error.report", { url: ISSUES_URL }));
     return ExitCode.internal;
-  } finally {
-    await run.dispose();
-    await renderer.close();
   }
 };
