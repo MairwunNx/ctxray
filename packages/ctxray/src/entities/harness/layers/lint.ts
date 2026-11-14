@@ -57,6 +57,26 @@ const duplicateText = async (project: Project, inventory: Inventory): Promise<Pr
   });
 };
 
+// Sizes past which a file works against its harness. Anthropic's skill guide asks for a SKILL.md under 500
+// lines, and Claude Code warns about an instruction file over 40,000 characters.
+const SKILL_LINES = 500;
+const INSTRUCTION_CHARS = 40_000;
+
+const lineCount = (text: string) => text.split("\n").length;
+
+const tooLong = (inventory: Inventory): Problem[] => [
+  ...[...inventory.skills, ...inventory.commands].flatMap(({ path, body }) =>
+    lineCount(body) > SKILL_LINES
+      ? [problem("lint.longBody", "warning", path, { lines: lineCount(body), limit: SKILL_LINES })]
+      : [],
+  ),
+  ...inventory.instructions.flatMap(({ path, text }) =>
+    text.length > INSTRUCTION_CHARS
+      ? [problem("lint.longInstructions", "warning", path, { size: text.length, limit: INSTRUCTION_CHARS })]
+      : [],
+  ),
+];
+
 const documents = (inventory: Inventory) => [
   ...inventory.instructions.map(({ path, text }) => ({ path, text })),
   ...[...inventory.skills, ...inventory.commands].map(({ path, body }) => ({ path, text: body })),
@@ -86,5 +106,6 @@ export const lint = async (project: Project, inventory: Inventory): Promise<Prob
   ...badGlobs(inventory),
   ...skillNames(inventory),
   ...(await duplicateText(project, inventory)),
+  ...tooLong(inventory),
   ...(await brokenLinks(project, inventory)),
 ];
