@@ -7,11 +7,12 @@ import {
   createHarnessInstallAction,
   createHarnessListAction,
   createHarnessPackAction,
+  createHarnessUpgradeAction,
 } from "#features/harness-install/index.ts";
 import { createInitAction } from "#features/init/index.ts";
 import { createInspectAction } from "#features/inspect/index.ts";
 import { createShowConfigAction } from "#features/show-config/index.ts";
-import { createTestRunAction } from "#features/test-run/index.ts";
+import { createStartingLoadout, createTestRunAction } from "#features/test-run/index.ts";
 import type { Translate } from "#shared/i18n/index.ts";
 import type { Env } from "#shared/infra/index.ts";
 import type { Renderer } from "#shared/render/index.ts";
@@ -49,6 +50,8 @@ export const createRunInjector = (
     .provideFactory("harnessInstallAction", createHarnessInstallAction)
     .provideFactory("harnessListAction", createHarnessListAction)
     .provideFactory("harnessPackAction", createHarnessPackAction)
+    .provideFactory("startingLoadout", createStartingLoadout)
+    .provideFactory("harnessUpgradeAction", createHarnessUpgradeAction)
     .provideFactory("cacheAction", createCacheAction)
     .provideFactory("doctorAction", createDoctorAction);
 export type RunInjector = ReturnType<typeof createRunInjector>;

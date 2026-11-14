@@ -11,6 +11,8 @@ import type { HarnessInstallAction } from "../install.action.ts";
 import { harnessIdOf } from "../lib/context.ts";
 import type { HarnessListAction } from "../list.action.ts";
 import type { HarnessPackAction } from "../pack.action.ts";
+import type { HarnessUpgradeAction } from "../upgrade.action.ts";
+import { upgradesView } from "./upgrade-view.ts";
 import { addView, installView, listView, packView } from "./view.ts";
 
 export const harnessSpec: CommandSpec = {
@@ -21,6 +23,7 @@ export const harnessSpec: CommandSpec = {
     install: "harness.install",
     list: "harness.list",
     pack: "harness.pack",
+    upgrade: "harness.upgrade",
   },
   options: {
     only: { type: "string", summary: "option.only", value: "ids" },
@@ -28,6 +31,7 @@ export const harnessSpec: CommandSpec = {
     from: { type: "string", summary: "option.from", value: "archive" },
     output: { type: "string", short: "o", summary: "option.output", value: "file" },
     platform: { type: "string", summary: "option.platform", value: "keys|all" },
+    "dry-run": { type: "boolean", summary: "option.dryRun" },
     config: CONFIG_OPTION,
   },
   usesConfig: true,
@@ -47,6 +51,7 @@ export const createHarnessCommand =
     install: HarnessInstallAction,
     listed: HarnessListAction,
     pack: HarnessPackAction,
+    upgrade: HarnessUpgradeAction,
     t: Translate,
     renderer: Renderer,
     cwd: string,
@@ -83,6 +88,20 @@ export const createHarnessCommand =
           result.outcomes.some((outcome) => outcome.kind === "missing");
         return broken ? ExitCode.environment : ExitCode.ok;
       }
+      if (sub === "upgrade") {
+        if (args.length === 0) return fail("harness.upgradeWhat");
+        const dryRun = values["dry-run"] === true;
+        const result = await upgrade(args, dryRun, (event) =>
+          renderer.live(
+            event.kind === "install"
+              ? progressView(event.harness, event.progress, t)
+              : [[span(` ${t("harness.capturing", { harness: event.harness, version: event.version })}`, "muted")]],
+          ),
+        );
+        renderer.live(undefined);
+        renderer.print(upgradesView(relative(cwd, result.lockPath), result.upgrades, dryRun, t));
+        return ExitCode.ok;
+      }
       if (sub === "list") {
         const { lockPath, rows } = await listed();
         renderer.print(listView(relative(cwd, lockPath), rows, t));
@@ -107,6 +126,7 @@ createHarnessCommand.inject = [
   "harnessInstallAction",
   "harnessListAction",
   "harnessPackAction",
+  "harnessUpgradeAction",
   "t",
   "renderer",
   "cwd",

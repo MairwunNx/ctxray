@@ -29,7 +29,15 @@ const requestOf = async (index: number, files: string[]): Promise<CapturedReques
   });
   const before = index === 0 ? [] : (await requestOf(index - 1, [])).loadout.rules.map((rule) => rule.path);
   const rules = loadout.rules.map((rule) => rule.path).filter((path) => !before.includes(path));
-  return { kind: "request", index, loadout: toCaptured(loadout), added: { rules, skills: [] }, predicted, raw };
+  return {
+    kind: "request",
+    index,
+    loadout: toCaptured(loadout),
+    added: { rules, skills: [] },
+    predicted,
+    raw,
+    snapshot: loadout,
+  };
 };
 
 const failureOf = (check: () => void) => {

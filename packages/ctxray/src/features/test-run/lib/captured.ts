@@ -44,6 +44,7 @@ export type CapturedRequest = {
   added: { rules: readonly string[]; skills: readonly string[] };
   predicted: StaticLoadout;
   raw: Exchange;
+  snapshot: LoadoutSnapshot; // the loadout as the contract has it, for a diff between two runs
 };
 
 // Names only: tokens move with the date, the paths, and git status in the payload, the names don't.

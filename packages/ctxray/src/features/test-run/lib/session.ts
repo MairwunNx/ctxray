@@ -81,6 +81,7 @@ export const createSession = (capture: Capture, scope: CellScope, request: Sessi
       },
       predicted,
       raw,
+      snapshot: loadout,
     };
     built.set(index, request);
     return request;
