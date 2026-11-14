@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { HarnessId } from "./harness.ts";
 import { Limits } from "./limits.ts";
+import { LintConfig } from "./lint.ts";
 import type { Component } from "./loadout.ts";
 
 // Custom issues carry a catalog key in `params.key`, so the CLI shows them in the user's language.
@@ -102,6 +103,7 @@ export const UserConfig = z
     policies: z.array(Policy).refine(uniqueIds, issue("config.duplicatePolicy")).optional(),
     redact: z.strictObject({ patterns: z.array(RedactPattern).optional() }).optional(),
     limits: Limits.optional(),
+    lint: LintConfig.optional(),
     reporters: z.array(Reporter).optional(),
     lang: z.string().optional().describe("CLI language: `auto`, `en`, or `ru`"),
     report: z.strictObject({ langs: z.array(z.string()).optional() }).optional(),

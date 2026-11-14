@@ -23,13 +23,22 @@ export { CONFIG_SCHEMA_URL, jsonSchemas } from "./json-schema.ts";
 export {
   DEFAULT_LIMITS,
   Limits,
+  type LimitsInput,
   MEASURES,
   type Measure,
+  mergeLimits,
   type ResolvedLimits,
   resolveLimits,
   SIZE_KINDS,
   type SizeKind,
 } from "./limits.ts";
+export {
+  LINT_RULES,
+  LintConfig,
+  LintLevel,
+  LintOverride,
+  LintRule,
+} from "./lint.ts";
 export {
   CommandEntry,
   Component,

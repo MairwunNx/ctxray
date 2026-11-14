@@ -1,10 +1,11 @@
-import type { Problem } from "#entities/harness/index.ts";
+import { type Problem, ruleOf } from "#entities/harness/index.ts";
 import { INSPECTION_SCHEMA_VERSION, type InspectedProblem, type Inspection } from "#shared/contract/index.ts";
 import type { InspectResult } from "../inspect.action.ts";
 
 const toProblem = (problem: Problem, message: (problem: Problem) => string): InspectedProblem => ({
   severity: problem.severity,
   key: problem.key,
+  ...(ruleOf(problem.key) && { rule: ruleOf(problem.key) }),
   message: message(problem),
   path: problem.path,
   ...(problem.line === undefined ? {} : { line: problem.line }),

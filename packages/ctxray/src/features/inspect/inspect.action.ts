@@ -1,11 +1,11 @@
 import { realpath, stat } from "node:fs/promises";
 import { relative, resolve, sep } from "node:path";
 import {
+  checkFiles,
   checkReach,
-  findDeadRules,
+  type FileCheckSettings,
   findRoot,
   type Inventory,
-  lint,
   openProject,
   type Problem,
   type Project,
@@ -14,7 +14,7 @@ import {
   type StaticAdapter,
 } from "#entities/harness/index.ts";
 import type { Config } from "#entities/user-config/index.ts";
-import type { HarnessId, ResolvedLimits } from "#shared/contract/index.ts";
+import type { HarnessId } from "#shared/contract/index.ts";
 import { type InspectedHarness, toInspection } from "./inspection.ts";
 
 export type InspectRequest = {
@@ -58,9 +58,9 @@ const inspectOne = async (
   inventory: Inventory,
   scope: Scope,
   unread: readonly Problem[],
-  limits: ResolvedLimits,
+  settings: FileCheckSettings,
 ): Promise<InspectedHarness> => {
-  const problems = [...(await lint(project, inventory, limits)), ...findDeadRules(project, inventory), ...unread];
+  const problems = await checkFiles(project, inventory, inventory.harness, settings, unread);
   return toInspection(adapter.resolve(inventory, scope), inventory, scope, problems.toSorted(byPlace));
 };
 
@@ -89,7 +89,10 @@ export const createInspectAction =
     );
     const harnesses = await Promise.all(
       readable.map(({ id, adapter }, index) =>
-        inspectOne(project, adapter, inventories[index] as Inventory, scope, unread[id] ?? [], config.limits),
+        inspectOne(project, adapter, inventories[index] as Inventory, scope, unread[id] ?? [], {
+          lint: config.lint,
+          limits: config.limitsInput,
+        }),
       ),
     );
     return { root, scope, harnesses, unsupported: ids.filter((id) => !STATIC_ADAPTERS[id]) };

@@ -144,7 +144,7 @@ describe("size limits", () => {
     const opened = await project({ ".claude/skills/big/SKILL.md": skill });
     const inventory = await STATIC_ADAPTERS["claude-code"]?.discover(opened);
     if (!inventory) throw new Error("claude-code");
-    const found = await lint(opened, inventory, resolveLimits(limits));
+    const found = await lint(opened, inventory, () => resolveLimits(limits));
     expect(found.map((item) => `${item.severity} ${item.key} ${item.path}`)).toEqual(expected);
   });
 });

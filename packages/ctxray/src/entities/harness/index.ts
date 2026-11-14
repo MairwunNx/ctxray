@@ -15,7 +15,9 @@ export {
 } from "./capture/session.ts";
 export type { Command, Instruction, Inventory, McpDeclaration, Problem, Severity, Skill } from "./inventory.ts";
 export { findDeadRules } from "./layers/dead-rules.ts";
-export { lint } from "./layers/lint.ts";
+export { checkFiles, type FileCheckSettings } from "./layers/files.ts";
+export { type LimitsOf, lint } from "./layers/lint.ts";
+export { applyLintConfig, limitsFor, ruleOf } from "./layers/lint-config.ts";
 export { checkPolicies, type Finding, type PolicyOutcome } from "./layers/policy.ts";
 export { checkReach, type ReachOptions } from "./layers/reach.ts";
 export { checkSupport, type HarnessProfile, type Requirement, type Support } from "./profile.ts";

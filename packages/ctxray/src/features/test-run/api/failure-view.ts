@@ -1,4 +1,4 @@
-import type { Problem } from "#entities/harness/index.ts";
+import { type Problem, ruleOf } from "#entities/harness/index.ts";
 import { type Line, span, type Tone, type View, widthOf } from "#shared/render/index.ts";
 import type { Failure } from "../lib/attempt.ts";
 import type { CellResult } from "../lib/run.ts";
@@ -18,7 +18,13 @@ const capped = (lines: Line[], words: Words): Line[] =>
 const problemLine = (problem: Problem, words: Words): Line => {
   const where = problem.line === undefined ? problem.path : `${problem.path}:${problem.line}`;
   const tone = problem.severity === "error" ? "failure" : "warning";
-  return [span(`${INDENT}${where}`, tone), span(`  ${words.t(problem.key, problem.params)}`)];
+  const rule = ruleOf(problem.key);
+  return [
+    span(`${INDENT}${where}`, tone),
+    span(`  ${words.t(problem.key, problem.params)}`),
+    // The check's id, as the config names it in `lint.rules`.
+    ...(rule ? [span(`  ${rule}`, "muted")] : []),
+  ];
 };
 
 // The lines under a failure's title, in the user's language.

@@ -2,6 +2,8 @@ import {
   type Backend,
   type HarnessId,
   type HarnessSettings,
+  type LimitsInput,
+  type LintConfig,
   type Network,
   type Policy,
   type ResolvedLimits,
@@ -23,6 +25,8 @@ export type Config = {
   readonly policies: readonly Policy[];
   readonly redact: { readonly patterns: readonly RegExp[] };
   readonly limits: ResolvedLimits;
+  readonly limitsInput: LimitsInput | undefined; // as written, for lint overrides to build on
+  readonly lint: LintConfig;
   readonly reporters: readonly string[];
   readonly lang: string;
   readonly reportLangs: readonly string[] | undefined;
@@ -48,6 +52,8 @@ export const finalizeConfig = (merged: UserConfig, env: Env, files: readonly str
     policies: merged.policies ?? [],
     redact: { patterns: merged.redact?.patterns ?? [] },
     limits: resolveLimits(merged.limits),
+    limitsInput: merged.limits,
+    lint: merged.lint ?? {},
     reporters: merged.reporters ?? ["console"],
     lang: merged.lang ?? "auto",
     reportLangs: merged.report?.langs,

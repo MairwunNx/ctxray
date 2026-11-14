@@ -23,6 +23,7 @@ export const testSpec: CommandSpec = {
     filter: { type: "string", summary: "option.filter", value: "text" },
     "update-snapshots": { type: "boolean", short: "u", summary: "option.updateSnapshots" },
     "ignore-harness-differences": { type: "boolean", summary: "option.ignoreHarnessDifferences" },
+    "error-on-warnings": { type: "boolean", summary: "option.errorOnWarnings" },
     config: CONFIG_OPTION,
   },
   usesConfig: true,
@@ -52,6 +53,7 @@ export const createTestCommand =
         selection,
         updateSnapshots: values["update-snapshots"] === true,
         differences: values["ignore-harness-differences"] !== true && !config.ignoreHarnessDifferences,
+        errorOnWarnings: values["error-on-warnings"] === true,
       },
       (done, total, current) =>
         renderer.live(

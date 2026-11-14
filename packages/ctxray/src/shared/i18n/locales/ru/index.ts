@@ -173,6 +173,7 @@ export const ru: Catalog = {
   "option.backend": "Бэкенд модели: mock, replay, real или имя из backends в конфиге",
   "option.layer": "Слои для прогона, например L1-L3 или L3,L5",
   "option.ignoreHarnessDifferences": "Не предупреждать, если ИИ-харнессы получают разные инструкции или скиллы",
+  "option.errorOnWarnings": "Считать любое предупреждение L1 ошибкой",
   "option.filter": "Запустить только тесты, в имени которых есть этот текст",
   "option.updateSnapshots": "Записать новые и изменившиеся снапшоты loadout",
   "test.unknownBackend": "Неизвестный бэкенд «{name}». Известные: {known}",

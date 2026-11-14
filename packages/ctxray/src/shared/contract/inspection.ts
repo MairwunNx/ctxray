@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { HarnessId } from "./harness.ts";
+import { LintRule } from "./lint.ts";
 import { CommandEntry, Component, McpServer, Provenance, RuleEntry, SkillEntry } from "./loadout.ts";
 
 export const INSPECTION_SCHEMA_VERSION = 1;
@@ -23,6 +24,7 @@ export type StaticTokens = z.infer<typeof StaticTokens>;
 export const InspectedProblem = z.object({
   severity: z.enum(["error", "warning"]),
   key: z.string().describe("Stable message id, like `lint.brokenLink`"),
+  rule: LintRule.optional().describe("The check that found it, as `lint.rules` in the config names it"),
   message: z.string().describe("The message in the language of the run"),
   path: z.string(),
   line: z.number().int().positive().optional(),

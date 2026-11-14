@@ -36,6 +36,23 @@ export const Limits = z
   .describe("Size limits for each skill, command, and instruction file");
 export type LimitsInput = z.output<typeof Limits>;
 
+// One set of limits over another, threshold by threshold, the way an override sits over the project's limits.
+export const mergeLimits = (base: LimitsInput | undefined, over: LimitsInput | undefined): LimitsInput => {
+  const merged: Record<string, unknown> = { ...base };
+  for (const [kind, own] of Object.entries(over ?? {})) {
+    const under = merged[kind];
+    if (own === false || under === false || under === undefined || own === undefined) merged[kind] = own ?? under;
+    else {
+      const measures: Record<string, unknown> = { ...under };
+      for (const [measure, threshold] of Object.entries(own)) {
+        measures[measure] = { ...(measures[measure] as object | undefined), ...threshold };
+      }
+      merged[kind] = measures;
+    }
+  }
+  return merged as LimitsInput;
+};
+
 export type ResolvedThreshold = { warning: number | undefined; error: number | undefined };
 export type ResolvedLimits = Record<SizeKind, Record<Measure, ResolvedThreshold>>;
 

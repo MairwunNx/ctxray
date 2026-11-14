@@ -59,6 +59,9 @@ const duplicateText = async (project: Project, inventory: Inventory): Promise<Pr
   });
 };
 
+// The size limits of one file: lint overrides can give folders limits of their own.
+export type LimitsOf = (path: string) => ResolvedLimits;
+
 const measureOf: Record<Measure, (text: string) => number> = {
   lines: (text) => text.split("\n").length,
   chars: (text) => text.length,
@@ -66,7 +69,7 @@ const measureOf: Record<Measure, (text: string) => number> = {
 };
 
 // The configured size limits: an error over the hard limit, else a warning over the soft one.
-const oversized = (inventory: Inventory, limits: ResolvedLimits): Problem[] => {
+const oversized = (inventory: Inventory, limitsOf: LimitsOf): Problem[] => {
   const items: { kind: SizeKind; path: string; text: string }[] = [
     ...inventory.skills.map(({ path, body }) => ({ kind: "skill" as const, path, text: body })),
     ...inventory.commands.map(({ path, body }) => ({ kind: "command" as const, path, text: body })),
@@ -74,7 +77,7 @@ const oversized = (inventory: Inventory, limits: ResolvedLimits): Problem[] => {
   ];
   return items.flatMap(({ kind, path, text }) =>
     MEASURES.flatMap((measure) => {
-      const { warning, error } = limits[kind][measure];
+      const { warning, error } = limitsOf(path)[kind][measure];
       if (warning === undefined && error === undefined) return [];
       const size = measureOf[measure](text);
       if (error !== undefined && size > error)
@@ -114,12 +117,12 @@ const brokenLinks = async (project: Project, inventory: Inventory): Promise<Prob
 export const lint = async (
   project: Project,
   inventory: Inventory,
-  limits: ResolvedLimits = DEFAULT_LIMITS,
+  limitsOf: LimitsOf = () => DEFAULT_LIMITS,
 ): Promise<Problem[]> => [
   ...inventory.problems,
   ...badGlobs(inventory),
   ...skillNames(inventory),
   ...(await duplicateText(project, inventory)),
-  ...oversized(inventory, limits),
+  ...oversized(inventory, limitsOf),
   ...(await brokenLinks(project, inventory)),
 ];

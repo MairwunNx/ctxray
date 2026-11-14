@@ -17,6 +17,7 @@ export type TestRunRequest = {
   selection: Selection;
   updateSnapshots: boolean;
   differences?: boolean; // warn when the harnesses get different instructions, true by default
+  errorOnWarnings?: boolean; // --error-on-warnings, over the config
 };
 
 export type TestRunResult = {
@@ -34,7 +35,7 @@ export type Progress = (done: number, total: number, current: string | undefined
 export const createTestRunAction =
   (config: Config, cwd: string, version: string, env: Env, self: readonly string[]) =>
   async (
-    { selection, updateSnapshots, differences = true }: TestRunRequest,
+    { selection, updateSnapshots, differences = true, errorOnWarnings = false }: TestRunRequest,
     progress: Progress = () => {},
   ): Promise<TestRunResult> => {
     const started = performance.now();
@@ -54,7 +55,8 @@ export const createTestRunAction =
 
     const results = await runChecks(repository, selection.harnesses, selection.layers, {
       policies: config.policies,
-      limits: config.limits,
+      lint: errorOnWarnings ? { ...config.lint, errorOnWarnings } : config.lint,
+      limits: config.limitsInput,
       differences,
     });
     results.push(...(await runContextChecks(repository, selection, capture, config.policies, env)));

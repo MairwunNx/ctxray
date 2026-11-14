@@ -151,6 +151,7 @@ export const en = {
   "option.backend": "Model backend: mock, replay, real, or a name from the config's backends",
   "option.layer": "Layers to run, like L1-L3 or L3,L5",
   "option.ignoreHarnessDifferences": "Don't warn when the harnesses get different instructions or skills",
+  "option.errorOnWarnings": "Fail the run on any L1 warning, as on an error",
   "option.filter": "Run only the tests whose name holds this text",
   "option.updateSnapshots": "Write new and changed loadout snapshots",
   "test.unknownBackend": "Unknown backend “{name}”. Known ones: {known}",

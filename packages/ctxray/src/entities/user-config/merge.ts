@@ -37,6 +37,16 @@ const mergePatterns = (base: readonly RegExp[], override: readonly RegExp[]): Re
 export const mergeConfigs = (base: UserConfig, override: UserConfig): UserConfig => {
   const { extends: _, policies, redact, ...rest } = override;
   const merged = deepMerge(base, rest) as UserConfig;
+  // Lint ignores and overrides add up: the inherited ones first, so the project's own win.
+  if (base.lint && override.lint) {
+    const ignore = [...(base.lint.ignore ?? []), ...(override.lint.ignore ?? [])];
+    const overrides = [...(base.lint.overrides ?? []), ...(override.lint.overrides ?? [])];
+    merged.lint = {
+      ...merged.lint,
+      ...(ignore.length > 0 && { ignore: [...new Set(ignore)] }),
+      ...(overrides.length > 0 && { overrides }),
+    };
+  }
   if (policies) merged.policies = mergePolicies(base.policies ?? [], policies);
   if (redact?.patterns) merged.redact = { patterns: mergePatterns(base.redact?.patterns ?? [], redact.patterns) };
   return merged;

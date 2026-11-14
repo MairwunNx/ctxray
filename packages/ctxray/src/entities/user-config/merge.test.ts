@@ -34,6 +34,11 @@ describe("mergeConfigs", () => {
       { id: "forbidden-mcp", denyMcp: ["some-server"] },
     ],
     redact: { patterns: [/ORG-\d+/] },
+    lint: {
+      rules: { "broken-link": "error", size: "warning" },
+      ignore: ["vendor/**"],
+      overrides: [{ include: ["legacy/**"], rules: { "broken-link": "off" } }],
+    },
   };
 
   test.each<[string, UserConfig, Partial<UserConfig>]>([
@@ -63,6 +68,26 @@ describe("mergeConfigs", () => {
           { id: "mcp-budget", maxTokens: { mcp: 10_000, total: 25_000 } },
           { id: "forbidden-mcp", denyMcp: ["some-server"] },
         ],
+      },
+    ],
+    [
+      "lint rules merge per check, ignores and overrides add up",
+      {
+        lint: {
+          rules: { size: "error" },
+          ignore: ["generated/**"],
+          overrides: [{ include: ["docs/**"], rules: { "dead-rule": "off" } }],
+        },
+      },
+      {
+        lint: {
+          rules: { "broken-link": "error", size: "error" },
+          ignore: ["vendor/**", "generated/**"],
+          overrides: [
+            { include: ["legacy/**"], rules: { "broken-link": "off" } },
+            { include: ["docs/**"], rules: { "dead-rule": "off" } },
+          ],
+        },
       },
     ],
     [
