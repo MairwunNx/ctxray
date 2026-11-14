@@ -12,6 +12,8 @@
     "noFallthroughCasesInSwitch": true,
     "noPropertyAccessFromIndexSignature": true,
     "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
+    "noUncheckedSideEffectImports": true,
     "isolatedModules": true,
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,

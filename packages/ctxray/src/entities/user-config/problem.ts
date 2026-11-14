@@ -5,8 +5,11 @@ export type ConfigProblem = { readonly key: MessageKey; readonly params: Params 
 
 // Thrown inside the loader and caught at its edge, which turns it into a result.
 export class ConfigFailure extends Error {
-  constructor(readonly problems: readonly ConfigProblem[]) {
+  readonly problems: readonly ConfigProblem[];
+
+  constructor(problems: readonly ConfigProblem[]) {
     super(problems.map((problem) => problem.key).join(", "));
+    this.problems = problems;
   }
 }
 
