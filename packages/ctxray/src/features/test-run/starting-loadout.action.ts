@@ -21,6 +21,8 @@ export const createStartingLoadout =
       inventory: await workspace.inventoryOf(harness),
       snapshot: () => {},
       stats: [],
+      sessions: [],
+      seen: new Set<string>(),
     };
     const session = createSession(capture, scope);
     try {

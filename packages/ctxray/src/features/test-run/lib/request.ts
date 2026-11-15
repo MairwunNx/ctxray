@@ -70,3 +70,29 @@ export const requestOf = async (
     snapshot: loadout,
   };
 };
+
+const idsOf = (loadout: LoadoutSnapshot) => [
+  ...loadout.rules.map((rule) => rule.path),
+  ...loadout.skills.loaded.map((skill) => skill.name),
+];
+
+// The requests a session sent, kept for the report: its first, its largest, and what each turn brought in.
+export const recordSession = (scope: CellScope, requests: readonly CapturedRequest[]) => {
+  const sorted = requests.toSorted((a, b) => a.index - b.index);
+  const [first] = sorted;
+  if (!first) return;
+  const peak = sorted.reduce((most, one) => (one.snapshot.tokens.total > most.snapshot.tokens.total ? one : most));
+  const timeline = sorted.map((one, at) => {
+    const before = new Set(at === 0 ? [] : idsOf((sorted[at - 1] as CapturedRequest).snapshot));
+    return {
+      turn: one.index,
+      added: idsOf(one.snapshot).filter((id) => !before.has(id)),
+      tokens: one.snapshot.tokens.total,
+    };
+  });
+  scope.sessions.push({ start: first.snapshot, peak: peak.snapshot, timeline });
+  for (const one of sorted) {
+    for (const rule of one.snapshot.rules) scope.seen.add(rule.path);
+    for (const skill of one.snapshot.skills.loaded) scope.seen.add(skill.path);
+  }
+};

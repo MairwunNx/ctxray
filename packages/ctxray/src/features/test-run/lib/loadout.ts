@@ -70,5 +70,8 @@ export const resolveIn =
     const { project } = scope.workspace;
     if (dir.startsWith("..") || (dir !== "" && !project.dirs.includes(dir))) fail("resolve.noFolder", { dir: cwd });
     const paths = files.map(normal).filter((path) => !path.startsWith(".."));
-    return toView(adapter.resolve(scope.inventory, { cwd: dir, files: paths }), paths);
+    const loadout = adapter.resolve(scope.inventory, { cwd: dir, files: paths });
+    for (const rule of loadout.rules) scope.seen.add(rule.path);
+    for (const skill of [...loadout.skills.listed, ...loadout.skills.loaded]) scope.seen.add(skill.path);
+    return toView(loadout, paths);
   };

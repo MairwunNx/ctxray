@@ -6,7 +6,7 @@ import { formatName } from "./dsl.ts";
 import type { EvalContext } from "./evals.ts";
 import { KIND_LAYERS, type TestDefinition } from "./model.ts";
 import { selectRules } from "./rules.ts";
-import type { CellScope, Stat } from "./scope.ts";
+import type { CellScope, SessionRecord, Stat } from "./scope.ts";
 import { decide, type Selection } from "./selection.ts";
 import { type Snapshots, snapshotKey } from "./snapshot.ts";
 import type { Workspaces } from "./workspace.ts";
@@ -29,6 +29,7 @@ export type CellResult = {
   tokens?: number; // the starting context of a context check
   exact?: boolean; // the provider counted `tokens`, not a local tokenizer
   stats?: readonly Stat[]; // the rates L6 and L7 judged
+  sessions?: readonly SessionRecord[]; // the harness sessions it ran, for the report
   attempts: number;
   duration: number;
 };
@@ -39,6 +40,7 @@ export type RunContext = {
   snapshots: Snapshots;
   capture: Capture;
   evals: EvalContext | undefined; // set with a replay or real backend
+  seen: (harness: HarnessId) => Set<string>; // what the tests of each harness looked at, for coverage
 };
 
 // A harness needs a few seconds to start, and a test may run several sessions.
@@ -100,6 +102,8 @@ export const runDefinition = async (
       inventory,
       snapshot: (value, variant) => context.snapshots.check(definition.file, snapshotKey(key, harness, variant), value),
       stats: [],
+      sessions: [],
+      seen: context.seen(harness),
     });
     return { scopeOf, cells: cellsOf(definition, scopeOf(definition.key)) };
   };
@@ -120,13 +124,15 @@ export const runDefinition = async (
       attempt(
         () => {
           scope.stats.length = 0;
+          scope.sessions.length = 0;
           return runBody(definition, cell, scope, context);
         },
         { ...definition.options, timeout },
       ),
     );
     const stats = scope.stats.length > 0 ? { stats: [...scope.stats] } : {};
-    results.push({ ...base, name: cell.name, key: cell.key, ...value, ...stats, duration });
+    const sessions = scope.sessions.length > 0 ? { sessions: [...scope.sessions] } : {};
+    results.push({ ...base, name: cell.name, key: cell.key, ...value, ...stats, ...sessions, duration });
   }
   return results;
 };

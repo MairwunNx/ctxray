@@ -14,6 +14,7 @@ import { createCassettes } from "./lib/cassettes.ts";
 import { runChecks } from "./lib/checks.ts";
 import { collectFile, findTestFiles, installedVersion } from "./lib/collect.ts";
 import { runContextChecks } from "./lib/context.ts";
+import { type Coverage, coverageOf } from "./lib/coverage.ts";
 import { type CellResult, runDefinition } from "./lib/run.ts";
 import { fullName, type Selection } from "./lib/selection.ts";
 import { createSnapshots, type SnapshotStats } from "./lib/snapshot.ts";
@@ -39,6 +40,9 @@ export type TestRunResult = {
   snapshots: SnapshotStats;
   spend: SpendTotal | undefined; // a real run: what the model cost
   cassettes: number; // tapes written by --record
+  root: string; // the project root
+  selection: Selection;
+  coverage: readonly Coverage[];
   installed: string | undefined; // @mairwunnx/ctxray in the project's node_modules, when it isn't this version
   duration: number;
 };
@@ -94,7 +98,9 @@ export const createTestRunAction =
               clean: createRedactor(config.redact.patterns).text,
             }),
           };
-    const context = { root, workspaces, snapshots, capture, evals };
+    const seen = new Map<HarnessId, Set<string>>();
+    const seenBy = (harness: HarnessId) => seen.get(harness) ?? seen.set(harness, new Set()).get(harness) ?? new Set();
+    const context = { root, workspaces, snapshots, capture, evals, seen: seenBy };
 
     const results = await runChecks(repository, selection.harnesses, selection.layers, {
       policies: config.policies,
@@ -125,6 +131,9 @@ export const createTestRunAction =
       snapshots: await snapshots.save(),
       spend: kind === "real" ? spend.total() : undefined,
       cassettes: await cassettes.save(),
+      root,
+      selection,
+      coverage: await coverageOf(repository, selection.harnesses, seenBy, results),
       installed: installed === version ? undefined : installed,
       duration: performance.now() - started,
     };

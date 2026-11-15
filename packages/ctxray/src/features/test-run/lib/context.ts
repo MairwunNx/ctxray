@@ -66,11 +66,20 @@ const checkOne = async (
       attempts: 0,
     };
   }
-  const scope = { harness, workspace, inventory: await workspace.inventoryOf(harness), snapshot: () => {}, stats: [] };
+  const scope = {
+    harness,
+    workspace,
+    inventory: await workspace.inventoryOf(harness),
+    snapshot: () => {},
+    stats: [],
+    sessions: [],
+    seen: new Set<string>(),
+  };
   const session = createSession(capture, scope);
   try {
     const { loadout } = await session.firstRequest();
     await session.end();
+    const sessions = scope.sessions;
     const { errors, warnings } = overBudget(loadout, policies, harness);
     // The same instructions twice cost tokens twice and pull the model two ways after the next edit.
     for (const { path, sameAs } of loadout.duplicates) {
@@ -86,6 +95,7 @@ const checkOne = async (
       status: errors.length > 0 ? "failed" : "passed",
       tokens: loadout.tokens.total,
       exact: loadout.tokens.exact,
+      sessions,
       duration: performance.now() - started,
       ...(found.length > 0 && { failure: { kind: "findings" as const, findings: found } }),
       ...(warnings.length > 0 && { warnings: warnings.length }),

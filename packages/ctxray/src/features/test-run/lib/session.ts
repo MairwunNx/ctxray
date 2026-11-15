@@ -3,7 +3,7 @@ import type { Exchange } from "#shared/contract/index.ts";
 import type { Capture, OpenSession } from "./capture.ts";
 import type { CapturedRequest } from "./captured.ts";
 import { fail } from "./failure.ts";
-import { requestOf } from "./request.ts";
+import { recordSession, requestOf } from "./request.ts";
 import type { CellScope } from "./scope.ts";
 
 // A harness at work against the mock model. The test plays the model: each call answers the harness's
@@ -83,6 +83,7 @@ export const createSession = (capture: Capture, scope: CellScope, request: Sessi
       if (ended || !opened) return;
       ended = true;
       const session = await opened;
+      recordSession(scope, [...built.values()]);
       const result = await session.harness.end();
       const egress = session.egress().filter((host) => !session.adapter.probes?.includes(host));
       await session.close();

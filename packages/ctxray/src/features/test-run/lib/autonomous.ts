@@ -3,7 +3,7 @@ import { toFailure } from "./attempt.ts";
 import type { SampleBackend } from "./backend.ts";
 import type { Capture } from "./capture.ts";
 import { CheckFailure } from "./failure.ts";
-import { requestOf } from "./request.ts";
+import { recordSession, requestOf } from "./request.ts";
 import type { Run } from "./runs.ts";
 import type { CellScope } from "./scope.ts";
 
@@ -60,6 +60,10 @@ export const runSample = async (
       ...(start?.snapshot.rules.map((rule) => rule.path) ?? []),
       ...(start?.snapshot.skills.loaded.map((skill) => skill.name) ?? []),
     ]);
+    recordSession(
+      scope,
+      [start, peak].filter((one) => one !== undefined),
+    );
     const misses = backend.misses();
     run = {
       ...empty,
