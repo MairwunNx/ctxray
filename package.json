@@ -10,9 +10,9 @@
     "#ctxray/*": "./packages/ctxray/src/*"
   },
   "scripts": {
-    "check": "biome check . && tsc -p . && bun scripts/check-file-size.ts",
+    "check": "biome check . && tsc -p . && tsc -p tsconfig.client.json && bun scripts/check-file-size.ts",
     "fix": "biome check --write .",
-    "typecheck": "tsc -p .",
+    "typecheck": "tsc -p . && tsc -p tsconfig.client.json",
     "schemas": "bun scripts/gen-schemas.ts",
     "gitleaks": "bun scripts/gen-gitleaks.ts",
     "build": "bun scripts/build.ts"

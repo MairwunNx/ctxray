@@ -21,5 +21,7 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["packages/*/src", "scripts"]
+  "include": ["packages/*/src", "scripts"],
+  // The HTML report's page runs in a browser: tsconfig.client.json checks it with the DOM.
+  "exclude": ["packages/ctxray/src/entities/report/client"]
 }
