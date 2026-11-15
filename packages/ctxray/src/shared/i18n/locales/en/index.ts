@@ -210,6 +210,7 @@ export const en = {
   "dsl.outsideTest": "This works only inside a running test",
   "discover.empty": "{selector} selects no rules for {harness}",
   "discover.noCodeowners": "{selector} needs a CODEOWNERS file, and the project has none",
+  "declarative.invalid": "The test file doesn't fit the schema at {path}: {message}",
   "corpus.unreadable": "Can't load prompts from {file}: {message}",
   "corpus.invalid": "{file} must export positive and negative prompts as lists of strings",
   "resolve.noAdapter": "ctxray can't read the files of {harness} yet",

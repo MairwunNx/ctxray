@@ -246,6 +246,7 @@ export const ru: Catalog = {
   "dsl.outsideTest": "Это работает только внутри идущего теста",
   "discover.empty": "{selector} не выбирает ни одного правила для {harness}",
   "discover.noCodeowners": "{selector} нужен файл CODEOWNERS, а в проекте его нет",
+  "declarative.invalid": "Файл тестов не подходит под схему в {path}: {message}",
   "corpus.unreadable": "Не удалось загрузить промпты из {file}: {message}",
   "corpus.invalid": "{file} должен экспортировать positive и negative — списки строк",
   "resolve.noAdapter": "ctxray пока не читает файлы {harness}",

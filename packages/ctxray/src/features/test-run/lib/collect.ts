@@ -1,9 +1,11 @@
 import { join } from "node:path";
 import type { Project } from "#entities/harness/index.ts";
+import { registerDeclarative } from "./declarative.ts";
 import { type Collector, withCollector } from "./dsl.ts";
 import type { TestDefinition } from "./model.ts";
 
-export const TEST_FILE = /(^|\/)[^/]+\.ctxray\.[mc]?[jt]s$/;
+export const TEST_FILE = /(^|\/)[^/]+\.ctxray\.(?:[mc]?[jt]s|jsonc?)$/;
+const DECLARATIVE = /\.jsonc?$/;
 
 // Test files under `dir` (relative to the root, "" for all), as the repository holds them: what .gitignore
 // hides, node_modules included, stays out.
@@ -20,7 +22,8 @@ export const collectFile = async (file: string, run: string): Promise<Collected>
   const collector: Collector = { file, frames: [], tests: [], pending: [] };
   try {
     await withCollector(collector, async () => {
-      await import(`${file}?run=${run}`);
+      if (DECLARATIVE.test(file)) registerDeclarative(await Bun.file(file).text());
+      else await import(`${file}?run=${run}`);
       const [error] = (await Promise.all(collector.pending)).filter((settled) => settled !== undefined);
       if (error !== undefined) throw error;
     });
