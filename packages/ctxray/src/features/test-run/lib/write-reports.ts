@@ -30,7 +30,9 @@ export const writeReports = async (
     return { dir, html: undefined, files };
   await mkdir(folder, { recursive: true });
   const label = (key: string) => t(key as Parameters<Translate>[0]);
-  if (reporters.has("json")) await write("report.json", `${JSON.stringify(report, null, 2)}\n`);
+  // The HTML report keeps its data beside it: show-report serves from it, and a reader without scripts gets it.
+  if (reporters.has("json") || reporters.has("html"))
+    await write("report.json", `${JSON.stringify(report, null, 2)}\n`);
   if (reporters.has("junit")) await write("junit.xml", toJunit(report, label));
   if (reporters.has("allure")) {
     await rm(join(folder, "allure-results"), { recursive: true, force: true });
