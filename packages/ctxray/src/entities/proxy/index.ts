@@ -10,3 +10,4 @@ export { createRelay, type Relay } from "./relay.ts";
 export { type ProxyServer, startProxy } from "./server.ts";
 export { createTraceWriter, type TraceWriter } from "./trace.ts";
 export { addUsage, NO_USAGE, type Usage, usageOf } from "./usage.ts";
+export { callsOf, KITS, type MadeCall } from "./protocols/index.ts";
