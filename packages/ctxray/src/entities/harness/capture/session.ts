@@ -33,6 +33,7 @@ export type SessionOptions = {
   remoteMcp: RemoteMcp;
   timeout: number; // milliseconds a harness may take for one turn
   user?: UserScope | undefined; // `userScope: "inherit"`
+  onDirs?: (dirs: RunDirs) => void; // the session's folders, before the harness starts
 };
 
 export class HarnessExit extends Error {
@@ -55,6 +56,8 @@ export type HarnessSession = {
   servers: () => Promise<Record<string, ServerRecord>>; // what each MCP server told the harness so far
   events: () => readonly unknown[]; // the harness's own JSON events so far
   say: (position: number, intent: Intent | Step) => Promise<void>;
+  exited: () => Promise<number | null>; // the harness ended by itself: a real model told it to stop
+  changes: () => Promise<string[]>; // files the agent changed in its copy, relative to the project root
   end: () => Promise<SessionResult>;
 };
 
@@ -64,6 +67,7 @@ const tail = (text: string, lines = 20) => text.trim().split("\n").slice(-lines)
 export const startSession = async (options: SessionOptions): Promise<HarnessSession> => {
   const { adapter, port } = options;
   const dirs = await isolate(options.copy);
+  options.onDirs?.(dirs);
   // XDG folders under the run's HOME too: a harness that reads them never sees the user's.
   const env = {
     ...options.env,
@@ -154,6 +158,14 @@ export const startSession = async (options: SessionOptions): Promise<HarnessSess
     say: async (position, said) => {
       const step = "tool" in said ? { call: adapter.call(said, dirs.work, await request(position)) } : said;
       port.answer(position, step);
+    },
+    exited: () => child.exited,
+    changes: async () => {
+      const status = await Bun.$`git -C ${dirs.work} status --porcelain -uall -z`.quiet().nothrow().text();
+      return status
+        .split("\0")
+        .filter((entry) => entry.length > 3)
+        .map((entry) => entry.slice(3));
     },
     end: async () => {
       port.finish({ text: "done" });
