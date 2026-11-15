@@ -1,8 +1,9 @@
-import { buildLoadout, HarnessExit, STATIC_ADAPTERS } from "#entities/harness/index.ts";
+import { HarnessExit } from "#entities/harness/index.ts";
 import type { Exchange } from "#shared/contract/index.ts";
 import type { Capture, OpenSession } from "./capture.ts";
-import { type CapturedLoadout, type CapturedRequest, toCaptured } from "./captured.ts";
+import type { CapturedRequest } from "./captured.ts";
 import { fail } from "./failure.ts";
+import { requestOf } from "./request.ts";
 import type { CellScope } from "./scope.ts";
 
 // A harness at work against the mock model. The test plays the model: each call answers the harness's
@@ -53,36 +54,8 @@ export const createSession = (capture: Capture, scope: CellScope, request: Sessi
     if (cached) return cached;
     const session = await open();
     const raw: Exchange = await session.harness.request(index).catch((error) => exited(session, error));
-    const resolve = STATIC_ADAPTERS[scope.harness]?.resolve;
-    const predicted = resolve
-      ? resolve(scope.inventory, { cwd, files: [...files] })
-      : fail("resolve.noAdapter", { harness: scope.harness });
-    const loadout = buildLoadout({
-      harness: { name: scope.harness, version: session.harness.version, model: session.model },
-      segments: session.adapter.segment(raw, session.harness.dirs.work),
-      inventory: scope.inventory,
-      predicted,
-      servers: await session.harness.servers(),
-      work: session.harness.dirs.work,
-      first: index === 0,
-      aliases: session.harness.aliases,
-    });
-    const before = index > 0 ? (await build(index - 1)).loadout : undefined;
-    const hadRules = new Set(before?.rules.map((rule) => rule.path));
-    const hadSkills = new Set(before?.skills.loaded.map((skill) => skill.name));
-    const view: CapturedLoadout = toCaptured(loadout);
-    const request: CapturedRequest = {
-      kind: "request",
-      index,
-      loadout: view,
-      added: {
-        rules: loadout.rules.map((rule) => rule.path).filter((path) => !hadRules.has(path)),
-        skills: loadout.skills.loaded.map((skill) => skill.name).filter((name) => !hadSkills.has(name)),
-      },
-      predicted,
-      raw,
-      snapshot: loadout,
-    };
+    const before = index > 0 ? (await build(index - 1)).snapshot : undefined;
+    const request = await requestOf(scope, session, raw, { cwd, files, before });
     built.set(index, request);
     return request;
   };

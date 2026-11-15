@@ -10,7 +10,15 @@ import {
   type ProjectCopy,
   startSession,
 } from "#entities/harness/index.ts";
-import { createConversation, createTraceWriter, startEgressGuard, startProxy } from "#entities/proxy/index.ts";
+import {
+  createConversation,
+  createRelay,
+  createTraceWriter,
+  type Handler,
+  type Relay,
+  startEgressGuard,
+  startProxy,
+} from "#entities/proxy/index.ts";
 import { type Config, egressOf, resolveNetwork } from "#entities/user-config/index.ts";
 import type { HarnessId } from "#shared/contract/index.ts";
 import type { Egress, Env } from "#shared/infra/index.ts";
@@ -21,7 +29,15 @@ import type { CellScope } from "./scope.ts";
 
 export type CaptureDeps = { config: Config; env: Env; self: readonly string[]; binaries: Binaries };
 
-export type OpenRequest = { cwd: string; prompt: string };
+// A model that answers by itself, real or replayed, in place of the mock a test drives. `inner` gets the
+// session's project folder once the session has one.
+export type RelaySpec = {
+  inner: (work: () => readonly string[]) => Handler;
+  maxTurns: number;
+  refuse?: () => string | undefined;
+};
+
+export type OpenRequest = { cwd: string; prompt: string; relay?: RelaySpec | undefined };
 
 // One harness session as the runner holds it: the harness side, and what a failure should point at.
 export type OpenSession = {
@@ -29,6 +45,7 @@ export type OpenSession = {
   adapter: CaptureAdapter;
   model: string;
   trace: string;
+  relay: Relay | undefined; // set when a real or replayed model answers
   egress: () => readonly string[]; // connections this harness tried past ctxray
   close: () => Promise<void>; // stops the session's egress guard
 };
@@ -82,7 +99,7 @@ export const createCapture = ({ config, env, self, binaries }: CaptureDeps) => {
     return file;
   };
 
-  const open = async (scope: CellScope, { cwd, prompt }: OpenRequest): Promise<OpenSession> => {
+  const open = async (scope: CellScope, { cwd, prompt, relay: spec }: OpenRequest): Promise<OpenSession> => {
     const adapter = CAPTURE_ADAPTERS[scope.harness] ?? fail("capture.noAdapter", { harness: scope.harness });
     const binary =
       (await binaries(scope.harness)) ??
@@ -94,8 +111,17 @@ export const createCapture = ({ config, env, self, binaries }: CaptureDeps) => {
     caFile ??= await caFileOf();
     const trace = join(traceDir, `${scope.harness}-${++count}.jsonl`);
     const writer = createTraceWriter(trace, redactor);
-    const conversation = createConversation(writer.write);
-    const prefix = server.open(conversation.handler);
+    let work: readonly string[] = [];
+    const relay =
+      spec &&
+      createRelay(
+        spec.inner(() => work),
+        { ...spec, onExchange: writer.write },
+      );
+    const answers = relay
+      ? { handler: relay.handler, turn: relay.turn, answer: () => {}, finish: () => {} }
+      : createConversation(writer.write);
+    const prefix = server.open(answers.handler);
     const settings = config.harnesses[scope.harness];
     const model = settings?.model ?? adapter.defaultModel;
     // A harness that fails to start takes its guard down with it.
@@ -119,7 +145,16 @@ export const createCapture = ({ config, env, self, binaries }: CaptureDeps) => {
         ...both("NO_PROXY", "127.0.0.1,localhost"),
       },
       mcp: { self, shimEnv: caFile ? { ...shimEnv, env: { ...shimEnv.env, NODE_EXTRA_CA_CERTS: caFile } } : shimEnv },
-      port: { ...conversation, baseUrl: prefix.baseUrl, close: prefix.close },
+      port: {
+        turn: answers.turn,
+        answer: answers.answer,
+        finish: answers.finish,
+        baseUrl: prefix.baseUrl,
+        close: prefix.close,
+      },
+      onDirs: (dirs) => {
+        work = [dirs.work, dirs.root];
+      },
       remoteMcp: (target, onMessage) => server.openMcp(target, egress, onMessage),
       timeout: 60_000,
       user:
@@ -132,7 +167,7 @@ export const createCapture = ({ config, env, self, binaries }: CaptureDeps) => {
     });
     // The provider changes the payload too, so it joins the model in the snapshot key: `anthropic/claude-…`.
     const label = settings?.provider ? `${settings.provider}/${model}` : model;
-    return { harness, adapter, model: label, trace, egress: guard.attempts, close: guard.stop };
+    return { harness, adapter, model: label, trace, relay, egress: guard.attempts, close: guard.stop };
   };
 
   const stop = async (keepTraces: boolean) => {
