@@ -255,6 +255,12 @@ export const en = {
   "test.unpriced": "no price for {models}",
   "test.cassettes": { one: "{count} cassette written", other: "{count} cassettes written" },
   "tokens.exactFailed": "The provider couldn't count the {protocol} request: {message}",
+  "report.total": "total",
+  "report.startingContext": "Starting context, tokens",
+  "report.against": "Against {ref}",
+  "report.changes": "Changes",
+  "report.failures": "Failed",
+  "report.full": "The whole report: {path}",
   "expect.notRequest": "{matcher} takes a request from session.nextRequest(), not {received}",
   "drift.found":
     "Resolver drift: {harness} {version} doesn't load what ctxray predicts. If {harness} changed this on purpose, ctxray's adapter for it needs an update",

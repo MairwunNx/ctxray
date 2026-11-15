@@ -297,6 +297,12 @@ export const ru: Catalog = {
     other: "записано {count} кассеты",
   },
   "tokens.exactFailed": "Провайдер не смог посчитать запрос {protocol}: {message}",
+  "report.total": "всего",
+  "report.startingContext": "Стартовый контекст, токены",
+  "report.against": "Относительно {ref}",
+  "report.changes": "Изменения",
+  "report.failures": "Упали",
+  "report.full": "Полный отчёт: {path}",
   "expect.notRequest": "{matcher} принимает запрос из session.nextRequest(), а не {received}",
   "drift.found":
     "Расхождение резолвера: {harness} {version} загружает не то, что предсказывает ctxray. Если {harness} изменил это намеренно, адаптер ctxray для него нужно обновить",
