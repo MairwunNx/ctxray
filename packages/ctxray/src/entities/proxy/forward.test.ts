@@ -64,6 +64,26 @@ describe("forward", () => {
     session.close();
   });
 
+  test("hands over the answer as the harness read it", async () => {
+    const answers: string[] = [];
+    const { promise, resolve } = Promise.withResolvers<void>();
+    const session = proxy.open(
+      createForward({
+        upstream: upstream.url.origin,
+        egress: NO_EGRESS,
+        onAnswer: (exchange, answer) => {
+          answers.push(`${exchange.path} ${answer.status} ${answer.contentType} ${answer.text}`);
+          resolve();
+        },
+      }),
+    );
+    const response = await fetch(`${session.baseUrl}/v1/messages`, { method: "POST", body: "{}" });
+    const text = await response.text();
+    await promise;
+    expect(answers).toEqual([`/v1/messages 200 application/json;charset=utf-8 ${text}`]);
+    session.close();
+  });
+
   test("answers a protocol error when the upstream is down", async () => {
     const session = proxy.open(createForward({ upstream: "http://127.0.0.1:9", egress: NO_EGRESS }));
     const response = await fetch(`${session.baseUrl}/v1/responses`, { method: "POST", body: "{}" });

@@ -1,8 +1,12 @@
+export { createPlayer, createRecorder, type Miss, type TapeEntry, WORK } from "./cassette.ts";
 export { type Conversation, createConversation } from "./conversation.ts";
 export { CREDENTIAL_HEADERS, credentialsFor } from "./credentials.ts";
 export { type EgressGuard, startEgressGuard } from "./egress.ts";
-export { createForward, type ForwardOptions, PROVIDERS } from "./forward.ts";
+export { type Answer, createForward, type ForwardOptions, PROVIDERS } from "./forward.ts";
 export type { McpMessage } from "./mcp-forward.ts";
 export type { Exchange, Handler, Incoming, Json, Protocol, Step, ToolCall } from "./model.ts";
+export { costOf, PRICES, type Price, priceOf } from "./prices.ts";
+export { createRelay, type Relay } from "./relay.ts";
 export { type ProxyServer, startProxy } from "./server.ts";
 export { createTraceWriter, type TraceWriter } from "./trace.ts";
+export { addUsage, NO_USAGE, type Usage, usageOf } from "./usage.ts";
