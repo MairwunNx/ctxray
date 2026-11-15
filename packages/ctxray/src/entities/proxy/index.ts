@@ -2,6 +2,14 @@ export { createPlayer, createRecorder, type Miss, type TapeEntry, WORK } from ".
 export { type Conversation, createConversation } from "./conversation.ts";
 export { CREDENTIAL_HEADERS, credentialsFor } from "./credentials.ts";
 export { type EgressGuard, startEgressGuard } from "./egress.ts";
+export {
+  CountFailure,
+  createExactCounter,
+  type ExactCounter,
+  exactSummary,
+  openCountCache,
+  type Piece,
+} from "./exact/index.ts";
 export { type Answer, createForward, type ForwardOptions, PROVIDERS } from "./forward.ts";
 export type { McpMessage } from "./mcp-forward.ts";
 export type { Exchange, Handler, Incoming, Json, Protocol, Step, ToolCall } from "./model.ts";
