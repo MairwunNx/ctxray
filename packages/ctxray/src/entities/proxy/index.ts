@@ -7,6 +7,7 @@ export {
   createExactCounter,
   type ExactCounter,
   exactSummary,
+  memoryCountCache,
   openCountCache,
   type Piece,
 } from "./exact/index.ts";

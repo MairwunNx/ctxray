@@ -1,6 +1,7 @@
 import { createInjector } from "typed-inject";
 import { type Config, createConfigLoader } from "#entities/user-config/index.ts";
 import { createCacheAction } from "#features/cache/index.ts";
+import { createCalibrateAction } from "#features/calibrate/index.ts";
 import { createDoctorAction } from "#features/doctor/index.ts";
 import {
   createHarnessAddAction,
@@ -56,5 +57,6 @@ export const createRunInjector = (
     .provideFactory("cacheAction", createCacheAction)
     .provideFactory("spectateHooksAction", createSpectateHooksAction)
     .provideFactory("spectateShowAction", createSpectateShowAction)
-    .provideFactory("doctorAction", createDoctorAction);
+    .provideFactory("doctorAction", createDoctorAction)
+    .provideFactory("calibrateAction", createCalibrateAction);
 export type RunInjector = ReturnType<typeof createRunInjector>;

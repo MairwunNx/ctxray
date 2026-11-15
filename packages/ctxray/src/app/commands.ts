@@ -1,4 +1,5 @@
 import { cacheSpec, createCacheCommand } from "#features/cache/index.ts";
+import { calibrateSpec, createCalibrateCommand } from "#features/calibrate/index.ts";
 import { createDoctorCommand, doctorSpec } from "#features/doctor/index.ts";
 import { createHarnessCommand, harnessSpec } from "#features/harness-install/index.ts";
 import { createInitCommand, initSpec } from "#features/init/index.ts";
@@ -21,6 +22,7 @@ export const COMMANDS: readonly Command[] = [
   { spec: spectateSpec, handler: (injector) => injector.injectFunction(createSpectateCommand) },
   { spec: cacheSpec, handler: (injector) => injector.injectFunction(createCacheCommand) },
   { spec: doctorSpec, handler: (injector) => injector.injectFunction(createDoctorCommand) },
+  { spec: calibrateSpec, handler: (injector) => injector.injectFunction(createCalibrateCommand) },
   { spec: initSpec, handler: (injector) => injector.injectFunction(createInitCommand) },
   { spec: showConfigSpec, handler: (injector) => injector.injectFunction(createShowConfigCommand) },
 ];
