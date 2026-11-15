@@ -8,7 +8,7 @@ import type {
   RuleEntry,
   SkillEntry,
 } from "#shared/contract/index.ts";
-import { counterFor, type TokenCounter } from "#shared/tokens/index.ts";
+import { counterFor, type ModelFamily, type TokenCounter } from "#shared/tokens/index.ts";
 
 // Where the agent starts and which files it works with, both relative to the project root.
 export type Scope = { cwd: string; files: readonly string[] };
@@ -34,9 +34,15 @@ export type StaticLoadout = {
 // The listing line both harnesses show the model for a skill or a command.
 export const listingLine = (name: string, description: string): string => `- ${name}: ${description}`;
 
-// The tokenizer for a harness's model family (ADR 0012): Gemma's vocabulary for Gemini CLI, o200k for the rest.
-export const tokenCounterOf = (harness: HarnessId): TokenCounter =>
-  counterFor(harness === "gemini-cli" ? "google" : "other");
+// The model family a harness runs by default.
+export const familyOf = (harness: HarnessId): ModelFamily => {
+  if (harness === "gemini-cli") return "google";
+  return harness === "claude-code" || harness === "claude-code-desktop" ? "anthropic" : "other";
+};
+
+// The tokenizer for a harness's model family (ADR 0012): Gemma's vocabulary for Gemini CLI, o200k for the rest,
+// scaled to Claude once ctxray has measured factors.
+export const tokenCounterOf = (harness: HarnessId): TokenCounter => counterFor(familyOf(harness));
 
 export const createRules = (counter: TokenCounter = tokenCounterOf("claude-code")) => {
   const rules: RuleEntry[] = [];

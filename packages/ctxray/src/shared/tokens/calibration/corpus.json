@@ -1,0 +1,152 @@
+{
+  "pieces": [
+    {
+      "class": "prose",
+      "text": "# Project guide for agents\n\nThis repository holds `orbit`, a Kotlin multiplatform service that syncs player inventories between Minecraft servers. Read this file before you change code. Ask before you touch anything under `infra/`."
+    },
+    {
+      "class": "prose",
+      "text": "## Commands\n\n- Build: `./gradlew build -x test`\n- Unit tests: `./gradlew :core:test --tests \"*InventorySync*\"`\n- Lint: `./gradlew ktlintCheck detekt`\n- Local stack: `docker compose -f infra/dev.yml up -d postgres redis`\n- Regenerate protobuf stubs: `./gradlew :proto:generateProto`\n\nNever run `./gradlew publish` or anything that pushes images. CI owns releases."
+    },
+    {
+      "class": "prose",
+      "text": "## Architecture\n\nThe service has three modules:\n\n1. `core/` – domain model (`Inventory`, `ItemStack`, `SyncCursor`) and pure functions. No I/O here.\n2. `adapters/` – Postgres (Exposed DSL), Redis streams, and the Paper plugin bridge.\n3. `app/` – Ktor server, dependency wiring with Koin, HTTP + gRPC endpoints.\n\nData flows one way: plugin → Redis stream → `SyncWorker` → Postgres. The worker is idempotent: every event carries `(serverId, playerUuid, seq)` and the worker drops anything with `seq <= cursor`."
+    },
+    {
+      "class": "prose",
+      "text": "## Code style\n\n- Kotlin 2.2, explicit API mode in `core/`. Prefer `sealed interface` over enums when variants carry data.\n- No `!!`. Use `requireNotNull` with a message, or model absence in the type.\n- Coroutines: structured concurrency only. No `GlobalScope`. Every `launch` lives in a scope owned by a lifecycle object.\n- Tests use Kotest `FunSpec` and `io.mockk`. Name tests as sentences: `test(\"drops events older than the cursor\")`.\n- Logging through `KotlinLogging.logger {}` with structured fields: `log.info { \"synced\" to mapOf(\"player\" to uuid, \"items\" to n) }`."
+    },
+    {
+      "class": "prose",
+      "text": "## Database\n\nMigrations live in `adapters/src/main/resources/db/migration` and use Flyway naming `V{n}__{snake_case}.sql`. Never edit an applied migration – add a new one. The `inventory_items` table is partitioned by `server_id` hash, 16 partitions. Queries must include `server_id` in the `WHERE` clause or the planner scans every partition.\n\n```sql\nSELECT item_id, slot, amount, nbt\nFROM inventory_items\nWHERE server_id = $1 AND player_uuid = $2\nORDER BY slot;\n```"
+    },
+    {
+      "class": "prose",
+      "text": "## Gotchas\n\n- Paper 1.21 changed `ItemStack#serializeAsBytes`. Old blobs (before `V14`) need `LegacyNbtCodec`.\n- Redis consumer groups: if you rename the group, old pending entries stay unacknowledged forever. Run `XGROUP DESTROY` by hand after deploy.\n- Time zones: store `Instant`, render in the player's zone only at the edge.\n- The `SyncWorker` batch size (`orbit.sync.batch=256`) is tuned for p99 under 40 ms. Do not raise it without a load test."
+    },
+    {
+      "class": "prose",
+      "text": "## When you finish a task\n\n1. Run lint and the affected module's tests.\n2. Update `CHANGELOG.md` under `## Unreleased` in one line, imperative mood.\n3. Summarise what you changed and what you did not verify.\n\n@docs/protocol.md\n@docs/runbooks/redis.md"
+    },
+    {
+      "class": "nonLatin",
+      "text": "# Руководство для участников\n\nЭтот репозиторий содержит лаунчер для модпаков: он скачивает сборку, проверяет хеши файлов и запускает игру с нужной версией Java. Прежде чем отправлять изменения, прочитайте этот файл целиком — он короткий."
+    },
+    {
+      "class": "nonLatin",
+      "text": "## Как устроен проект\n\nЛаунчер состоит из трёх частей. Ядро отвечает за манифесты и загрузку файлов, оно не знает ничего об интерфейсе. Интерфейс написан на Compose Multiplatform и общается с ядром через события. Третья часть — небольшой агент обновлений, который живёт в отдельном процессе и подменяет бинарник, когда лаунчер закрыт.\n\nМанифест сборки описывает каждый файл: путь, размер, SHA-256 и зеркала, с которых его можно скачать. Если хеш не совпал, лаунчер пробует следующее зеркало, а после трёх неудач показывает игроку понятную ошибку с кнопкой «Повторить»."
+    },
+    {
+      "class": "nonLatin",
+      "text": "## Правила кода\n\nПишите маленькие функции с говорящими именами. Не ловите исключения, которые не можете обработать: пусть они дойдут до верхнего уровня, где их запишет журнал. Каждое сообщение для игрока должно отвечать на два вопроса — что случилось и что теперь делать.\n\nТексты интерфейса храните в файлах локализации, а не в коде. Сейчас поддерживаются русский, английский и немецкий. Если добавляете строку, добавьте её во все три файла, даже если перевод пока черновой: так переводчики увидят пропуск."
+    },
+    {
+      "class": "nonLatin",
+      "text": "## Тесты\n\nПеред отправкой запустите модульные тесты и проверку форматирования. Тесты загрузчика используют локальный HTTP-сервер с заранее подготовленными файлами, поэтому они не зависят от сети. Если тест падает только на CI, приложите к задаче журнал целиком, а не последние десять строк."
+    },
+    {
+      "class": "nonLatin",
+      "text": "## Выпуск версий\n\nВерсии выпускает только сопровождающий. Он обновляет журнал изменений, ставит тег и запускает сборку подписанных установщиков для Windows, macOS и Linux. Ночные сборки публикуются автоматически, но игрокам их не показывают, пока не включён канал «Предварительные версии»."
+    },
+    {
+      "class": "nonLatin",
+      "text": "## Вопросы\n\nЕсли что-то непонятно, откройте обсуждение и опишите, что вы пытались сделать, что ожидали увидеть и что получили на самом деле. Скриншоты помогают, особенно когда речь идёт об интерфейсе. Мы отвечаем в течение пары дней."
+    },
+    {
+      "class": "nonLatin",
+      "text": "本仓库包含一个模组包启动器：它会下载整合包，校验文件哈希，并使用正确版本的 Java 启动游戏。提交更改之前，请完整阅读本文件。启动器由三部分组成：核心负责清单和下载，界面显示进度，命令行工具供持续集成使用。每个拉取请求都必须通过测试，并且不能降低覆盖率。"
+    },
+    {
+      "class": "nonLatin",
+      "text": "このリポジトリにはモッドパック用のランチャーが含まれています。ランチャーはパックをダウンロードし、ファイルのハッシュを検証し、正しいバージョンの Java でゲームを起動します。変更を送る前に、このファイルを最後まで読んでください。テストはすべて通る必要があり、カバレッジを下げてはいけません。"
+    },
+    {
+      "class": "code",
+      "text": "package dev.orbit.core.sync\n\nimport kotlinx.coroutines.CoroutineScope\nimport kotlinx.coroutines.channels.Channel\nimport kotlinx.coroutines.flow.Flow\nimport kotlinx.coroutines.flow.receiveAsFlow\nimport kotlinx.coroutines.launch\nimport java.time.Instant\nimport java.util.UUID\n\n@JvmInline\nvalue class ServerId(val value: String)\n\ndata class ItemStack(\n    val itemId: String,\n    val amount: Int,\n    val nbt: ByteArray? = null,\n) {\n    init {\n        require(amount in 1..64) { \"amount must be in 1..64, was $amount\" }\n    }\n\n    override fun equals(other: Any?): Boolean =\n        other is ItemStack && itemId == other.itemId && amount == other.amount &&\n            (nbt?.contentEquals(other.nbt) ?: (other.nbt == null))\n\n    override fun hashCode(): Int = 31 * (31 * itemId.hashCode() + amount) + (nbt?.contentHashCode() ?: 0)\n}"
+    },
+    {
+      "class": "code",
+      "text": "sealed interface SyncEvent {\n    val serverId: ServerId\n    val player: UUID\n    val seq: Long\n    val at: Instant\n\n    data class SlotChanged(\n        override val serverId: ServerId,\n        override val player: UUID,\n        override val seq: Long,\n        override val at: Instant,\n        val slot: Int,\n        val stack: ItemStack?,\n    ) : SyncEvent\n\n    data class Cleared(\n        override val serverId: ServerId,\n        override val player: UUID,\n        override val seq: Long,\n        override val at: Instant,\n    ) : SyncEvent\n}\n\ndata class Inventory(val slots: Map<Int, ItemStack>) {\n    fun apply(event: SyncEvent): Inventory = when (event) {\n        is SyncEvent.SlotChanged ->\n            if (event.stack == null) copy(slots = slots - event.slot)\n            else copy(slots = slots + (event.slot to event.stack))\n        is SyncEvent.Cleared -> EMPTY\n    }"
+    },
+    {
+      "class": "code",
+      "text": "companion object {\n        val EMPTY = Inventory(emptyMap())\n    }\n}\n\ninterface CursorStore {\n    suspend fun cursor(server: ServerId, player: UUID): Long\n    suspend fun advance(server: ServerId, player: UUID, seq: Long)\n}\n\nclass SyncWorker(\n    private val scope: CoroutineScope,\n    private val cursors: CursorStore,\n    private val sink: suspend (SyncEvent, Inventory) -> Unit,\n    private val batchSize: Int = 256,\n) {\n    private val inbox = Channel<SyncEvent>(capacity = batchSize * 4)\n    private val state = HashMap<Pair<ServerId, UUID>, Inventory>()\n\n    fun events(): Flow<SyncEvent> = inbox.receiveAsFlow()\n\n    suspend fun offer(event: SyncEvent) = inbox.send(event)"
+    },
+    {
+      "class": "code",
+      "text": "fun start() = scope.launch {\n        val batch = ArrayList<SyncEvent>(batchSize)\n        for (event in inbox) {\n            batch += event\n            if (batch.size >= batchSize || inbox.isEmpty) {\n                flush(batch)\n                batch.clear()\n            }\n        }\n    }\n\n    private suspend fun flush(batch: List<SyncEvent>) {\n        for ((key, events) in batch.groupBy { it.serverId to it.player }) {\n            val cursor = cursors.cursor(key.first, key.second)\n            val fresh = events.filter { it.seq > cursor }.sortedBy { it.seq }\n            if (fresh.isEmpty()) continue\n            var inv = state[key] ?: Inventory.EMPTY\n            for (e in fresh) {\n                inv = inv.apply(e)\n                sink(e, inv)\n            }\n            state[key] = inv\n            cursors.advance(key.first, key.second, fresh.last().seq)\n        }\n    }\n}"
+    },
+    {
+      "class": "code",
+      "text": "// Generates mcp-tools.json: an MCP tools/list result shaped like a GitHub-style server.\nconst str = (description: string, extra: Record<string, unknown> = {}) => ({ type: \"string\", description, ...extra });\nconst int = (description: string, extra: Record<string, unknown> = {}) => ({ type: \"integer\", description, ...extra });\nconst owner = str(\"Repository owner (user or organization login)\");\nconst repo = str(\"Repository name without the owner\");\nconst page = int(\"Page number for pagination, starting at 1\", { minimum: 1, default: 1 });\nconst perPage = int(\"Results per page, at most 100\", { minimum: 1, maximum: 100, default: 30 });\nconst tool = (name: string, description: string, properties: Record<string, unknown>, required: string[], readOnly: boolean) => ({\n  name,\n  description,\n  inputSchema: { type: \"object\", properties, required, additionalProperties: false, $schema: \"http://json-schema.org/draft-07/schema#\" },\n  annotations: { title: name.replace(/_/g, \" \"), readOnlyHint: readOnly },\n});\nconst tools = [\n  tool(\"get_file_contents\", \"Get the contents of a file or directory from a GitHub repository. Returns base64 for binary files.\", { owner, repo, path: str(\"Path to the file or directory\"), ref: str(\"Git ref: branch, tag or commit SHA. Defaults to the default branch.\") }, [\"owner\", \"repo\", \"path\"], true),\n  tool(\"create_or_update_file\", \"Create or update a single file in a repository. Requires the blob SHA when updating an existing file.\", { owner, repo, path: str(\"Path where to create or update the file\"), content: str(\"New file content, UTF-8\"), message: str(\"Commit message\"), branch: str(\"Branch to commit to\"), sha: str(\"Blob SHA of the file being replaced, required for updates\") }, [\"owner\", \"repo\", \"path\", \"content\", \"message\", \"branch\"], false),\n  tool(\"search_code\", \"Search for code across GitHub repositories using the code search syntax, for example `language:kotlin repo:owner/name SyncWorker`.\", { query: str(\"Search query using GitHub code search syntax\"), sort: str(\"Sort field\", { enum: [\"indexed\"] }), order: str(\"Sort order\", { enum: [\"asc\", \"desc\"] }), page, perPage }, [\"query\"], true),\n  tool(\"list_issues\", \"List issues in a repository with optional filters. Pull requests are excluded.\", { owner, repo, state: str(\"Filter by state\", { enum: [\"open\", \"closed\", \"all\"], default: \"open\" }), labels: { type: \"array\", items: { type: \"string\" }, description: \"Only issues with all of these labels\" }, since: str(\"ISO 8601 timestamp, only issues updated after it\", { format: \"date-time\" }), page, perPage }, [\"owner\", \"repo\"], true),\n  tool(\"create_issue\", \"Open a new issue in a repository.\", { owner, repo, title: str(\"Issue title\"), body: str(\"Issue body in GitHub Markdown\"), assignees: { type: \"array\", items: { type: \"string\" }, description: \"Logins to assign\" }, labels: { type: \"array\", items: { type: \"string\" }, description: \"Labels to apply\" }, milestone: int(\"Milestone number\") }, [\"owner\", \"repo\", \"title\"], false),\n  tool(\"create_pull_request\", \"Create a pull request from a head branch into a base branch.\", { owner, repo, title: str(\"Pull request title\"), body: str(\"Pull request description\"), head: str(\"Branch with your changes, or `user:branch` for forks\"), base: str(\"Branch to merge into\"), draft: { type: \"boolean\", description: \"Create as draft\", default: false } }, [\"owner\", \"repo\", \"title\", \"head\", \"base\"], false),\n  tool(\"get_pull_request_diff\", \"Get the unified diff of a pull request.\", { owner, repo, pullNumber: int(\"Pull request number\") }, [\"owner\", \"repo\", \"pullNumber\"], true),\n  tool(\"add_pull_request_review_comment\", \"Add a review comment to a specific line of a pull request diff.\", { owner, repo, pullNumber: int(\"Pull request number\"), path: str(\"Relative path of the file to comment on\"), line: int(\"Line in the diff to comment on\"), side: str(\"Side of the diff\", { enum: [\"LEFT\", \"RIGHT\"] }), body: str(\"Comment text\") }, [\"owner\", \"repo\", \"pullNumber\", \"path\", \"line\", \"body\"], false),\n  tool(\"list_workflow_runs\", \"List GitHub Actions workflow runs for a repository, newest first.\", { owner, repo, workflowId: str(\"Workflow file name or numeric ID\"), branch: str(\"Only runs on this branch\"), status: str(\"Run status\", { enum: [\"queued\", \"in_progress\", \"completed\", \"failure\", \"success\"] }), page, perPage }, [\"owner\", \"repo\"], true),\n  tool(\"get_job_logs\", \"Download logs for a workflow job. Large logs are truncated to the last N lines.\", { owner, repo, jobId: int(\"Job ID\"), tailLines: int(\"Number of lines from the end to return\", { default: 500 }) }, [\"owner\", \"repo\", \"jobId\"], true),\n];\nawait Bun.write(new URL(\"./mcp-tools.json\", import.meta.url), JSON.stringify({ tools }, null, 2) + \"\\n\");"
+    },
+    {
+      "class": "code",
+      "text": "def resolve_rules(rules, files):\n    \"\"\"Return the rules whose globs match any of the files.\"\"\"\n    matched = []\n    for rule in rules:\n        if any(fnmatch.fnmatch(path, glob) for glob in rule.globs for path in files):\n            matched.append(rule)\n    return sorted(matched, key=lambda rule: rule.path)\n"
+    },
+    {
+      "class": "json",
+      "text": "{\"name\":\"get_file_contents\",\"description\":\"Get the contents of a file or directory from a GitHub repository. Returns base64 for binary files.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"owner\":{\"type\":\"string\",\"description\":\"Repository owner (user or organization login)\"},\"repo\":{\"type\":\"string\",\"description\":\"Repository name without the owner\"},\"path\":{\"type\":\"string\",\"description\":\"Path to the file or directory\"},\"ref\":{\"type\":\"string\",\"description\":\"Git ref: branch, tag or commit SHA. Defaults to the default branch.\"}},\"required\":[\"owner\",\"repo\",\"path\"],\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"},\"annotations\":{\"title\":\"get file contents\",\"readOnlyHint\":true}}"
+    },
+    {
+      "class": "json",
+      "text": "{\"name\":\"create_or_update_file\",\"description\":\"Create or update a single file in a repository. Requires the blob SHA when updating an existing file.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"owner\":{\"type\":\"string\",\"description\":\"Repository owner (user or organization login)\"},\"repo\":{\"type\":\"string\",\"description\":\"Repository name without the owner\"},\"path\":{\"type\":\"string\",\"description\":\"Path where to create or update the file\"},\"content\":{\"type\":\"string\",\"description\":\"New file content, UTF-8\"},\"message\":{\"type\":\"string\",\"description\":\"Commit message\"},\"branch\":{\"type\":\"string\",\"description\":\"Branch to commit to\"},\"sha\":{\"type\":\"string\",\"description\":\"Blob SHA of the file being replaced, required for updates\"}},\"required\":[\"owner\",\"repo\",\"path\",\"content\",\"message\",\"branch\"],\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"},\"annotations\":{\"title\":\"create or update file\",\"readOnlyHint\":false}}"
+    },
+    {
+      "class": "json",
+      "text": "{\"name\":\"search_code\",\"description\":\"Search for code across GitHub repositories using the code search syntax, for example `language:kotlin repo:owner/name SyncWorker`.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"Search query using GitHub code search syntax\"},\"sort\":{\"type\":\"string\",\"description\":\"Sort field\",\"enum\":[\"indexed\"]},\"order\":{\"type\":\"string\",\"description\":\"Sort order\",\"enum\":[\"asc\",\"desc\"]},\"page\":{\"type\":\"integer\",\"description\":\"Page number for pagination, starting at 1\",\"minimum\":1,\"default\":1},\"perPage\":{\"type\":\"integer\",\"description\":\"Results per page, at most 100\",\"minimum\":1,\"maximum\":100,\"default\":30}},\"required\":[\"query\"],\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"},\"annotations\":{\"title\":\"search code\",\"readOnlyHint\":true}}"
+    },
+    {
+      "class": "json",
+      "text": "{\"name\":\"list_issues\",\"description\":\"List issues in a repository with optional filters. Pull requests are excluded.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"owner\":{\"type\":\"string\",\"description\":\"Repository owner (user or organization login)\"},\"repo\":{\"type\":\"string\",\"description\":\"Repository name without the owner\"},\"state\":{\"type\":\"string\",\"description\":\"Filter by state\",\"enum\":[\"open\",\"closed\",\"all\"],\"default\":\"open\"},\"labels\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"description\":\"Only issues with all of these labels\"},\"since\":{\"type\":\"string\",\"description\":\"ISO 8601 timestamp, only issues updated after it\",\"format\":\"date-time\"},\"page\":{\"type\":\"integer\",\"description\":\"Page number for pagination, starting at 1\",\"minimum\":1,\"default\":1},\"perPage\":{\"type\":\"integer\",\"description\":\"Results per page, at most 100\",\"minimum\":1,\"maximum\":100,\"default\":30}},\"required\":[\"owner\",\"repo\"],\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"},\"annotations\":{\"title\":\"list issues\",\"readOnlyHint\":true}}"
+    },
+    {
+      "class": "json",
+      "text": "{\"name\":\"create_issue\",\"description\":\"Open a new issue in a repository.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"owner\":{\"type\":\"string\",\"description\":\"Repository owner (user or organization login)\"},\"repo\":{\"type\":\"string\",\"description\":\"Repository name without the owner\"},\"title\":{\"type\":\"string\",\"description\":\"Issue title\"},\"body\":{\"type\":\"string\",\"description\":\"Issue body in GitHub Markdown\"},\"assignees\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"description\":\"Logins to assign\"},\"labels\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"description\":\"Labels to apply\"},\"milestone\":{\"type\":\"integer\",\"description\":\"Milestone number\"}},\"required\":[\"owner\",\"repo\",\"title\"],\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"},\"annotations\":{\"title\":\"create issue\",\"readOnlyHint\":false}}"
+    },
+    {
+      "class": "json",
+      "text": "{\"name\":\"create_pull_request\",\"description\":\"Create a pull request from a head branch into a base branch.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"owner\":{\"type\":\"string\",\"description\":\"Repository owner (user or organization login)\"},\"repo\":{\"type\":\"string\",\"description\":\"Repository name without the owner\"},\"title\":{\"type\":\"string\",\"description\":\"Pull request title\"},\"body\":{\"type\":\"string\",\"description\":\"Pull request description\"},\"head\":{\"type\":\"string\",\"description\":\"Branch with your changes, or `user:branch` for forks\"},\"base\":{\"type\":\"string\",\"description\":\"Branch to merge into\"},\"draft\":{\"type\":\"boolean\",\"description\":\"Create as draft\",\"default\":false}},\"required\":[\"owner\",\"repo\",\"title\",\"head\",\"base\"],\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"},\"annotations\":{\"title\":\"create pull request\",\"readOnlyHint\":false}}"
+    },
+    {
+      "class": "json",
+      "text": "{\"name\":\"get_pull_request_diff\",\"description\":\"Get the unified diff of a pull request.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"owner\":{\"type\":\"string\",\"description\":\"Repository owner (user or organization login)\"},\"repo\":{\"type\":\"string\",\"description\":\"Repository name without the owner\"},\"pullNumber\":{\"type\":\"integer\",\"description\":\"Pull request number\"}},\"required\":[\"owner\",\"repo\",\"pullNumber\"],\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"},\"annotations\":{\"title\":\"get pull request diff\",\"readOnlyHint\":true}}"
+    },
+    {
+      "class": "json",
+      "text": "{\"name\":\"add_pull_request_review_comment\",\"description\":\"Add a review comment to a specific line of a pull request diff.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"owner\":{\"type\":\"string\",\"description\":\"Repository owner (user or organization login)\"},\"repo\":{\"type\":\"string\",\"description\":\"Repository name without the owner\"},\"pullNumber\":{\"type\":\"integer\",\"description\":\"Pull request number\"},\"path\":{\"type\":\"string\",\"description\":\"Relative path of the file to comment on\"},\"line\":{\"type\":\"integer\",\"description\":\"Line in the diff to comment on\"},\"side\":{\"type\":\"string\",\"description\":\"Side of the diff\",\"enum\":[\"LEFT\",\"RIGHT\"]},\"body\":{\"type\":\"string\",\"description\":\"Comment text\"}},\"required\":[\"owner\",\"repo\",\"pullNumber\",\"path\",\"line\",\"body\"],\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"},\"annotations\":{\"title\":\"add pull request review comment\",\"readOnlyHint\":false}}"
+    },
+    {
+      "class": "json",
+      "text": "{\"name\":\"list_workflow_runs\",\"description\":\"List GitHub Actions workflow runs for a repository, newest first.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"owner\":{\"type\":\"string\",\"description\":\"Repository owner (user or organization login)\"},\"repo\":{\"type\":\"string\",\"description\":\"Repository name without the owner\"},\"workflowId\":{\"type\":\"string\",\"description\":\"Workflow file name or numeric ID\"},\"branch\":{\"type\":\"string\",\"description\":\"Only runs on this branch\"},\"status\":{\"type\":\"string\",\"description\":\"Run status\",\"enum\":[\"queued\",\"in_progress\",\"completed\",\"failure\",\"success\"]},\"page\":{\"type\":\"integer\",\"description\":\"Page number for pagination, starting at 1\",\"minimum\":1,\"default\":1},\"perPage\":{\"type\":\"integer\",\"description\":\"Results per page, at most 100\",\"minimum\":1,\"maximum\":100,\"default\":30}},\"required\":[\"owner\",\"repo\"],\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"},\"annotations\":{\"title\":\"list workflow runs\",\"readOnlyHint\":true}}"
+    },
+    {
+      "class": "json",
+      "text": "{\"name\":\"get_job_logs\",\"description\":\"Download logs for a workflow job. Large logs are truncated to the last N lines.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{\"owner\":{\"type\":\"string\",\"description\":\"Repository owner (user or organization login)\"},\"repo\":{\"type\":\"string\",\"description\":\"Repository name without the owner\"},\"jobId\":{\"type\":\"integer\",\"description\":\"Job ID\"},\"tailLines\":{\"type\":\"integer\",\"description\":\"Number of lines from the end to return\",\"default\":500}},\"required\":[\"owner\",\"repo\",\"jobId\"],\"additionalProperties\":false,\"$schema\":\"http://json-schema.org/draft-07/schema#\"},\"annotations\":{\"title\":\"get job logs\",\"readOnlyHint\":true}}"
+    },
+    {
+      "class": "metadata",
+      "text": "- pdf-operations: Creates and manipulates PDF files with qpdf, Ghostscript, and Typst. Use when the user asks to merge, split, insert, delete, reorder, rotate, compress, or create PDF pages.\n- ripgrep-search: Searches file contents quickly with ripgrep. Use whenever locating substrings, regular-expression matches, symbols, references, logs, or text across files and directories."
+    },
+    {
+      "class": "metadata",
+      "text": "- release-notes: Drafts release notes from merged pull requests since the last tag. Use when the user asks for a changelog, release notes, or \"what changed since vX\".\n- db-migrations: Writes and reviews Flyway migrations for the orbit Postgres schema. Use when adding tables, columns, indexes, or partitions."
+    },
+    {
+      "class": "metadata",
+      "text": "- kotest-writer: Writes Kotest FunSpec tests with mockk following the project's sentence naming. Use when the user asks for tests in Kotlin modules."
+    },
+    {
+      "class": "metadata",
+      "text": "- refunds: Issue full or partial refunds for an order.\n- payouts: Schedule merchant payouts."
+    },
+    {
+      "class": "metadata",
+      "text": "- /review: Review the pending changes on the current branch\n- /deploy: Build the image and roll it out to staging"
+    },
+    {
+      "class": "metadata",
+      "text": "- android-build: Build, sign, and install the Android app on a device or an emulator.\n- release: Cut a release: bump the version, write the changelog, tag it."
+    }
+  ]
+}

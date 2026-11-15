@@ -1,5 +1,5 @@
 import type { Activation } from "#shared/contract/index.ts";
-import { countTokens } from "#shared/tokens/index.ts";
+import { countTokens, isCalibrated } from "#shared/tokens/index.ts";
 import type { Instruction, Inventory } from "../inventory.ts";
 import { chainTo, isInside, isWithin, matchingGlob, parentDirs } from "../project.ts";
 import { createRules, listingLine, type Scope, type StaticLoadout, withTokens } from "../static-loadout.ts";
@@ -73,6 +73,6 @@ export const resolveClaudeCode = (inventory: Inventory, { cwd, files }: Scope): 
       commands: commands.map(({ name, path }) => ({ name, path })),
     },
     commands.map((command) => listingLine(command.name, command.description)),
-    { calibration: "none" },
+    isCalibrated("anthropic") ? {} : { calibration: "none" },
   );
 };
