@@ -2,6 +2,7 @@ import { createInjector } from "typed-inject";
 import { type Config, createConfigLoader } from "#entities/user-config/index.ts";
 import { createCacheAction } from "#features/cache/index.ts";
 import { createCalibrateAction } from "#features/calibrate/index.ts";
+import { createDiffAction } from "#features/diff/index.ts";
 import { createDoctorAction } from "#features/doctor/index.ts";
 import { createGenPromptsAction } from "#features/gen-prompts/index.ts";
 import {
@@ -62,5 +63,6 @@ export const createRunInjector = (
     .provideFactory("doctorAction", createDoctorAction)
     .provideFactory("calibrateAction", createCalibrateAction)
     .provideFactory("genPromptsAction", createGenPromptsAction)
-    .provideFactory("showReportAction", createShowReportAction);
+    .provideFactory("showReportAction", createShowReportAction)
+    .provideFactory("diffAction", createDiffAction);
 export type RunInjector = ReturnType<typeof createRunInjector>;

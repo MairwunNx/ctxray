@@ -1,5 +1,6 @@
 import { cacheSpec, createCacheCommand } from "#features/cache/index.ts";
 import { calibrateSpec, createCalibrateCommand } from "#features/calibrate/index.ts";
+import { createDiffCommand, diffSpec } from "#features/diff/index.ts";
 import { createDoctorCommand, doctorSpec } from "#features/doctor/index.ts";
 import { createGenPromptsCommand, genPromptsSpec } from "#features/gen-prompts/index.ts";
 import { createHarnessCommand, harnessSpec } from "#features/harness-install/index.ts";
@@ -20,6 +21,7 @@ export type Command = {
 export const COMMANDS: readonly Command[] = [
   { spec: inspectSpec, handler: (injector) => injector.injectFunction(createInspectCommand) },
   { spec: testSpec, handler: (injector) => injector.injectFunction(createTestCommand) },
+  { spec: diffSpec, handler: (injector) => injector.injectFunction(createDiffCommand) },
   { spec: showReportSpec, handler: (injector) => injector.injectFunction(createShowReportCommand) },
   { spec: harnessSpec, handler: (injector) => injector.injectFunction(createHarnessCommand) },
   { spec: spectateSpec, handler: (injector) => injector.injectFunction(createSpectateCommand) },
