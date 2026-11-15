@@ -45,6 +45,7 @@ export {
   CommandEntry,
   Component,
   LOADOUT_SCHEMA_VERSION,
+  type LoadoutPieces,
   LoadoutSnapshot,
   McpServer,
   McpTool,

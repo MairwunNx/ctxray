@@ -85,3 +85,10 @@ export const LoadoutSnapshot = z.object({
     .describe("Files that reach the model twice: sent again, or the same text as `sameAs`"),
 });
 export type LoadoutSnapshot = z.infer<typeof LoadoutSnapshot>;
+
+// A loadout as the diff sees it, captured or static: its pieces by component and their tokens.
+export type LoadoutPieces = {
+  total: number;
+  byComponent: Partial<Record<Component, number>>;
+  items: Record<Component, { id: string; tokens: number }[]>;
+};

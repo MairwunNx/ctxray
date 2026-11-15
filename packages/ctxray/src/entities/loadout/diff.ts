@@ -1,4 +1,4 @@
-import type { Component, LoadoutSnapshot } from "#shared/contract/index.ts";
+import type { Component, LoadoutPieces, LoadoutSnapshot } from "#shared/contract/index.ts";
 
 export type LoadoutChange = {
   component: Component;
@@ -13,9 +13,13 @@ export type LoadoutDiff = {
   changes: LoadoutChange[]; // added, removed, or a different size, by component
 };
 
-type Item = { id: string; tokens: number };
+export const piecesOfSnapshot = (loadout: LoadoutSnapshot): LoadoutPieces => ({
+  total: loadout.tokens.total,
+  byComponent: loadout.tokens.byComponent,
+  items: itemsOf(loadout),
+});
 
-const itemsOf = (loadout: LoadoutSnapshot): Record<Component, Item[]> => ({
+const itemsOf = (loadout: LoadoutSnapshot): LoadoutPieces["items"] => ({
   system: loadout.system.map((section) => ({ id: section.title ?? section.id, tokens: section.tokens })),
   rules: loadout.rules.map((rule) => ({ id: rule.path, tokens: rule.tokens })),
   skills: loadout.skills.listed.map((skill) => ({ id: skill.name, tokens: skill.tokens })),
@@ -28,9 +32,13 @@ const COMPONENTS: readonly Component[] = ["system", "tools", "rules", "skills", 
 
 // What changed between two loadouts of one project, like two versions of a harness: every piece that came,
 // went, or grew or shrank, and the tokens of each component.
-export const diffLoadouts = (before: LoadoutSnapshot, after: LoadoutSnapshot): LoadoutDiff => {
-  const old = itemsOf(before);
-  const next = itemsOf(after);
+export const diffLoadouts = (before: LoadoutSnapshot, after: LoadoutSnapshot): LoadoutDiff =>
+  diffPieces(piecesOfSnapshot(before), piecesOfSnapshot(after));
+
+// The same for any two loadouts as pieces: two captured requests, or what L3 predicts on two revisions.
+export const diffPieces = (before: LoadoutPieces, after: LoadoutPieces): LoadoutDiff => {
+  const old = before.items;
+  const next = after.items;
   const changes: LoadoutChange[] = [];
   const byComponent: LoadoutDiff["byComponent"] = {};
   for (const component of COMPONENTS) {
@@ -39,11 +47,8 @@ export const diffLoadouts = (before: LoadoutSnapshot, after: LoadoutSnapshot): L
     for (const id of new Set([...was.keys(), ...is.keys()])) {
       if (was.get(id) !== is.get(id)) changes.push({ component, id, before: was.get(id), after: is.get(id) });
     }
-    const tokens = {
-      before: before.tokens.byComponent[component] ?? 0,
-      after: after.tokens.byComponent[component] ?? 0,
-    };
+    const tokens = { before: before.byComponent[component] ?? 0, after: after.byComponent[component] ?? 0 };
     if (tokens.before !== 0 || tokens.after !== 0) byComponent[component] = tokens;
   }
-  return { total: { before: before.tokens.total, after: after.tokens.total }, byComponent, changes };
+  return { total: { before: before.total, after: after.total }, byComponent, changes };
 };

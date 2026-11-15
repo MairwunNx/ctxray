@@ -1,1 +1,1 @@
-export { diffLoadouts, type LoadoutChange, type LoadoutDiff } from "./diff.ts";
+export { diffLoadouts, diffPieces, type LoadoutChange, type LoadoutDiff, piecesOfSnapshot } from "./diff.ts";
