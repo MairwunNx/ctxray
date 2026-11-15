@@ -62,7 +62,7 @@ export const runSample = async (
     ]);
     recordSession(
       scope,
-      [start, peak].filter((one) => one !== undefined),
+      [...new Set([start, peak])].filter((one) => one !== undefined),
     );
     const misses = backend.misses();
     run = {
