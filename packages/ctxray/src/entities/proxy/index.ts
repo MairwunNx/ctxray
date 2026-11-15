@@ -1,3 +1,4 @@
+export { type AskDeps, askModel, protocolOfModel } from "./ask.ts";
 export { createPlayer, createRecorder, type Miss, type TapeEntry, WORK } from "./cassette.ts";
 export { type Conversation, createConversation } from "./conversation.ts";
 export { CREDENTIAL_HEADERS, credentialsFor } from "./credentials.ts";
