@@ -1,4 +1,4 @@
-import { Box, type Instance, render, Static, Text, type TextProps } from "ink";
+import { Box, type Instance, render, Static, Text, type TextProps, useInput, useStdin } from "ink";
 import { useEffect, useState } from "react";
 import type { Renderer } from "./renderer.ts";
 import type { Line, Tone, View } from "./view.ts";
@@ -49,10 +49,19 @@ const Spinner = () => {
   return <Text color="cyan">{FRAMES[frame]}</Text>;
 };
 
-type Screen = { items: readonly Printed[]; live: View | undefined };
+type OnKey = (key: string) => void;
+type Screen = { items: readonly Printed[]; live: View | undefined; onKey?: OnKey | undefined };
 
-const Screen = ({ items, live }: Screen) => (
+// Only a terminal in raw mode gives single keys: a pipe or an IDE console leaves Ctrl+C to end the process.
+const Keys = ({ onKey }: { onKey: OnKey }) => {
+  const { isRawModeSupported } = useStdin();
+  useInput((input, key) => onKey(key.return ? "enter" : input), { isActive: isRawModeSupported === true });
+  return null;
+};
+
+const Screen = ({ items, live, onKey }: Screen) => (
   <>
+    {onKey && <Keys onKey={onKey} />}
     <Static items={[...items]}>{(item) => <Lines key={item.id} view={item.view} />}</Static>
     {live && (
       <Box>
@@ -79,6 +88,7 @@ export const createInkRenderer = (stdout: NodeJS.WriteStream): Renderer => {
     live: (view) => {
       if (app || view) draw({ ...screen, live: view });
     },
+    keys: (onKey) => draw({ ...screen, onKey }),
     close: async () => {
       app?.unmount();
       await app?.waitUntilExit();
