@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { judge, type Threshold, wilson } from "./wilson.ts";
+import { judge, type Threshold, type Verdict, wilson } from "./wilson.ts";
 
 const round = (value: number) => Math.round(value * 1000) / 1000;
 
@@ -23,7 +23,7 @@ describe("wilson", () => {
 });
 
 describe("judge", () => {
-  test.each<[string, number, number, Threshold, string, number | undefined]>([
+  test.each<[string, number, number, Threshold, Verdict, number | undefined]>([
     ["the lower bound clears min", 19, 20, { min: 0.75 }, "passed", undefined],
     ["the rate misses min", 14, 20, { min: 0.9 }, "failed", undefined],
     ["the rate clears min, the bound doesn't", 18, 20, { min: 0.9 }, "inconclusive", undefined],
