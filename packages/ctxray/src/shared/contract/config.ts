@@ -84,6 +84,25 @@ export const Network = z.strictObject({
 });
 export type Network = z.output<typeof Network>;
 
+const usd = z.number().nonnegative();
+export const Price = z
+  .strictObject({
+    input: usd.describe("US dollars per million input tokens"),
+    output: usd.describe("US dollars per million output tokens"),
+    cacheRead: usd.optional().describe("Per million cached input tokens, the input price if unset"),
+    cacheWrite: usd.optional().describe("Per million tokens written to the cache, the input price if unset"),
+  })
+  .describe("What a model costs");
+export type Price = z.output<typeof Price>;
+
+export const Budget = z
+  .strictObject({
+    usd: usd.optional().describe("Stop sending to the real model once the run cost this much"),
+    tokens: z.number().int().positive().optional().describe("Stop once the run used this many tokens"),
+  })
+  .describe("Limits of a run with the real backend");
+export type Budget = z.output<typeof Budget>;
+
 export const Reporter = z.enum(["console", "html", "junit", "allure", "json", "markdown"]);
 
 // What a config file holds. Every field is optional: `extends` fills the gaps, and defaults fill the rest.
@@ -105,6 +124,11 @@ export const UserConfig = z
       .optional()
       .describe("Forbid every network request: no installs, no real runs. CTXRAY_OFFLINE=1 sets it too"),
     network: Network.optional(),
+    budget: Budget.optional(),
+    prices: z
+      .record(z.string(), Price)
+      .optional()
+      .describe("Prices by model, over the built-in list of the models ctxray runs by default"),
     ignoreHarnessDifferences: z
       .boolean()
       .optional()

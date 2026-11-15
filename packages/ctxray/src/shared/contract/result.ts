@@ -11,9 +11,10 @@ export const TestStatus = z
 export type TestStatus = z.infer<typeof TestStatus>;
 
 export const SkipReason = z
-  .enum(["unsupported", "filtered", "unavailable"])
+  .enum(["unsupported", "filtered", "unavailable", "backend", "budget"])
   .describe(
     "unsupported: the harness lacks a capability the test requires. filtered: --layer or --filter left it out. " +
-      "unavailable: this ctxray can't run the layer here",
+      "unavailable: this ctxray can't run the layer here. backend: L6 and L7 need a model, replay or real. " +
+      "budget: the run spent its budget before the test started",
   );
 export type SkipReason = z.infer<typeof SkipReason>;

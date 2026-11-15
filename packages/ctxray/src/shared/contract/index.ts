@@ -1,10 +1,12 @@
 export { Activation } from "./activation.ts";
 export {
   Backend,
+  Budget,
   HarnessSettings,
   Network,
   POLICY_CHECKS,
   Policy,
+  Price,
   RedactPattern,
   Reporter,
   UserConfig,
