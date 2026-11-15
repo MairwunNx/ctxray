@@ -62,6 +62,19 @@ export {
   Lockfile,
   type RegistryHarness,
 } from "./lockfile.ts";
+export {
+  REPORT_SCHEMA_VERSION,
+  Report,
+  ReportCell,
+  ReportCoverage,
+  ReportDiff,
+  ReportFailure,
+  ReportHarness,
+  ReportProblem,
+  ReportSession,
+  ReportStat,
+  ReportTest,
+} from "./report.ts";
 export { Layer, SkipReason, TestStatus } from "./result.ts";
 export { SESSION_SCHEMA_VERSION, Session, Turn } from "./session.ts";
 export {

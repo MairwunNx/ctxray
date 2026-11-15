@@ -3,6 +3,7 @@ import { RegExpValue, UserConfig } from "./config.ts";
 import { Inspection } from "./inspection.ts";
 import { LoadoutSnapshot } from "./loadout.ts";
 import { Lockfile } from "./lockfile.ts";
+import { Report } from "./report.ts";
 import { Session } from "./session.ts";
 import { DeclarativeTests } from "./tests.ts";
 import { Exchange } from "./trace.ts";
@@ -19,6 +20,7 @@ const documents = {
   exchange: { schema: Exchange, io: "output" }, // one line of a trace file
   lockfile: { schema: Lockfile, io: "output" },
   tests: { schema: DeclarativeTests, io: "input" }, // `*.ctxray.jsonc`
+  report: { schema: Report, io: "output" }, // `.ctxray/report/report.json`
 } as const;
 
 export type JsonSchemaDocument = { $id: string; $schema?: string; [key: string]: unknown };
