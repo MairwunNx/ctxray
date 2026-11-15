@@ -603,6 +603,15 @@ export const ru: Catalog = {
   "diff.unknownBase": "Git не знает ревизию «{ref}»: подтяните её или укажите другую через --base",
   "option.watch": "Запускать заново после каждого изменения файлов проекта",
   "test.watching": "Слежу за файлами: изменение перезапускает тесты, Enter запускает сейчас, q останавливает",
+  "command.baseline": "Записать находки L1 и L2 в ctxray.baseline.json: дальше прогон падает только на новых",
+  "baseline.written": {
+    one: "{file}: {count} находка",
+    few: "{file}: {count} находки",
+    many: "{file}: {count} находок",
+    other: "{file}: {count} находки",
+  },
+  "baseline.hint":
+    "Закоммитьте файл. ctxray test его читает, а ctxray baseline перезаписывает, когда вы что-то исправите",
   "option.noInstall": "Не ставить закреплённый харнесс, которого нет в кеше, а падать",
   "command.doctor": "Проверить, что нужно для L4 и выше: git, сеть, кеш и закреплённые харнессы",
   "doctor.titleSystem": "Система",

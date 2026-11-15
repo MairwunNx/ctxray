@@ -1,3 +1,4 @@
+import { UnknownRevision } from "#entities/harness/index.ts";
 import { CONFIG_OPTION, type Config } from "#entities/user-config/index.ts";
 import type { CommandSpec, Handler } from "#shared/cli/index.ts";
 import { ExitCode } from "#shared/contract/index.ts";
@@ -71,7 +72,14 @@ export const createTestCommand =
       ...(budget !== undefined && { budget }),
     };
     const deps = { testRun, t, renderer, config, env, version, lang: settings.lang };
-    let result = await runOnce(deps, request, reporting);
+    let result: Awaited<ReturnType<typeof runOnce>>;
+    try {
+      result = await runOnce(deps, request, reporting);
+    } catch (error) {
+      if (!(error instanceof UnknownRevision)) throw error;
+      renderer.print([[span(t("diff.unknownBase", { ref: request.base ?? "" }), "failure")]]);
+      return ExitCode.usage;
+    }
     // --watch: run again after each change until q or Ctrl+C. The exit code is the last run's.
     while (values["watch"] === true && (await nextRun(result.root, reporting.dir, renderer, t)) !== "quit") {
       result = await runOnce(deps, request, reporting);

@@ -17,7 +17,7 @@ import { createInspectAction } from "#features/inspect/index.ts";
 import { createShowConfigAction } from "#features/show-config/index.ts";
 import { createShowReportAction } from "#features/show-report/index.ts";
 import { createSpectateHooksAction, createSpectateShowAction } from "#features/spectate/index.ts";
-import { createStartingLoadout, createTestRunAction } from "#features/test-run/index.ts";
+import { createBaselineAction, createStartingLoadout, createTestRunAction } from "#features/test-run/index.ts";
 import type { Translate } from "#shared/i18n/index.ts";
 import type { Env } from "#shared/infra/index.ts";
 import type { Renderer } from "#shared/render/index.ts";
@@ -64,5 +64,6 @@ export const createRunInjector = (
     .provideFactory("calibrateAction", createCalibrateAction)
     .provideFactory("genPromptsAction", createGenPromptsAction)
     .provideFactory("showReportAction", createShowReportAction)
-    .provideFactory("diffAction", createDiffAction);
+    .provideFactory("diffAction", createDiffAction)
+    .provideFactory("baselineAction", createBaselineAction);
 export type RunInjector = ReturnType<typeof createRunInjector>;

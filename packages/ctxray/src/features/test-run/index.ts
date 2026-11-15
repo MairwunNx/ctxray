@@ -1,4 +1,6 @@
+export { baselineSpec, createBaselineCommand } from "./api/baseline-command.ts";
 export { createTestCommand, testSpec } from "./api/command.ts";
+export { type BaselineAction, createBaselineAction } from "./baseline.action.ts";
 export { corpus } from "./lib/corpus.ts";
 export { suite, test } from "./lib/dsl.ts";
 export { expect } from "./lib/expect.ts";
