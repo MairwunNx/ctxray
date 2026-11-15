@@ -6,6 +6,6 @@ import type { Kit } from "./kit.ts";
 import { responses } from "./responses.ts";
 
 export const KITS: Record<Protocol, Kit> = { anthropic, responses, chat, gemini };
+export { callsOf, type MadeCall } from "./calls.ts";
 export type { Kit } from "./kit.ts";
 export { roughTokens } from "./sse.ts";
-export { callsOf, type MadeCall } from "./calls.ts";

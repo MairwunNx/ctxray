@@ -10,7 +10,13 @@ test.each<[Protocol, Json]>([
     {
       messages: [
         { role: "user", content: "hi" },
-        { role: "assistant", content: [{ type: "text", text: "ok" }, { type: "tool_use", ...READ }] },
+        {
+          role: "assistant",
+          content: [
+            { type: "text", text: "ok" },
+            { type: "tool_use", ...READ },
+          ],
+        },
       ],
     },
   ],
