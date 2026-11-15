@@ -8,6 +8,8 @@ import { type Env, isCi } from "#shared/infra/index.ts";
 import { createRedactor } from "#shared/redact/index.ts";
 import { type Failure, toFailure } from "./lib/attempt.ts";
 import { createBackend } from "./lib/backend.ts";
+import { type BaseDiff, diffAgainst } from "./lib/base.ts";
+import { applyBaseline, BASELINE_FILE, loadBaseline } from "./lib/baseline.ts";
 import { createBinaries } from "./lib/binaries.ts";
 import { createCapture } from "./lib/capture.ts";
 import { createCassettes } from "./lib/cassettes.ts";
@@ -30,6 +32,7 @@ export type TestRunRequest = {
   install?: boolean; // false with --no-install: a harness missing from the cache fails instead
   record?: boolean; // --record: a real run keeps the model's answers as cassettes for replay
   budget?: number; // --budget: US dollars a real run may spend, over the config
+  base?: string | undefined; // --base: the report holds the loadout diff against this revision
 };
 
 export type TestRunResult = {
@@ -43,6 +46,8 @@ export type TestRunResult = {
   root: string; // the project root
   selection: Selection;
   coverage: readonly Coverage[];
+  base: BaseDiff | undefined;
+  baseline: { file: string; known: number } | undefined; // findings the baseline file already holds
   installed: string | undefined; // @mairwunnx/ctxray in the project's node_modules, when it isn't this version
   duration: number;
 };
@@ -60,6 +65,8 @@ export const createTestRunAction =
     const started = performance.now();
     const here = await realpath(cwd);
     const { root } = await findRoot(here);
+    // A base git doesn't know fails before any test runs.
+    const base = request.base === undefined ? undefined : await diffAgainst(root, request.base, selection.harnesses);
     const workspaces = createWorkspaces();
     const repository = await workspaces(root);
     const files = findTestFiles(repository.project, relative(root, here).split(sep).join("/"));
@@ -108,6 +115,8 @@ export const createTestRunAction =
       limits: config.limitsInput,
       differences,
     });
+    const known = await loadBaseline(root);
+    const baselined = known ? applyBaseline(results, known) : 0;
     results.push(...(await runContextChecks(repository, selection, capture, config.policies, binaries)));
     const total = definitions.length * selection.harnesses.length;
     let done = 0;
@@ -134,6 +143,8 @@ export const createTestRunAction =
       root,
       selection,
       coverage: await coverageOf(repository, selection.harnesses, seenBy, results),
+      base,
+      baseline: known ? { file: BASELINE_FILE, known: baselined } : undefined,
       installed: installed === version ? undefined : installed,
       duration: performance.now() - started,
     };

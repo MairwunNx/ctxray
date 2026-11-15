@@ -67,6 +67,8 @@ const RESULT: TestRunResult = {
     filter: undefined,
   },
   coverage: [],
+  base: undefined,
+  baseline: undefined,
 };
 
 test("the report fits its schema, groups cells by test, and leaves filtered ones out", () => {

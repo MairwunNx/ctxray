@@ -143,5 +143,22 @@ export const buildReport = (result: TestRunResult, { version, langs, t, now }: R
       failure: reportFailure(failure, t),
     })),
     coverage: result.coverage.map((one) => ({ ...one, kinds: one.kinds.map((kind) => ({ ...kind })) })),
+    ...(result.base && {
+      base: {
+        ref: result.base.ref,
+        diffs: result.base.diffs.map(({ harness, diff }) => ({
+          harness,
+          total: diff.total,
+          byComponent: diff.byComponent,
+          changes: diff.changes.map((change) => ({
+            component: change.component,
+            id: change.id,
+            ...(change.before !== undefined && { before: change.before }),
+            ...(change.after !== undefined && { after: change.after }),
+          })),
+        })),
+      },
+    }),
+    ...(result.baseline && { baseline: result.baseline }),
   };
 };

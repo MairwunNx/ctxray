@@ -1,6 +1,7 @@
 import type { Layer, TestStatus } from "#shared/contract/index.ts";
 import type { MessageKey } from "#shared/i18n/index.ts";
 import { type Span, span, type View, widthOf } from "#shared/render/index.ts";
+import type { BaseDiff } from "../lib/base.ts";
 import { LAYERS } from "../lib/selection.ts";
 import type { Written } from "../lib/write-reports.ts";
 import type { TestRunResult } from "../test-run.action.ts";
@@ -84,6 +85,20 @@ const spendSpans = (result: TestRunResult, { t }: Words): Span[] => {
   ];
 };
 
+// --base: the tokens of files each harness reads, against the base revision.
+const baseSpans = (base: BaseDiff, { t }: Words): Span[] => [
+  span(`${base.ref}  `, "muted"),
+  ...base.diffs.flatMap(({ harness, diff }, index) => {
+    const delta = diff.total.after - diff.total.before;
+    const shown = delta === 0 ? "±0" : delta > 0 ? `+${delta}` : String(delta);
+    return [
+      ...(index > 0 ? [span("   ")] : []),
+      span(`${harness} `),
+      span(t("test.baseDelta", { delta: shown, changes: diff.changes.length }), delta > 0 ? "warning" : "muted"),
+    ];
+  }),
+];
+
 export const summaryView = (result: TestRunResult, words: Words, version: string, reports?: Written): View => {
   const { t } = words;
   const { written, updated } = result.snapshots;
@@ -96,6 +111,15 @@ export const summaryView = (result: TestRunResult, words: Words, version: string
     ...(layers.length > 0 ? [[t("test.layers"), layers] as [string, Span[]]] : []),
     [t("test.total"), totalSpans(result, words)],
     ...(result.spend ? [[t("test.cost"), spendSpans(result, words)] as [string, Span[]]] : []),
+    ...(result.base ? [[t("test.base"), baseSpans(result.base, words)] as [string, Span[]]] : []),
+    ...(result.baseline
+      ? [
+          [
+            t("test.baseline"),
+            [span(t("test.baselineKnown", { count: result.baseline.known, file: result.baseline.file }), "muted")],
+          ] as [string, Span[]],
+        ]
+      : []),
     ...(reports && reports.files.length > 0
       ? [[t("test.report"), [span(reports.html ?? reports.dir, "accent")]] as [string, Span[]]]
       : []),
