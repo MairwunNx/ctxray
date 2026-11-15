@@ -37,9 +37,9 @@ export type Decision = { run: true } | { run: false; reason: SkipReason; missing
 export const fullName = (definition: Pick<TestDefinition, "suites" | "name">) =>
   [...definition.suites, definition.name].join(" › ");
 
-// Unsupported says the harness can't do what the test needs. Unavailable says this ctxray can't run it yet:
-// L3 reads files, L4 and L5 launch harnesses against the mock model, and replay, real models, L6, and L7
-// come later.
+// Unsupported says the harness can't do what the test needs. Unavailable says ctxray can't run it here. L3 reads
+// files. L4 and L5 launch harnesses against the mock model whatever the backend: it's free and it's
+// deterministic. L6 and L7 need a model that answers by itself, real or replayed.
 export const decide = (definition: TestDefinition, harness: HarnessId, selection: Selection): Decision => {
   const layer = KIND_LAYERS[definition.kind];
   const filter = selection.filter?.toLowerCase();
@@ -54,8 +54,7 @@ export const decide = (definition: TestDefinition, harness: HarnessId, selection
   });
   if (!support.supported) return { run: false, reason: "unsupported", missing: support.missing };
   if (layer === "L3") return STATIC_ADAPTERS[harness] ? { run: true } : { run: false, reason: "unavailable" };
-  if ((layer === "L4" || layer === "L5") && launches(harness, selection) && selection.backend.kind === "mock") {
-    return { run: true };
-  }
-  return { run: false, reason: "unavailable" };
+  if (!launches(harness, selection)) return { run: false, reason: "unavailable" };
+  if ((layer === "L6" || layer === "L7") && selection.backend.kind === "mock") return { run: false, reason: "backend" };
+  return { run: true };
 };

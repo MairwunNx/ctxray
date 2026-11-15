@@ -32,10 +32,18 @@ const run = (args: string[], root = shared, env: Record<string, string> = {}) =>
   runIn(root, ["test", ...args], { CTXRAY_CACHE_DIR: cache, ...env });
 
 describe.each([
-  ["en", ["ctxray checks", "payments rules attach to payment sources", "needs pathRules", "L6 doesn't run here yet"]],
+  [
+    "en",
+    ["ctxray checks", "payments rules attach to payment sources", "needs pathRules", "needs --backend replay or real"],
+  ],
   [
     "ru",
-    ["проверки ctxray", "payments rules attach to payment sources", "нужно pathRules", "L6 здесь пока не запускается"],
+    [
+      "проверки ctxray",
+      "payments rules attach to payment sources",
+      "нужно pathRules",
+      "нужен --backend replay или real",
+    ],
   ],
 ])("the examples in %s", (lang, words) => {
   test("pass, with what can't run skipped and said why", async () => {

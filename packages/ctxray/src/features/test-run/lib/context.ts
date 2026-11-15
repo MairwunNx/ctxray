@@ -66,7 +66,7 @@ const checkOne = async (
       attempts: 0,
     };
   }
-  const scope = { harness, workspace, inventory: await workspace.inventoryOf(harness), snapshot: () => {} };
+  const scope = { harness, workspace, inventory: await workspace.inventoryOf(harness), snapshot: () => {}, stats: [] };
   const session = createSession(capture, scope);
   try {
     const { loadout } = await session.firstRequest();
@@ -103,7 +103,7 @@ export const runContextChecks = async (
   policies: readonly Policy[],
   binaries: Binaries,
 ): Promise<CellResult[]> => {
-  if (!selection.layers.has("L4") || selection.backend.kind !== "mock") return [];
+  if (!selection.layers.has("L4")) return [];
   const results: CellResult[] = [];
   for (const harness of selection.harnesses.filter((id) => launches(id, selection))) {
     results.push(await checkOne(workspace, harness, capture, policies, binaries));

@@ -8,5 +8,5 @@ export const PAYMENTS = join(import.meta.dir, "../../../../fixtures/static/payme
 // A cell on the payments fixture, the way the runner builds one.
 export const scopeIn = async (harness: HarnessId, snapshot: CellScope["snapshot"] = () => {}): Promise<CellScope> => {
   const workspace = await createWorkspaces()(PAYMENTS);
-  return { harness, workspace, inventory: await workspace.inventoryOf(harness), snapshot };
+  return { harness, workspace, inventory: await workspace.inventoryOf(harness), snapshot, stats: [] };
 };

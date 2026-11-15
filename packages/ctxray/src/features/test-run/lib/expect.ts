@@ -1,5 +1,6 @@
 import type { HarnessId } from "#shared/contract/index.ts";
 import { captureMatchers } from "./expect-capture.ts";
+import { runMatchers } from "./expect-runs.ts";
 import { CheckFailure, type FailureLine, fail, show } from "./failure.ts";
 import { idOf } from "./loadout.ts";
 import { isRuleSet, selectRules } from "./rules.ts";
@@ -78,6 +79,7 @@ const matchers = (actual: unknown, negated: boolean) => {
       ]);
     },
     ...captureMatchers(actual, negated, check),
+    ...runMatchers(actual),
     toMatchLoadoutSnapshot: () => {
       if (negated) fail("expect.noNot", { matcher: "toMatchLoadoutSnapshot()" });
       const snapshot = attachedSnapshot(actual) ?? fail("expect.notLoadout", { received: show(actual) });

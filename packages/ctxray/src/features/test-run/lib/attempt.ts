@@ -27,6 +27,7 @@ const messageOf = (error: Error) => {
 };
 
 export const toFailure = (error: unknown): Failure => {
+  if (error instanceof Error && "failure" in error) return (error as Error & { failure: Failure }).failure;
   if (error instanceof CheckFailure) return { kind: "check", key: error.key, params: error.params, lines: error.lines };
   if (error instanceof Error) return { kind: "error", message: messageOf(error), where: whereOf(error) };
   return { kind: "error", message: String(error), where: undefined };
@@ -35,6 +36,7 @@ export const toFailure = (error: unknown): Failure => {
 export const DEFAULT_TIMEOUT = 30_000;
 
 const withTimeout = async (run: () => unknown, timeout: number) => {
+  if (!Number.isFinite(timeout)) return run();
   let timer: Timer | undefined;
   const late = new Promise<never>((_, reject) => {
     timer = setTimeout(() => reject(new CheckFailure("test.timeout", { ms: timeout })), timeout);

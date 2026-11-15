@@ -3,6 +3,7 @@ import type { HarnessId, Layer } from "#shared/contract/index.ts";
 import type { CapturedLoadout } from "./captured.ts";
 import type { ResolvedLoadout, ResolveRequest } from "./loadout.ts";
 import type { RuleSet } from "./rules.ts";
+import type { Run, Runs } from "./runs.ts";
 import type { Session, SessionRequest } from "./session.ts";
 
 // Each test kind checks one layer of the Loadout Stack. L1 and L2 need no tests: ctxray runs them itself.
@@ -25,6 +26,8 @@ export type TestOptions = {
   positive?: readonly string[];
   negative?: readonly string[];
   samples?: number;
+  turns?: number; // L6 and L7: model turns before ctxray says “that's all”, 2 and 30 by default
+  min?: number; // L7: the share of runs that must pass, every one by default
 };
 
 export type SuiteOptions = { fixture?: string }; // a project folder, relative to the test file
@@ -34,13 +37,18 @@ export type ResolveContext = BaseContext & { resolve: (request?: ResolveRequest)
 // L4: launch the harness, take its first request. L5: drive a session turn by turn.
 export type AssembleContext = BaseContext & { assemble: (request?: SessionRequest) => Promise<CapturedLoadout> };
 export type WireContext = BaseContext & { session: Session; startSession: (request?: SessionRequest) => Session };
+// L6: every run of every prompt. L7: one run at a time, the body checks it.
+export type ActivateContext = BaseContext & { runs: Runs };
+export type ScenarioContext = BaseContext & { run: Run };
 export type ContextOf<K extends Kind> = K extends "resolve"
   ? ResolveContext
   : K extends "assemble"
     ? AssembleContext
     : K extends "wire"
       ? WireContext
-      : BaseContext;
+      : K extends "activate"
+        ? ActivateContext
+        : ScenarioContext;
 
 // biome-ignore lint/suspicious/noExplicitAny: a body's context differs per kind, the registry holds them all
 export type Body = (context: any) => unknown;
