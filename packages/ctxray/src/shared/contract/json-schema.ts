@@ -4,6 +4,7 @@ import { Inspection } from "./inspection.ts";
 import { LoadoutSnapshot } from "./loadout.ts";
 import { Lockfile } from "./lockfile.ts";
 import { Session } from "./session.ts";
+import { DeclarativeTests } from "./tests.ts";
 import { Exchange } from "./trace.ts";
 
 const BASE = "https://github.com/MairwunNx/ctxray/releases/latest/download";
@@ -17,6 +18,7 @@ const documents = {
   inspection: { schema: Inspection, io: "output" },
   exchange: { schema: Exchange, io: "output" }, // one line of a trace file
   lockfile: { schema: Lockfile, io: "output" },
+  tests: { schema: DeclarativeTests, io: "input" }, // `*.ctxray.jsonc`
 } as const;
 
 export type JsonSchemaDocument = { $id: string; $schema?: string; [key: string]: unknown };
