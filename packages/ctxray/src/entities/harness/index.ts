@@ -24,4 +24,5 @@ export { checkReach, type ReachOptions } from "./layers/reach.ts";
 export { checkSupport, type HarnessProfile, type Requirement, type Support } from "./profile.ts";
 export { PROFILES } from "./profiles.ts";
 export { findRoot, openProject, type Project } from "./project.ts";
+export { checkoutRevision, type Revision, staticPieces, UnknownRevision } from "./revision.ts";
 export type { Scope, StaticLoadout } from "./static-loadout.ts";
