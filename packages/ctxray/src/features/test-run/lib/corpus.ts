@@ -4,9 +4,13 @@ import { z } from "zod";
 import { collecting } from "./dsl.ts";
 import { CheckFailure } from "./failure.ts";
 
+const Prompts = { positive: z.array(z.string()).optional(), negative: z.array(z.string()).optional() };
+// `ctxray gen-prompts` adds the model that wrote them, the date, and the prompts of each rule or skill.
 const CorpusFile = z.strictObject({
-  positive: z.array(z.string()).optional(),
-  negative: z.array(z.string()).optional(),
+  ...Prompts,
+  model: z.string().optional(),
+  generated: z.string().optional(),
+  by: z.record(z.string(), z.strictObject(Prompts)).optional(),
 });
 
 export type Corpus = { readonly positive: readonly string[]; readonly negative: readonly string[] };

@@ -3,6 +3,7 @@ import { type Config, createConfigLoader } from "#entities/user-config/index.ts"
 import { createCacheAction } from "#features/cache/index.ts";
 import { createCalibrateAction } from "#features/calibrate/index.ts";
 import { createDoctorAction } from "#features/doctor/index.ts";
+import { createGenPromptsAction } from "#features/gen-prompts/index.ts";
 import {
   createHarnessAddAction,
   createHarnessInstallAction,
@@ -58,5 +59,6 @@ export const createRunInjector = (
     .provideFactory("spectateHooksAction", createSpectateHooksAction)
     .provideFactory("spectateShowAction", createSpectateShowAction)
     .provideFactory("doctorAction", createDoctorAction)
-    .provideFactory("calibrateAction", createCalibrateAction);
+    .provideFactory("calibrateAction", createCalibrateAction)
+    .provideFactory("genPromptsAction", createGenPromptsAction);
 export type RunInjector = ReturnType<typeof createRunInjector>;
