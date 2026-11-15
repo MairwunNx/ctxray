@@ -30,6 +30,7 @@
 - ❓ **Why it's there.** Every piece says why it loaded: it's always on, a file path matched, or the model asked for it.
 - ✅ **Tests for your agent setup.** `*.ctxray.ts` files read like Bun or Vitest tests: “payment rules load for payment code”, “the context stays under 25k tokens”, “this prompt picks the refunds skill”.
 - 🧪 **One test, every agent.** The same test runs against each agent you use. You don't copy it per tool.
+- 🎯 **Does the model pick the right skill?** A prompt runs a few dozen times against a real model, and ctxray reports how often the skill loaded, with a confidence interval. Record the answers once, and every merge request replays them for free.
 - 📉 **What a merge request changes.** `ctxray diff` compares with the main branch: a new MCP server with 14 tools, a rule that grew by 6k tokens.
 - 📋 **Your organisation's rules.** Token limits, banned MCP servers, a required AGENTS.md: checked on every merge request, without calling a model.
 - 🏢 **Works in a closed network.** Corporate LLM gateways, proxies, your own CA certificates, and internal npm registries all work.
