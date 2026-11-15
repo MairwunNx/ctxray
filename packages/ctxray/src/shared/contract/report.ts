@@ -62,6 +62,7 @@ export const ReportCell = z.object({
   stats: z.array(ReportStat).optional(),
   sessions: z.array(ReportSession).optional(),
 });
+export type ReportCell = z.infer<typeof ReportCell>;
 
 export const ReportTest = z.object({
   id: z.string().describe("Stable across runs: the file and the test's key"),
