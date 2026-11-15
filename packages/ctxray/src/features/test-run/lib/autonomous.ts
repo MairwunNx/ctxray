@@ -84,10 +84,12 @@ export const runSample = async (
       }),
       ...(misses.length > 0 && {
         error: toFailure(
-          new CheckFailure("cassette.miss", {
-            path: misses[0]?.path ?? "",
-            turn: String(misses[0]?.position ?? "—"),
-          }),
+          (await backend.recorded()) === undefined
+            ? new CheckFailure("cassette.none", { harness: scope.harness })
+            : new CheckFailure("cassette.miss", {
+                path: misses[0]?.path ?? "",
+                turn: String(misses[0]?.position ?? "—"),
+              }),
         ),
       }),
     };

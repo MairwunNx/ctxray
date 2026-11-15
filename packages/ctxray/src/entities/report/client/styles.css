@@ -419,6 +419,8 @@ td {
 }
 .added {
   color: var(--ink-good);
+  display: inline-block;
+  margin: 2px 10px 2px 0;
 }
 .pair {
   display: grid;

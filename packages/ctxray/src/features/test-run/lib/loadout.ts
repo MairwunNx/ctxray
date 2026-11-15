@@ -1,4 +1,4 @@
-import { posix } from "node:path";
+import { join, posix } from "node:path";
 import { STATIC_ADAPTERS, type StaticLoadout } from "#entities/harness/index.ts";
 import type { CommandEntry, Component, HarnessId, McpServer, RuleEntry, SkillEntry } from "#shared/contract/index.ts";
 import { fail } from "./failure.ts";
@@ -71,7 +71,8 @@ export const resolveIn =
     if (dir.startsWith("..") || (dir !== "" && !project.dirs.includes(dir))) fail("resolve.noFolder", { dir: cwd });
     const paths = files.map(normal).filter((path) => !path.startsWith(".."));
     const loadout = adapter.resolve(scope.inventory, { cwd: dir, files: paths });
-    for (const rule of loadout.rules) scope.seen.add(rule.path);
-    for (const skill of [...loadout.skills.listed, ...loadout.skills.loaded]) scope.seen.add(skill.path);
+    for (const rule of loadout.rules) scope.seen.add(join(project.root, rule.path));
+    for (const skill of [...loadout.skills.listed, ...loadout.skills.loaded])
+      scope.seen.add(join(project.root, skill.path));
     return toView(loadout, paths);
   };

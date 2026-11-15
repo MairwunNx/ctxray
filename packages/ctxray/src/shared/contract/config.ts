@@ -143,7 +143,18 @@ export const UserConfig = z
     lint: LintConfig.optional(),
     reporters: z.array(Reporter).optional(),
     lang: z.string().optional().describe("CLI language: `auto`, `en`, or `ru`"),
-    report: z.strictObject({ langs: z.array(z.string()).optional() }).optional(),
+    report: z
+      .strictObject({
+        langs: z
+          .array(z.string())
+          .optional()
+          .describe("Languages the HTML report carries, the first by default, or `all`. CLI language by default"),
+        dir: z
+          .string()
+          .optional()
+          .describe("Where reports go, relative to the project root: .ctxray/report by default"),
+      })
+      .optional(),
   })
   .describe("ctxray configuration");
 export type UserConfigInput = z.input<typeof UserConfig>;

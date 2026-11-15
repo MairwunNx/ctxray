@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import { buildLoadout, STATIC_ADAPTERS } from "#entities/harness/index.ts";
 import { exactSummary, type Piece } from "#entities/proxy/index.ts";
 import type { Exchange, LoadoutSnapshot } from "#shared/contract/index.ts";
@@ -92,7 +93,7 @@ export const recordSession = (scope: CellScope, requests: readonly CapturedReque
   });
   scope.sessions.push({ start: first.snapshot, peak: peak.snapshot, timeline });
   for (const one of sorted) {
-    for (const rule of one.snapshot.rules) scope.seen.add(rule.path);
-    for (const skill of one.snapshot.skills.loaded) scope.seen.add(skill.path);
+    for (const rule of one.snapshot.rules) scope.seen.add(join(scope.workspace.root, rule.path));
+    for (const skill of one.snapshot.skills.loaded) scope.seen.add(join(scope.workspace.root, skill.path));
   }
 };

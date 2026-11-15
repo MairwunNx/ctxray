@@ -2,14 +2,17 @@ import { progressView } from "#entities/harness-cache/index.ts";
 import { CONFIG_OPTION, type Config } from "#entities/user-config/index.ts";
 import type { CommandSpec, Handler } from "#shared/cli/index.ts";
 import { ExitCode } from "#shared/contract/index.ts";
-import type { Translate } from "#shared/i18n/index.ts";
+import { createTranslator, type Translate } from "#shared/i18n/index.ts";
 import type { Env } from "#shared/infra/index.ts";
 import { createRedactor } from "#shared/redact/index.ts";
 import { type Renderer, span, type View } from "#shared/render/index.ts";
+import { buildReport } from "../lib/report.ts";
 import type { Selection } from "../lib/selection.ts";
+import { writeReports } from "../lib/write-reports.ts";
 import type { TestRunAction, TestRunResult } from "../test-run.action.ts";
 import { failuresView } from "./failure-view.ts";
 import { matrixView } from "./matrix-view.ts";
+import { chooseReporting } from "./reporting.ts";
 import { chooseSelection } from "./selection.ts";
 import { summaryView } from "./summary-view.ts";
 import type { Words } from "./words.ts";
@@ -28,6 +31,9 @@ export const testSpec: CommandSpec = {
     frozen: { type: "boolean", summary: "option.frozen" },
     "no-install": { type: "boolean", summary: "option.noInstall" },
     record: { type: "boolean", summary: "option.record" },
+    reporter: { type: "string", summary: "option.reporter", value: "names" },
+    "report-lang": { type: "string", summary: "option.reportLang", value: "langs" },
+    "report-dir": { type: "string", summary: "option.reportDir", value: "dir" },
     budget: { type: "string", summary: "option.budget", value: "usd" },
     config: CONFIG_OPTION,
   },
@@ -44,14 +50,28 @@ const headerView = (selection: Selection, t: Translate, version: string): View =
 const failed = (result: TestRunResult) =>
   result.broken.length > 0 || result.results.some((cell) => cell.status === "failed");
 
+export type RunSettings = { readonly lang: string; readonly ci: boolean };
+
 export const createTestCommand =
-  (testRun: TestRunAction, t: Translate, renderer: Renderer, config: Config, env: Env, version: string): Handler =>
+  (
+    testRun: TestRunAction,
+    t: Translate,
+    renderer: Renderer,
+    config: Config,
+    env: Env,
+    version: string,
+    settings: RunSettings,
+  ): Handler =>
   async (values) => {
     const selection = chooseSelection(values, env, config);
-    if ("key" in selection) {
-      renderer.print([[span(t(selection.key, selection.params), "failure")]]);
-      return ExitCode.usage;
+    const reporting = chooseReporting(values, env, config, settings.ci, settings.lang);
+    for (const chosen of [selection, reporting]) {
+      if ("key" in chosen) {
+        renderer.print([[span(t(chosen.key, chosen.params), "failure")]]);
+        return ExitCode.usage;
+      }
     }
+    if ("key" in selection || "key" in reporting) return ExitCode.usage;
     const budget = typeof values["budget"] === "string" ? Number(values["budget"]) : undefined;
     if (budget !== undefined && !(Number.isFinite(budget) && budget >= 0)) {
       renderer.print([[span(t("test.badBudget", { value: String(values["budget"]) }), "failure")]]);
@@ -84,11 +104,25 @@ export const createTestCommand =
       clean: (text) => redactor.text(text),
       cwd: result.cwd,
     };
+    const report = buildReport(result, {
+      version,
+      langs: reporting.langs,
+      t: createTranslator(reporting.langs[0] ?? settings.lang),
+      now: new Date(),
+    });
+    const written = await writeReports(
+      report,
+      reporting,
+      result.root,
+      env,
+      createTranslator(reporting.langs[0] ?? settings.lang),
+    );
     renderer.print([
-      ...matrixView(result.results, words),
-      ...failuresView(result, words),
-      ...summaryView(result, words, version),
+      ...(reporting.reporters.has("console")
+        ? [...matrixView(result.results, words), ...failuresView(result, words)]
+        : []),
+      ...summaryView(result, words, version, written),
     ]);
     return failed(result) ? ExitCode.failed : ExitCode.ok;
   };
-createTestCommand.inject = ["testRunAction", "t", "renderer", "config", "env", "version"] as const;
+createTestCommand.inject = ["testRunAction", "t", "renderer", "config", "env", "version", "settings"] as const;

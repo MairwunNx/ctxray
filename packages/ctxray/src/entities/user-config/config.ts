@@ -32,9 +32,10 @@ export type Config = {
   readonly limits: ResolvedLimits;
   readonly limitsInput: LimitsInput | undefined; // as written, for lint overrides to build on
   readonly lint: LintConfig;
-  readonly reporters: readonly string[];
+  readonly reporters: readonly string[] | undefined; // as the config lists them: CI picks its own otherwise
   readonly lang: string;
   readonly reportLangs: readonly string[] | undefined;
+  readonly reportDir: string; // relative to the project root
 };
 
 const present = (value: string | undefined) => (value === undefined || value === "" ? undefined : value);
@@ -70,9 +71,10 @@ export const finalizeConfig = (merged: UserConfig, env: Env, files: readonly str
     limits: resolveLimits(merged.limits),
     limitsInput: merged.limits,
     lint: merged.lint ?? {},
-    reporters: merged.reporters ?? ["console"],
+    reporters: merged.reporters,
     lang: merged.lang ?? "auto",
     reportLangs: merged.report?.langs,
+    reportDir: merged.report?.dir ?? ".ctxray/report",
   };
 };
 

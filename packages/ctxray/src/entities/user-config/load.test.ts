@@ -36,7 +36,10 @@ const ORG_PACKAGE = {
 
 describe("createConfigLoader", () => {
   test("without a config file the defaults apply", async () => {
-    expect(await load({})).toMatchObject({ ok: true, config: { files: [], reporters: ["console"], lang: "auto" } });
+    expect(await load({})).toMatchObject({
+      ok: true,
+      config: { files: [], reportDir: ".ctxray/report", lang: "auto" },
+    });
   });
 
   test("reads ctxray.config.ts", async () => {

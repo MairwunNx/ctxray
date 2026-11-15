@@ -80,7 +80,7 @@ describe("finalizeConfig", () => {
 
   test("fills the defaults and drops harnesses set to false", () => {
     const config = finalizeConfig({ harnesses: { codex: {}, "cursor-cli": false } }, {}, []);
-    expect(config).toMatchObject({ harnesses: { codex: {} }, reporters: ["console"], lang: "auto", policies: [] });
+    expect(config).toMatchObject({ harnesses: { codex: {} }, reportDir: ".ctxray/report", lang: "auto", policies: [] });
     expect(Object.keys(config.harnesses)).toEqual(["codex"]);
   });
 });
