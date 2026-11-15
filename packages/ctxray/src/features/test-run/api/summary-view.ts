@@ -15,7 +15,8 @@ const COUNTS: [TestStatus, MessageKey, Span["tone"]][] = [
 
 const passes = (status: TestStatus) => status === "passed" || status === "flaky";
 
-// `L3 ✓ 7` when every test that ran passed, `L4 3/4` otherwise, `L5 ○ 2` when none ran.
+// `L3 ✓ 7` when every test that ran passed, `L4 3/4` after a failure, `L6 ~ 1/2` when the rest can't tell yet,
+// `L5 ○ 2` when none ran.
 const layerSpans = (result: TestRunResult): Span[] =>
   LAYERS.flatMap((layer: Layer) => {
     const cells = result.results.filter((cell) => cell.layer === layer && cell.reason !== "filtered");
@@ -24,7 +25,9 @@ const layerSpans = (result: TestRunResult): Span[] =>
     const passed = ran.filter((cell) => passes(cell.status)).length;
     if (ran.length === 0) return [span(`${layer} ○ ${cells.length}   `, "muted")];
     if (passed === ran.length) return [span(`${layer} `), span(`✓ ${passed}   `, "success")];
-    return [span(`${layer} `), span(`${passed}/${ran.length}   `, "failure")];
+    // Statistics that can't tell yet aren't a failure.
+    const failed = ran.some((cell) => cell.status === "failed");
+    return [span(`${layer} `), span(`${failed ? "" : "~ "}${passed}/${ran.length}   `, failed ? "failure" : "warning")];
   });
 
 const totalSpans = (result: TestRunResult, { t }: Words): Span[] => {
