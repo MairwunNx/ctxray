@@ -125,6 +125,10 @@ export const UserConfig = z
       .describe("Forbid every network request: no installs, no real runs. CTXRAY_OFFLINE=1 sets it too"),
     network: Network.optional(),
     budget: Budget.optional(),
+    exactTokens: z
+      .boolean()
+      .optional()
+      .describe("Count captured tokens with the provider's own endpoint, through the upstream and your key"),
     prices: z
       .record(z.string(), Price)
       .optional()

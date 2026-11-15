@@ -203,6 +203,7 @@ export const ru: Catalog = {
     many: "≈ {count} токенов",
     other: "≈ {count} токена",
   },
+  "test.exactTokens": { one: "{count} токен", few: "{count} токена", many: "{count} токенов", other: "{count} токена" },
   "test.notInstalled": "в PATH нет {binary}",
   "context.sentTwice": "{path} попадает к модели дважды уже в первом запросе",
   "context.sameText": "В {path} тот же текст, что в {other}, и модель читает оба",
@@ -294,6 +295,7 @@ export const ru: Catalog = {
     many: "записано {count} кассет",
     other: "записано {count} кассеты",
   },
+  "tokens.exactFailed": "Провайдер не смог посчитать запрос {protocol}: {message}",
   "expect.notRequest": "{matcher} принимает запрос из session.nextRequest(), а не {received}",
   "drift.found":
     "Расхождение резолвера: {harness} {version} загружает не то, что предсказывает ctxray. Если {harness} изменил это намеренно, адаптер ctxray для него нужно обновить",

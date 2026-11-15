@@ -10,11 +10,15 @@ import {
   type ProjectCopy,
   startSession,
 } from "#entities/harness/index.ts";
+import { defaultCacheDir } from "#entities/harness-cache/index.ts";
 import {
   createConversation,
+  createExactCounter,
   createRelay,
   createTraceWriter,
+  type ExactCounter,
   type Handler,
+  openCountCache,
   type Relay,
   startEgressGuard,
   startProxy,
@@ -24,6 +28,7 @@ import type { HarnessId } from "#shared/contract/index.ts";
 import type { Egress, Env } from "#shared/infra/index.ts";
 import { createRedactor } from "#shared/redact/index.ts";
 import type { Binaries } from "./binaries.ts";
+import { both, caFileIn, shimEnvOf } from "./capture-env.ts";
 import { fail } from "./failure.ts";
 import type { CellScope } from "./scope.ts";
 
@@ -46,12 +51,10 @@ export type OpenSession = {
   model: string;
   trace: string;
   relay: Relay | undefined; // set when a real or replayed model answers
+  exact: ExactCounter | undefined; // set with exactTokens: the provider counts the tokens
   egress: () => readonly string[]; // connections this harness tried past ctxray
   close: () => Promise<void>; // stops the session's egress guard
 };
-
-const PROXY_VARIABLES = ["HTTPS_PROXY", "HTTP_PROXY", "ALL_PROXY", "NO_PROXY"];
-const both = (name: string, value: string) => ({ [name]: value, [name.toLowerCase()]: value });
 
 // The proxy lives for the whole run, each harness session gets its own prefix, trace, and egress guard: sessions
 // run side by side, and a guard of their own tells which harness tried to get past ctxray.
@@ -78,25 +81,17 @@ export const createCapture = ({ config, env, self, binaries }: CaptureDeps) => {
     return made;
   };
 
-  // MCP servers reach the network the way the user's own tools do: through the user's proxy, not the guard.
-  const userNetwork = {
-    ...(network.httpsProxy && both("HTTPS_PROXY", network.httpsProxy)),
-    ...(network.httpProxy && both("HTTP_PROXY", network.httpProxy)),
-    ...(network.noProxy.length > 0 && both("NO_PROXY", network.noProxy.join(","))),
-  };
-  const shimEnv = {
-    env: userNetwork,
-    unset: PROXY_VARIABLES.flatMap((name) => [name, name.toLowerCase()]).filter((name) => !(name in userNetwork)),
-    patterns: config.redact.patterns.map(({ source, flags }) => ({ source, flags })),
-  };
-
-  // Node-based MCP servers trust the user's CA certificates through one PEM file (ADR 0003).
+  const shimEnv = shimEnvOf(config, network);
+  const caFileOf = () => caFileIn(traceDir, network);
   let caFile: string | undefined;
-  const caFileOf = async () => {
-    if (network.caFiles.length <= 1) return network.caFiles[0];
-    const file = join(traceDir, "ca.pem");
-    await Bun.write(file, (await Promise.all(network.caFiles.map((one) => Bun.file(one).text()))).join("\n"));
-    return file;
+
+  // Exact counts go to the provider through the user's network, and only when the config asks for them.
+  let exact: ExactCounter | undefined;
+  const exactOf = async () => {
+    if (!config.exactTokens || config.offline) return undefined;
+    const cache = openCountCache(join(defaultCacheDir(env), "tokens.db"));
+    exact ??= createExactCounter({ upstream: config.upstream, egress: await egressOf(network), env, cache });
+    return exact;
   };
 
   const open = async (scope: CellScope, { cwd, prompt, relay: spec }: OpenRequest): Promise<OpenSession> => {
@@ -167,7 +162,16 @@ export const createCapture = ({ config, env, self, binaries }: CaptureDeps) => {
     });
     // The provider changes the payload too, so it joins the model in the snapshot key: `anthropic/claude-…`.
     const label = settings?.provider ? `${settings.provider}/${model}` : model;
-    return { harness, adapter, model: label, trace, relay, egress: guard.attempts, close: guard.stop };
+    return {
+      harness,
+      adapter,
+      model: label,
+      trace,
+      relay,
+      exact: await exactOf(),
+      egress: guard.attempts,
+      close: guard.stop,
+    };
   };
 
   const stop = async (keepTraces: boolean) => {

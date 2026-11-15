@@ -20,7 +20,9 @@ const cellSpans = (cell: CellResult, words: Words): Span[] => {
   const rate = stat ? [span(` ${stat.rate.toFixed(2)} [${stat.low.toFixed(2)}–${stat.high.toFixed(2)}]`)] : [];
   const warnings = [
     ...rate,
-    ...(cell.tokens !== undefined ? [span(` ${t("test.tokens", { count: cell.tokens })}`, "muted")] : []),
+    ...(cell.tokens !== undefined
+      ? [span(` ${t(cell.exact ? "test.exactTokens" : "test.tokens", { count: cell.tokens })}`, "muted")]
+      : []),
     ...(cell.warnings ? [span(` ${t("test.warnings", { count: cell.warnings })}`, "warning")] : []),
   ];
   switch (cell.status) {

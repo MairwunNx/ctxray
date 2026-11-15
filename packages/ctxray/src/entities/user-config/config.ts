@@ -24,6 +24,7 @@ export type Config = {
   readonly network: Network;
   readonly budget: Budget; // CTXRAY_BUDGET_USD sets the dollars
   readonly prices: Readonly<Record<string, Price>>;
+  readonly exactTokens: boolean; // CTXRAY_EXACT_TOKENS=1
   // The reach check stays quiet about harnesses that get different instructions. CTXRAY_IGNORE_HARNESS_DIFFERENCES=1.
   readonly ignoreHarnessDifferences: boolean;
   readonly policies: readonly Policy[];
@@ -61,6 +62,7 @@ export const finalizeConfig = (merged: UserConfig, env: Env, files: readonly str
       ...(dollars(env["CTXRAY_BUDGET_USD"]) !== undefined && { usd: dollars(env["CTXRAY_BUDGET_USD"]) }),
     },
     prices: merged.prices ?? {},
+    exactTokens: isOn(env["CTXRAY_EXACT_TOKENS"]) || merged.exactTokens === true,
     ignoreHarnessDifferences:
       isOn(env["CTXRAY_IGNORE_HARNESS_DIFFERENCES"]) || merged.ignoreHarnessDifferences === true,
     policies: merged.policies ?? [],

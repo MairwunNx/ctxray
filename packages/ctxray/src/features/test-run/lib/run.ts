@@ -26,7 +26,8 @@ export type CellResult = {
   missing?: readonly string[];
   failure?: Failure;
   warnings?: number;
-  tokens?: number; // the starting context of a context check, counted locally
+  tokens?: number; // the starting context of a context check
+  exact?: boolean; // the provider counted `tokens`, not a local tokenizer
   stats?: readonly Stat[]; // the rates L6 and L7 judged
   attempts: number;
   duration: number;

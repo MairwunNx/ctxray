@@ -172,6 +172,7 @@ export const en = {
   "test.checks": "ctxray checks",
   "test.context": "starting context",
   "test.tokens": { one: "≈ {count} token", other: "≈ {count} tokens" },
+  "test.exactTokens": { one: "{count} token", other: "{count} tokens" },
   "test.notInstalled": "no {binary} on PATH",
   "context.sentTwice": "{path} reaches the model twice in the first request",
   "context.sameText": "{path} has the same text as {other}, and the model reads both",
@@ -252,6 +253,7 @@ export const en = {
   "test.modelTokens": { one: "{count} token", other: "{count} tokens" },
   "test.unpriced": "no price for {models}",
   "test.cassettes": { one: "{count} cassette written", other: "{count} cassettes written" },
+  "tokens.exactFailed": "The provider couldn't count the {protocol} request: {message}",
   "expect.notRequest": "{matcher} takes a request from session.nextRequest(), not {received}",
   "drift.found":
     "Resolver drift: {harness} {version} doesn't load what ctxray predicts. If {harness} changed this on purpose, ctxray's adapter for it needs an update",

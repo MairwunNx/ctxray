@@ -85,6 +85,7 @@ const checkOne = async (
       ...base(harness),
       status: errors.length > 0 ? "failed" : "passed",
       tokens: loadout.tokens.total,
+      exact: loadout.tokens.exact,
       duration: performance.now() - started,
       ...(found.length > 0 && { failure: { kind: "findings" as const, findings: found } }),
       ...(warnings.length > 0 && { warnings: warnings.length }),

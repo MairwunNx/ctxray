@@ -30,8 +30,9 @@ export type CapturedLoadout = {
     total: number;
     byComponent: Partial<Record<Component, number>>;
     byMcpServer: (server: string) => number; // its schemas and instructions, as they load
-    exact: false;
+    exact: boolean; // true only when the provider counted them
     method: string;
+    framing: number | undefined; // exact counts: what no component owns
   };
 };
 
@@ -98,8 +99,9 @@ export const toCaptured = (loadout: LoadoutSnapshot): CapturedLoadout => {
       total: loadout.tokens.total,
       byComponent: loadout.tokens.byComponent,
       byMcpServer,
-      exact: false,
+      exact: loadout.tokens.exact,
       method: loadout.tokens.method,
+      framing: loadout.tokens.framing,
     },
   };
   const variant = [loadout.harness.version, loadout.harness.model].filter(Boolean).join(" ");

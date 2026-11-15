@@ -53,6 +53,9 @@ export const TokenSummary = z.object({
     .describe("What each MCP server costs once its tools load: schemas and instructions, deferred or not"),
   exact: z.boolean().describe("True only when a provider counted the tokens; false for any local estimate"),
   method: z.string().describe("`provider:<api>` or `local:<tokenizer>`"),
+  framing: tokens
+    .optional()
+    .describe("Exact counts only: what no component owns, like the conversation and the tool-use preamble"),
 });
 
 export const Provenance = z.object({
