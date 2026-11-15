@@ -15,7 +15,13 @@ export const createStartingLoadout =
     const { root } = await findRoot(await realpath(cwd));
     const workspace = await createWorkspaces()(root);
     const capture = createCapture({ config, env, self, binaries: async () => binary });
-    const scope = { harness, workspace, inventory: await workspace.inventoryOf(harness), snapshot: () => {} };
+    const scope = {
+      harness,
+      workspace,
+      inventory: await workspace.inventoryOf(harness),
+      snapshot: () => {},
+      stats: [],
+    };
     const session = createSession(capture, scope);
     try {
       return (await session.firstRequest()).snapshot;

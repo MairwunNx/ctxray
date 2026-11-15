@@ -2,18 +2,22 @@ import { realpath } from "node:fs/promises";
 import { relative, sep } from "node:path";
 import { findRoot } from "#entities/harness/index.ts";
 import type { Progress as CacheProgress } from "#entities/harness-cache/index.ts";
-import type { Config } from "#entities/user-config/index.ts";
+import { type Config, egressOf, resolveNetwork } from "#entities/user-config/index.ts";
 import type { HarnessId } from "#shared/contract/index.ts";
 import { type Env, isCi } from "#shared/infra/index.ts";
+import { createRedactor } from "#shared/redact/index.ts";
 import { type Failure, toFailure } from "./lib/attempt.ts";
+import { createBackend } from "./lib/backend.ts";
 import { createBinaries } from "./lib/binaries.ts";
 import { createCapture } from "./lib/capture.ts";
+import { createCassettes } from "./lib/cassettes.ts";
 import { runChecks } from "./lib/checks.ts";
 import { collectFile, findTestFiles, installedVersion } from "./lib/collect.ts";
 import { runContextChecks } from "./lib/context.ts";
 import { type CellResult, runDefinition } from "./lib/run.ts";
 import { fullName, type Selection } from "./lib/selection.ts";
 import { createSnapshots, type SnapshotStats } from "./lib/snapshot.ts";
+import { createSpend, type SpendTotal } from "./lib/spend.ts";
 import { createWorkspaces } from "./lib/workspace.ts";
 
 export type TestRunRequest = {
@@ -23,6 +27,8 @@ export type TestRunRequest = {
   errorOnWarnings?: boolean; // --error-on-warnings, over the config
   frozen?: boolean; // --frozen, on by itself in CI: ctxray.lock must match the config
   install?: boolean; // false with --no-install: a harness missing from the cache fails instead
+  record?: boolean; // --record: a real run keeps the model's answers as cassettes for replay
+  budget?: number; // --budget: US dollars a real run may spend, over the config
 };
 
 export type TestRunResult = {
@@ -31,6 +37,8 @@ export type TestRunResult = {
   broken: readonly { file: string; failure: Failure }[]; // test files that failed to load
   results: readonly CellResult[];
   snapshots: SnapshotStats;
+  spend: SpendTotal | undefined; // a real run: what the model cost
+  cassettes: number; // tapes written by --record
   installed: string | undefined; // @mairwunnx/ctxray in the project's node_modules, when it isn't this version
   duration: number;
 };
@@ -63,7 +71,30 @@ export const createTestRunAction =
       onInstall,
     });
     const capture = createCapture({ config, env, self, binaries });
-    const context = { root, workspaces, snapshots, capture };
+    const spend = createSpend(
+      request.budget === undefined ? config.budget : { ...config.budget, usd: request.budget },
+      config.prices,
+    );
+    const cassettes = createCassettes();
+    const { kind } = selection.backend;
+    const evals =
+      kind === "mock"
+        ? undefined
+        : {
+            capture,
+            concurrency: 4,
+            backend: createBackend({
+              kind,
+              record: kind === "real" && request.record === true,
+              upstream: config.upstream,
+              env,
+              egress: () => egressOf(resolveNetwork(config, env)),
+              cassettes,
+              spend,
+              clean: createRedactor(config.redact.patterns).text,
+            }),
+          };
+    const context = { root, workspaces, snapshots, capture, evals };
 
     const results = await runChecks(repository, selection.harnesses, selection.layers, {
       policies: config.policies,
@@ -92,6 +123,8 @@ export const createTestRunAction =
       ),
       results,
       snapshots: await snapshots.save(),
+      spend: kind === "real" ? spend.total() : undefined,
+      cassettes: await cassettes.save(),
       installed: installed === version ? undefined : installed,
       duration: performance.now() - started,
     };

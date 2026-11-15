@@ -58,6 +58,7 @@ const notes = (result: TestRunResult, words: Words, version: string): string[] =
     ...(result.files.length === 0 ? [t("test.noFiles")] : []),
     ...(result.installed === undefined ? [] : [t("test.skew", { installed: result.installed, version })]),
     ...(missing ? [t("test.updateHint")] : []),
+    ...(result.cassettes > 0 ? [t("test.cassettes", { count: result.cassettes })] : []),
   ];
 };
 
@@ -65,6 +66,18 @@ const notes = (result: TestRunResult, words: Words, version: string): string[] =
 const labelled = (rows: readonly [string, Span[]][]): View => {
   const width = Math.max(...rows.map(([label]) => widthOf(label)));
   return rows.map(([label, rest]) => [span(` ${label}${" ".repeat(width - widthOf(label) + 3)}`, "strong"), ...rest]);
+};
+
+// What the real model cost: dollars for the models with a price, tokens for all of them.
+const spendSpans = (result: TestRunResult, { t }: Words): Span[] => {
+  if (!result.spend) return [];
+  const { usage, cost, unpriced } = result.spend;
+  const tokens = usage.input + usage.cacheRead + usage.cacheWrite + usage.output;
+  return [
+    span(t("test.dollars", { amount: cost.toFixed(2) })),
+    span(` · ${t("test.modelTokens", { count: tokens })}`, "muted"),
+    ...(unpriced.length > 0 ? [span(` · ${t("test.unpriced", { models: unpriced.join(", ") })}`, "warning")] : []),
+  ];
 };
 
 export const summaryView = (result: TestRunResult, words: Words, version: string): View => {
@@ -78,6 +91,7 @@ export const summaryView = (result: TestRunResult, words: Words, version: string
   const rows: [string, Span[]][] = [
     ...(layers.length > 0 ? [[t("test.layers"), layers] as [string, Span[]]] : []),
     [t("test.total"), totalSpans(result, words)],
+    ...(result.spend ? [[t("test.cost"), spendSpans(result, words)] as [string, Span[]]] : []),
     ...(snapshots.length > 0 ? [[t("test.snapshots"), [span(snapshots.join(" · "))]] as [string, Span[]]] : []),
   ];
   return [...labelled(rows), ...notes(result, words, version).map((note) => [span(` ${note}`, "muted")])];

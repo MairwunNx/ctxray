@@ -7,6 +7,8 @@ type Row = { heading: string; fixture: string | undefined; badge: string; name: 
 const reasonOf = (cell: CellResult, { t }: Words) => {
   if (cell.reason === "unsupported") return t("test.unsupported", { missing: (cell.missing ?? []).join(", ") });
   if (cell.reason === "filtered") return t("test.filtered");
+  if (cell.reason === "backend") return t("test.needsBackend");
+  if (cell.reason === "budget") return t("test.budget");
   if (cell.check === "context") return t("test.notInstalled", { binary: (cell.missing ?? []).join(", ") });
   return t("test.unavailable", { layer: cell.layer });
 };
@@ -14,7 +16,10 @@ const reasonOf = (cell: CellResult, { t }: Words) => {
 const cellSpans = (cell: CellResult, words: Words): Span[] => {
   const { t } = words;
   const harness = span(`${cell.harness} `);
+  const [stat] = cell.stats ?? [];
+  const rate = stat ? [span(` ${stat.rate.toFixed(2)} [${stat.low.toFixed(2)}–${stat.high.toFixed(2)}]`)] : [];
   const warnings = [
+    ...rate,
     ...(cell.tokens !== undefined ? [span(` ${t("test.tokens", { count: cell.tokens })}`, "muted")] : []),
     ...(cell.warnings ? [span(` ${t("test.warnings", { count: cell.warnings })}`, "warning")] : []),
   ];
@@ -26,7 +31,7 @@ const cellSpans = (cell: CellResult, words: Words): Span[] => {
     case "flaky":
       return [harness, span(`✓ ${t("test.flaky")}`, "warning")];
     case "inconclusive":
-      return [harness, span(`~ ${t("test.inconclusive")}`, "warning")];
+      return [harness, span(`~ ${t("test.inconclusive")}`, "warning"), ...rate];
     case "skipped":
       return [harness, span(`○ ${reasonOf(cell, words)}`, "muted")];
   }

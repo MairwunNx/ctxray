@@ -27,6 +27,8 @@ export const testSpec: CommandSpec = {
     "error-on-warnings": { type: "boolean", summary: "option.errorOnWarnings" },
     frozen: { type: "boolean", summary: "option.frozen" },
     "no-install": { type: "boolean", summary: "option.noInstall" },
+    record: { type: "boolean", summary: "option.record" },
+    budget: { type: "string", summary: "option.budget", value: "usd" },
     config: CONFIG_OPTION,
   },
   usesConfig: true,
@@ -50,6 +52,11 @@ export const createTestCommand =
       renderer.print([[span(t(selection.key, selection.params), "failure")]]);
       return ExitCode.usage;
     }
+    const budget = typeof values["budget"] === "string" ? Number(values["budget"]) : undefined;
+    if (budget !== undefined && !(Number.isFinite(budget) && budget >= 0)) {
+      renderer.print([[span(t("test.badBudget", { value: String(values["budget"]) }), "failure")]]);
+      return ExitCode.usage;
+    }
     renderer.print(headerView(selection, t, version));
     const result = await testRun(
       {
@@ -59,6 +66,8 @@ export const createTestCommand =
         errorOnWarnings: values["error-on-warnings"] === true,
         frozen: values["frozen"] === true,
         install: values["no-install"] !== true,
+        record: values["record"] === true,
+        ...(budget !== undefined && { budget }),
       },
       (done, total, current) =>
         renderer.live(
