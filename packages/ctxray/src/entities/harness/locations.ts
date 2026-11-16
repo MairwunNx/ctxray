@@ -40,3 +40,15 @@ export const readersOf = (path: string): HarnessId[] => [
 
 // Files agents read by their place: the reach check looks at each of them.
 export const isAgentFile = (path: string) => LOCATIONS.some(({ pattern }) => pattern.test(path));
+
+// Config files, MCP servers among what they declare. The harness opens each by its exact name.
+const CONFIGS: { pattern: RegExp; readers: HarnessId[] }[] = [
+  { pattern: /^\.mcp\.json$/, readers: CLAUDE },
+  { pattern: /(^|\/)\.cursor\/mcp\.json$/, readers: CURSOR },
+  { pattern: /(^|\/)\.codex\/config\.toml$/, readers: ["codex"] },
+  { pattern: /(^|\/)\.gemini\/settings\.json$/, readers: ["gemini-cli"] },
+  { pattern: /(^|\/)(\.opencode\/)?opencode\.jsonc?$/, readers: ["opencode"] },
+];
+
+export const configReadersOf = (path: string): HarnessId[] =>
+  CONFIGS.filter(({ pattern }) => pattern.test(path)).flatMap(({ readers }) => readers);

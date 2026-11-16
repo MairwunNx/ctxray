@@ -156,6 +156,9 @@ export const en = {
     "The file starts with a byte order mark, so {harness} skips the skill. Save it as UTF-8 without BOM",
   "lint.frontmatterTab":
     "A tab indents the frontmatter, which YAML forbids. The harnesses read it differently: Claude Code and Codex skip such a skill, the others take it. Indent with spaces",
+  "lint.misnamed": "{harness} never reads this file. Did you mean “{expected}”?",
+  "lint.letterCase":
+    "Did you mean “{expected}”? {harness} looks for that name: macOS and Windows may take this file for it, Linux and CI won't",
   "resolve.deadRule": "No file in the repository matches {patterns}, so the rule never loads",
   "resolve.deadPattern": "No file in the repository matches {pattern}",
   "policy.needsCapture": "The {component} limit needs a real run, a static view doesn't know these tokens",

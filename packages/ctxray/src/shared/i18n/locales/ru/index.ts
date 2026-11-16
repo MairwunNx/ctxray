@@ -181,6 +181,9 @@ export const ru: Catalog = {
     "Файл начинается с метки порядка байтов (BOM), и {harness} пропускает скилл. Сохраните его в UTF-8 без BOM",
   "lint.frontmatterTab":
     "Frontmatter отбит табуляцией, а YAML её запрещает. Харнессы читают такой файл по-разному: Claude Code и Codex пропускают такой скилл, остальные берут. Сделайте отступы пробелами",
+  "lint.misnamed": "{harness} не читает этот файл. Вы, видимо, имели в виду „{expected}“?",
+  "lint.letterCase":
+    "Вы, видимо, имели в виду „{expected}“? {harness} ищет это имя: на macOS и Windows файл может под него подойти, в Linux и CI — нет",
   "resolve.deadRule": "Ни один файл репозитория не подходит под {patterns}, правило никогда не загрузится",
   "resolve.deadPattern": "Ни один файл репозитория не подходит под {pattern}",
   "policy.needsCapture":

@@ -6,6 +6,7 @@ import { type Inventory, type Problem, problem, type Severity } from "../invento
 import { isAgentFile, readersOf } from "../locations.ts";
 import { PROFILES } from "../profiles.ts";
 import { dirOf, isInside, type Project } from "../project.ts";
+import { type NearMiss, nearMiss } from "./near-miss.ts";
 import { comparable, indexReach, type ReachIndex } from "./reach-index.ts";
 
 const SKILL = /(^|\/)SKILL\.md$/;
@@ -68,8 +69,30 @@ const createReport = (ids: readonly HarnessId[]) => {
   return { add, done };
 };
 
-// L1 across harnesses. Errors: agent files no harness reads at all, since they reach no model. Warnings: files
-// only a harness outside the run reads, and harnesses of the run that get different instructions or skills.
+// A file named almost right for a harness of the run, reported to that harness with the name it looks for.
+const findNearMisses = (project: Project, ids: readonly HarnessId[]) =>
+  new Map(
+    project.files.flatMap((path): [string, NearMiss][] => {
+      const miss = nearMiss(path);
+      return miss?.readers.some((id) => ids.includes(id)) ? [[path, miss]] : [];
+    }),
+  );
+
+const nearMissProblems = (misses: ReadonlyMap<string, NearMiss>, id: HarnessId): Problem[] =>
+  [...misses].flatMap(([path, { expected, kind, readers }]) =>
+    readers.includes(id)
+      ? [
+          problem(kind === "case" ? "lint.letterCase" : "lint.misnamed", "error", path, {
+            harness: PROFILES[id].title,
+            expected,
+          }),
+        ]
+      : [],
+  );
+
+// L1 across harnesses. Errors: agent files no harness reads at all, since they reach no model, and files named
+// almost right. Warnings: files only a harness outside the run reads, and harnesses of the run that get
+// different instructions or skills.
 export const checkReach = async (
   project: Project,
   inventories: Partial<Record<HarnessId, Inventory>>,
@@ -85,7 +108,10 @@ export const checkReach = async (
     !FOR_PEOPLE.test(path) &&
     !index.linked.has(path) &&
     !skillFolders.some((folder) => isInside(path, folder));
-  const candidates = project.files.filter((path) => isAgentFile(path) || SKILL.test(path) || strayMarkdown(path));
+  const misses = findNearMisses(project, ids);
+  const candidates = project.files.filter(
+    (path) => !misses.has(path) && (isAgentFile(path) || SKILL.test(path) || strayMarkdown(path)),
+  );
 
   for (const path of candidates) {
     const byPlace = readersOf(path);
@@ -109,5 +135,7 @@ export const checkReach = async (
       report.add(id, path, kind, { harness: PROFILES[id].title, by: titles(readers) });
     }
   }
-  return report.done();
+  const found = report.done();
+  for (const id of ids) found[id]?.push(...nearMissProblems(misses, id));
+  return found;
 };

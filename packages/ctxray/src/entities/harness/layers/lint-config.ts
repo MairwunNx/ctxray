@@ -40,6 +40,8 @@ const RULES: Partial<Record<MessageKey, LintRule>> = {
   "lint.duplicateSkill": "duplicate-skill",
   "lint.duplicateText": "duplicate-text",
   "lint.brokenLink": "broken-link",
+  "lint.misnamed": "misnamed-file",
+  "lint.letterCase": "letter-case",
   "lint.byteOrderMark": "byte-order-mark",
   "lint.frontmatterTab": "frontmatter",
   "resolve.deadRule": "dead-rule",
