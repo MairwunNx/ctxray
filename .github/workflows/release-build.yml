@@ -1,0 +1,131 @@
+name: Release build
+
+# Builds a release and checks it on every platform it ships for. Release and Next call it, it publishes nothing.
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: A version to build instead of the one in package.json, for the next channel
+        type: string
+        default: ""
+    outputs:
+      version:
+        description: The version it built
+        value: ${{ jobs.build.outputs.version }}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - name: Set the version
+        if: inputs.version != ''
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          for file in packages/ctxray/package.json packages/claude-plugin/.claude-plugin/plugin.json; do
+            jq --arg version "$VERSION" '.version = $version' "$file" > "$file.new" && mv "$file.new" "$file"
+          done
+      - id: version
+        run: echo "version=$(jq -r .version packages/ctxray/package.json)" >> "$GITHUB_OUTPUT"
+      - run: bun run typecheck
+      - run: bun test
+      # What the binaries bundle: the production dependencies the lockfile pins, without the build tools.
+      - name: Write the SBOM
+        run: |
+          src="$(mktemp -d)"
+          mkdir -p "$src/packages/ctxray"
+          cp package.json bun.lock "$src"
+          cp packages/ctxray/package.json "$src/packages/ctxray"
+          (cd "$src" && bun install --production --frozen-lockfile)
+          docker run --rm -v "$src:/src:ro" anchore/syft:v1.57.1 scan dir:/src --select-catalogers javascript \
+            -o cyclonedx-json > "$RUNNER_TEMP/ctxray.cdx.json"
+      - name: Build every platform
+        run: bun scripts/release.ts --sbom "$RUNNER_TEMP/ctxray.cdx.json"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: release-assets
+          path: dist/release/assets
+          retention-days: 7
+      - uses: actions/upload-artifact@v7
+        with:
+          name: release-packages
+          path: |
+            dist/release/npm/packs
+            dist/release/docker
+            dist/release/packaging
+          retention-days: 7
+
+  # Each platform installs its build the way a user would: install.sh, install.ps1, or the GitHub Action, from
+  # a mirror on localhost, which also checks CTXRAY_DOWNLOAD_BASE.
+  verify:
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { target: linux-x64, runner: ubuntu-latest, mode: action }
+          - { target: linux-arm64, runner: ubuntu-24.04-arm, mode: action }
+          - { target: darwin-arm64, runner: macos-latest, mode: action }
+          - { target: darwin-x64, runner: macos-15-intel, mode: action }
+          - { target: windows-x64, runner: windows-latest, mode: action }
+          - { target: windows-arm64, runner: windows-11-arm, mode: action }
+          - { target: linux-x64-musl, runner: ubuntu-latest, mode: alpine }
+          - { target: linux-arm64-musl, runner: ubuntu-24.04-arm, mode: alpine }
+          - { target: linux-x64-baseline, runner: ubuntu-latest, mode: archive }
+    runs-on: ${{ matrix.runner }}
+    env:
+      VERSION: ${{ needs.build.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          name: release-assets
+          path: assets
+      - name: Serve the release on localhost
+        shell: bash
+        run: |
+          mkdir -p mirror/latest mirror/download
+          cp -R assets mirror/latest/download
+          cp -R assets "mirror/download/v$VERSION"
+          node -e '
+            const { createReadStream } = require("node:fs");
+            require("node:http").createServer((request, response) => {
+              createReadStream("mirror" + decodeURIComponent(request.url))
+                .on("error", () => { response.statusCode = 404; response.end(); })
+                .pipe(response);
+            }).listen(8765);
+          ' &
+          sleep 2
+      - if: matrix.mode == 'action'
+        uses: ./packaging/action
+        with:
+          version: ${{ env.VERSION }}
+          download-base: http://127.0.0.1:8765
+          args: inspect
+          working-directory: packages/ctxray/fixtures/static/payments
+          cache: "false"
+      - if: matrix.mode == 'action'
+        shell: bash
+        run: ctxray --version | grep -qxF "ctxray $VERSION"
+      # Alpine leaves out the two libraries Bun's musl build needs: install.sh says so, the image adds them.
+      - if: matrix.mode == 'alpine'
+        run: |
+          docker run --rm --network host -v "$PWD/packaging/install.sh:/install.sh:ro" \
+            -e CTXRAY_DOWNLOAD_BASE=http://127.0.0.1:8765 alpine:3.22 \
+            sh -c 'apk add -q libstdc++ libgcc && sh /install.sh && ~/.local/bin/ctxray --version' | tee install.log
+          grep -qF "ctxray $VERSION" install.log
+      # install.sh picks the baseline build only without AVX2, which runners have: the archive alone, then.
+      - if: matrix.mode == 'archive'
+        run: |
+          tar -xzf "assets/ctxray-${{ matrix.target }}.tar.gz" ctxray
+          ./ctxray --version | grep -qxF "ctxray $VERSION"

@@ -1,0 +1,47 @@
+name: Next
+
+# Every push to master ships to the next channel: npm's `next` dist-tag and the :edge images. The version is the
+# next patch with the run number, 0.1.1-next.42 after 0.1.0, so it sorts above the release it follows. It stays
+# off until the repository variable NEXT_CHANNEL is "true", after the first release.
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: next
+  cancel-in-progress: true
+
+jobs:
+  version:
+    if: vars.NEXT_CHANNEL == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: version
+        run: |
+          IFS=. read -r major minor patch < <(jq -r .version packages/ctxray/package.json | cut -d- -f1)
+          echo "version=$major.$minor.$((patch + 1))-next.$GITHUB_RUN_NUMBER" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: version
+    uses: ./.github/workflows/release-build.yml
+    with:
+      version: ${{ needs.version.outputs.version }}
+
+  packages:
+    needs: build
+    uses: ./.github/workflows/release-packages.yml
+    with:
+      version: ${{ needs.build.outputs.version }}
+      channel: next
+      dry-run: false
+    secrets: inherit
+    permissions:
+      contents: read
+      packages: write
+      id-token: write

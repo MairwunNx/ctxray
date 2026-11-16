@@ -1,0 +1,145 @@
+name: Release
+
+# Run by hand: Actions → Release → Run workflow. It releases the version in packages/ctxray/package.json with
+# its notes from CHANGELOG.md. A dry run builds and checks everything and publishes nothing.
+on:
+  workflow_dispatch:
+    inputs:
+      changelog:
+        description: "Notes in Markdown; leave empty to take the version's section from CHANGELOG.md"
+        required: false
+      dry-run:
+        description: Build and check everything, publish nothing
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+      - name: Check the version and its notes
+        env:
+          RELEASE_NOTES: ${{ inputs.changelog }}
+        run: |
+          version="$(jq -r .version packages/ctxray/package.json)"
+          if git ls-remote --exit-code --tags origin "refs/tags/v$version" >/dev/null; then
+            echo "::error::v$version is released already: raise the version in packages/ctxray/package.json"
+            exit 1
+          fi
+          bun scripts/release/notes.ts "$RUNNER_TEMP/notes.md"
+
+  build:
+    needs: prepare
+    uses: ./.github/workflows/release-build.yml
+
+  github:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    env:
+      VERSION: ${{ needs.build.outputs.version }}
+      DRY_RUN: ${{ inputs.dry-run }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/download-artifact@v8
+        with:
+          name: release-assets
+          path: assets
+      - name: Write the notes
+        env:
+          RELEASE_NOTES: ${{ inputs.changelog }}
+        run: bun scripts/release/notes.ts "$RUNNER_TEMP/notes.md"
+      # Keyless: Sigstore's certificate names this workflow, and the signature goes to its public log.
+      - uses: sigstore/cosign-installer@v4
+        if: inputs.dry-run == false
+      - name: Sign SHA256SUMS
+        if: inputs.dry-run == false
+        run: cosign sign-blob --yes --bundle assets/SHA256SUMS.sigstore.json assets/SHA256SUMS
+      - uses: actions/attest-build-provenance@v4
+        if: inputs.dry-run == false
+        with:
+          subject-path: assets/*
+      - name: Publish the GitHub release
+        run: |
+          if [ "$DRY_RUN" = true ]; then
+            echo "Dry run: v$VERSION would carry these files"
+            ls -l assets
+            exit 0
+          fi
+          gh release create "v$VERSION" assets/* --target "$GITHUB_SHA" --title "ctxray $VERSION" \
+            --notes-file "$RUNNER_TEMP/notes.md"
+
+  packages:
+    needs: [build, github]
+    uses: ./.github/workflows/release-packages.yml
+    with:
+      version: ${{ needs.build.outputs.version }}
+      channel: latest
+      dry-run: ${{ inputs.dry-run }}
+    secrets: inherit
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+  # The tap, the bucket, the action, and the GitLab component live in repositories of their own. Each step runs
+  # once its token is in the repository's secrets.
+  repositories:
+    needs: [build, packages]
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.build.outputs.version }}
+      DRY_RUN: ${{ inputs.dry-run }}
+      PACKAGING_TOKEN: ${{ secrets.PACKAGING_TOKEN }}
+      GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+      GITLAB_PROJECT: ${{ vars.GITLAB_PROJECT || 'mairwunnx/ctxray' }}
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: release-packages
+          path: packages
+      - name: Push to the repositories
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # push <clone url> <folder with the files> <tag or empty>
+          push() {
+            dir="$(mktemp -d)"
+            git clone -q --depth 1 "$1" "$dir"
+            cp -R "$2/." "$dir"
+            git -C "$dir" add -A
+            git -C "$dir" diff --cached --stat
+            if [ "$DRY_RUN" = true ]; then echo "Dry run: nothing pushed"; return; fi
+            git -C "$dir" commit -q -m "ctxray $VERSION" || echo "No changes"
+            git -C "$dir" push -q origin HEAD
+            if [ -n "$3" ]; then git -C "$dir" tag -f "$3" && git -C "$dir" push -q -f origin "refs/tags/$3"; fi
+          }
+          github="https://x-access-token:$PACKAGING_TOKEN@github.com/MairwunNx"
+          if [ -n "$PACKAGING_TOKEN" ]; then
+            push "$github/homebrew-tap.git" packages/packaging/homebrew-tap ""
+            push "$github/scoop-bucket.git" packages/packaging/scoop-bucket ""
+            push "$github/ctxray-action.git" packages/packaging/action "v$VERSION"
+            # The major tag users pin, v0 until 1.0.
+            [ "$DRY_RUN" = true ] || push "$github/ctxray-action.git" packages/packaging/action "v${VERSION%%.*}"
+          else
+            echo "::warning::No PACKAGING_TOKEN: the tap, the bucket, and the action stay as they were"
+          fi
+          if [ -n "$GITLAB_TOKEN" ]; then
+            # The CI/CD Catalog takes tags without the v.
+            push "https://oauth2:$GITLAB_TOKEN@gitlab.com/$GITLAB_PROJECT.git" packages/packaging/gitlab-component "$VERSION"
+          else
+            echo "::warning::No GITLAB_TOKEN: the GitLab component stays as it was"
+          fi
