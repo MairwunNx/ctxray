@@ -16,4 +16,4 @@ claude plugin install ctxray@ctxray
 
 Without network access, load the zip from a release: `claude --plugin-dir ctxray-claude-plugin-<version>.zip`.
 
-`/ctxray` reads the requests Claude Code writes into the session's transcript. ctxray is tested against Claude Code 2.1.311. An older version may not write them, and `/ctxray` then says so.
+`/ctxray` reads the requests Claude Code writes into the session's transcript. ctxray checks it on Claude Code 2.1.311 and 2.1.325. An older version may not write them, and `/ctxray` then says so.
