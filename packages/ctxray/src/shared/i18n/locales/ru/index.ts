@@ -708,7 +708,7 @@ export const ru: Catalog = {
   "harness.sameLoadout": "Loadout не изменился",
   "harness.dryRun": "Пробный запуск: ctxray.lock не изменился",
   "npm.missing":
-    "Исполняемого файла ctxray здесь нет: npm не поставил {package} для {platform}. Переустановите без --omit=optional или поставьте ctxray иначе: https://github.com/MairwunNx/ctxray/blob/master/README.RU.md#быстрый-старт",
+    "Исполняемого файла ctxray здесь нет: npm не поставил {package} для {platform}. Переустановите без --omit=optional или поставьте ctxray иначе: https://github.com/MairwunNx/ctxray/blob/master/README.RU.md#установка",
   "npm.skew":
     "@mairwunnx/ctxray версии {version}, а пакет с исполняемым файлом {package} — версии {binary}. Переустановите пакет, чтобы версии совпали",
   "npm.outside": "@mairwunnx/ctxray даёт редактору типы, а запускает эти файлы ctxray: ctxray test",

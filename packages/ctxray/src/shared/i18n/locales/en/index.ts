@@ -580,7 +580,7 @@ export const en = {
   "harness.sameLoadout": "The loadout is the same",
   "harness.dryRun": "Dry run: ctxray.lock stays as it was",
   "npm.missing":
-    "ctxray has no binary here: npm didn't install {package} for {platform}. Reinstall without --omit=optional, or install ctxray another way: https://github.com/MairwunNx/ctxray#get-started",
+    "ctxray has no binary here: npm didn't install {package} for {platform}. Reinstall without --omit=optional, or install ctxray another way: https://github.com/MairwunNx/ctxray#install",
   "npm.skew": "@mairwunnx/ctxray is {version}, and its binary {package} is {binary}. Reinstall it to line them up",
   "npm.outside": "@mairwunnx/ctxray gives your editor the types, and ctxray runs these files: ctxray test",
 } as const satisfies Record<string, Message>;
