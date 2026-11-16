@@ -48,12 +48,16 @@ const decoded = (path: string) => {
   }
 };
 
+// Every link target outside code, as written, with its line.
+export const findHrefs = (source: string): Reference[] =>
+  blocks(source).flatMap(({ start, text, links }) =>
+    links.map(({ href, raw }) => ({ target: href, line: lineAt(source, start + Math.max(text.indexOf(raw), 0)) })),
+  );
+
 // Relative links only, inline or by reference: a URL, an anchor, or a root-relative path says nothing about the repo.
 export const findLinks = (source: string): Reference[] =>
-  blocks(source).flatMap(({ start, text, links }) =>
-    links.flatMap(({ href, raw }) => {
-      const path = href.replace(/[#?].*$/, "");
-      if (SCHEME.test(href) || /^[#/~]/.test(href) || path === "") return [];
-      return [{ target: decoded(path), line: lineAt(source, start + Math.max(text.indexOf(raw), 0)) }];
-    }),
-  );
+  findHrefs(source).flatMap(({ target: href, line }) => {
+    const path = href.replace(/[#?].*$/, "");
+    if (SCHEME.test(href) || /^[#/~]/.test(href) || path === "") return [];
+    return [{ target: decoded(path), line }];
+  });

@@ -28,6 +28,7 @@ export const LINT_RULES = [
   "broken-link",
   "misnamed-file",
   "letter-case",
+  "absolute-path",
   "byte-order-mark",
   "dead-rule",
   "size",

@@ -152,6 +152,7 @@ export const en = {
   "lint.duplicateSkill": "Another skill here has the name “{name}”: {other}",
   "lint.duplicateText": "Same text as {other}, so the model reads it twice",
   "lint.brokenLink": "The link to {target} leads nowhere",
+  "lint.absolutePath": "“{value}” leads into your home folder or onto your disk: the team and CI don't have it",
   "lint.byteOrderMark":
     "The file starts with a byte order mark, so {harness} skips the skill. Save it as UTF-8 without BOM",
   "lint.frontmatterTab":

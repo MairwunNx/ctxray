@@ -8,6 +8,7 @@ import { findLinks } from "#shared/markdown/index.ts";
 import { countTokens } from "#shared/tokens/index.ts";
 import { type Inventory, type Problem, problem } from "../inventory.ts";
 import { dirOf, joinPath, type Project } from "../project.ts";
+import { absolutePaths } from "./portable.ts";
 
 // The Agent Skills format: lowercase letters, digits, and single hyphens, up to 64 characters.
 const PORTABLE_NAME = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -125,4 +126,5 @@ export const lint = async (
   ...(await duplicateText(project, inventory)),
   ...oversized(inventory, limitsOf),
   ...(await brokenLinks(project, inventory)),
+  ...(await absolutePaths(project, inventory)),
 ];

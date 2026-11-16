@@ -42,6 +42,7 @@ const RULES: Partial<Record<MessageKey, LintRule>> = {
   "lint.brokenLink": "broken-link",
   "lint.misnamed": "misnamed-file",
   "lint.letterCase": "letter-case",
+  "lint.absolutePath": "absolute-path",
   "lint.byteOrderMark": "byte-order-mark",
   "lint.frontmatterTab": "frontmatter",
   "resolve.deadRule": "dead-rule",

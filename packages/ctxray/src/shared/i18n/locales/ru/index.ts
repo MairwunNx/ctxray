@@ -177,6 +177,7 @@ export const ru: Catalog = {
   "lint.duplicateSkill": "Здесь уже есть скилл с именем «{name}»: {other}",
   "lint.duplicateText": "Тот же текст, что в {other}, модель прочитает его дважды",
   "lint.brokenLink": "Ссылка на {target} никуда не ведёт",
+  "lint.absolutePath": "„{value}“ ведёт в вашу домашнюю папку или на ваш диск: у команды и в CI такого пути нет",
   "lint.byteOrderMark":
     "Файл начинается с метки порядка байтов (BOM), и {harness} пропускает скилл. Сохраните его в UTF-8 без BOM",
   "lint.frontmatterTab":
