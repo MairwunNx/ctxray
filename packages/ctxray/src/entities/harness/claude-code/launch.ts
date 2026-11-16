@@ -39,6 +39,10 @@ const inheritUser = async (context: LaunchContext, configDir: string) => {
   if (hooks !== undefined) await Bun.write(join(configDir, "settings.json"), JSON.stringify({ hooks }, null, 2));
 };
 
+// Claude Code refuses to skip permissions as root, the user of most CI containers. IS_SANDBOX is its own switch
+// for a container, where root is the norm.
+export const sandboxOf = (uid: number | undefined) => (uid === 0 ? { IS_SANDBOX: "1" } : {});
+
 // The isolation recipe of ADR 0005: a config dir of its own, the proxy as base URL, a dummy key, and every
 // switch that stops Claude Code from phoning home.
 export const launchClaudeCode = async (binary: string, context: LaunchContext) => {
@@ -68,6 +72,7 @@ export const launchClaudeCode = async (binary: string, context: LaunchContext) =
       DISABLE_ERROR_REPORTING: "1",
       DISABLE_AUTOUPDATER: "1",
       CLAUDE_CODE_DISABLE_OFFICIAL_MARKETPLACE_AUTOINSTALL: "1",
+      ...sandboxOf(process.getuid?.()),
     },
   };
 };
