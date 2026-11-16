@@ -18,7 +18,9 @@ export const diffSpec: CommandSpec = {
   usesConfig: true,
 };
 
-const signed = (value: number) => (value > 0 ? `+${value}` : String(value));
+const signed = (value: number) => (value > 0 ? `+${value}` : value < 0 ? `−${-value}` : "±0");
+// Commands and MCP servers count as one listing, so a single one has no tokens of its own: only the name shows.
+const amount = (component: string, value: number) => (value === 0 ? component : `${component} ${signed(value)}`);
 
 export const diffView = (result: DiffResult, t: Translate): View =>
   result.diffs.flatMap(({ harness, diff }) => {
@@ -35,16 +37,13 @@ export const diffView = (result: DiffResult, t: Translate): View =>
         if (change.before === undefined)
           return [
             span(`   + ${change.id}`, "success"),
-            span(`  ${change.component} ${signed(change.after ?? 0)}`, "muted"),
+            span(`  ${amount(change.component, change.after ?? 0)}`, "muted"),
           ];
         if (change.after === undefined)
-          return [
-            span(`   − ${change.id}`, "failure"),
-            span(`  ${change.component} ${signed(-change.before)}`, "muted"),
-          ];
+          return [span(`   − ${change.id}`, "failure"), span(`  ${amount(change.component, -change.before)}`, "muted")];
         return [
           span(`   ~ ${change.id}`, "warning"),
-          span(`  ${change.component} ${signed(change.after - change.before)}`, "muted"),
+          span(`  ${amount(change.component, change.after - change.before)}`, "muted"),
         ];
       }),
       [],
