@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="700" viewBox="0 0 920 700" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" role="img">
+<title>Какой харнесс что читает</title>
+<desc>Таблица файлов инструкций, правил, скиллов и MCP и того, кто из Claude Code, Codex, Gemini CLI, OpenCode и Cursor читает каждый.</desc>
+<text x="345.2" y="32" font-size="13" fill="#f0f6fc" font-weight="600" text-anchor="middle">Claude Code</text>
+<text x="467.59999999999997" y="32" font-size="13" fill="#f0f6fc" font-weight="600" text-anchor="middle">Codex</text>
+<text x="590.0" y="32" font-size="13" fill="#f0f6fc" font-weight="600" text-anchor="middle">Gemini CLI</text>
+<text x="712.4000000000001" y="32" font-size="13" fill="#f0f6fc" font-weight="600" text-anchor="middle">OpenCode</text>
+<text x="834.8000000000001" y="32" font-size="13" fill="#f0f6fc" font-weight="600" text-anchor="middle">Cursor</text>
+<path d="M24 42 H896" fill="none" stroke="#3d444d" stroke-width="1"/>
+<text x="24" y="66" font-size="12" fill="#9198a1" font-weight="600">Инструкции</text>
+<text x="36" y="82" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">CLAUDE.md</text>
+<circle cx="345.2" cy="78" r="6" fill="#3fb950"/>
+<text x="467.59999999999997" y="82" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="590.0" y="82" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<circle cx="712.4000000000001" cy="78" r="6" fill="none" stroke="#d29922" stroke-width="2"/>
+<text x="722.4000000000001" y="78" font-size="10" fill="#d29922" font-weight="700">3</text>
+<circle cx="834.8000000000001" cy="78" r="6" fill="#3fb950"/>
+<text x="36" y="108" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">CLAUDE.local.md</text>
+<circle cx="345.2" cy="104" r="6" fill="#3fb950"/>
+<text x="467.59999999999997" y="108" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="590.0" y="108" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="712.4000000000001" y="108" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<circle cx="834.8000000000001" cy="104" r="6" fill="#3fb950"/>
+<text x="36" y="134" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">AGENTS.md</text>
+<circle cx="345.2" cy="130" r="6" fill="none" stroke="#d29922" stroke-width="2"/>
+<text x="355.2" y="130" font-size="10" fill="#d29922" font-weight="700">1</text>
+<circle cx="467.59999999999997" cy="130" r="6" fill="#3fb950"/>
+<circle cx="590.0" cy="130" r="6" fill="none" stroke="#d29922" stroke-width="2"/>
+<text x="600.0" y="130" font-size="10" fill="#d29922" font-weight="700">2</text>
+<circle cx="712.4000000000001" cy="130" r="6" fill="#3fb950"/>
+<circle cx="834.8000000000001" cy="130" r="6" fill="#3fb950"/>
+<text x="36" y="160" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">AGENTS.override.md</text>
+<text x="345.2" y="160" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<circle cx="467.59999999999997" cy="156" r="6" fill="#3fb950"/>
+<text x="590.0" y="160" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="712.4000000000001" y="160" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="834.8000000000001" y="160" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="36" y="186" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">GEMINI.md</text>
+<text x="345.2" y="186" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="467.59999999999997" y="186" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<circle cx="590.0" cy="182" r="6" fill="#3fb950"/>
+<text x="712.4000000000001" y="186" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="834.8000000000001" y="186" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="36" y="212" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">CONTEXT.md</text>
+<text x="345.2" y="212" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="467.59999999999997" y="212" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="590.0" y="212" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<circle cx="712.4000000000001" cy="208" r="6" fill="none" stroke="#d29922" stroke-width="2"/>
+<text x="722.4000000000001" y="208" font-size="10" fill="#d29922" font-weight="700">3</text>
+<text x="834.8000000000001" y="212" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="24" y="252" font-size="12" fill="#9198a1" font-weight="600">Правила</text>
+<text x="36" y="268" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">.claude/rules/**/*.md</text>
+<circle cx="345.2" cy="264" r="6" fill="#3fb950"/>
+<text x="467.59999999999997" y="268" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="590.0" y="268" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="712.4000000000001" y="268" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="834.8000000000001" y="268" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="36" y="294" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">.cursor/rules/**/*.mdc</text>
+<text x="345.2" y="294" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="467.59999999999997" y="294" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="590.0" y="294" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="712.4000000000001" y="294" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<circle cx="834.8000000000001" cy="290" r="6" fill="#3fb950"/>
+<text x="36" y="320" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">.cursorrules</text>
+<text x="345.2" y="320" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="467.59999999999997" y="320" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="590.0" y="320" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="712.4000000000001" y="320" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<circle cx="834.8000000000001" cy="316" r="6" fill="#3fb950"/>
+<text x="24" y="360" font-size="12" fill="#9198a1" font-weight="600">Скиллы: &lt;name&gt;/SKILL.md в</text>
+<text x="36" y="376" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">.claude/skills/</text>
+<circle cx="345.2" cy="372" r="6" fill="#3fb950"/>
+<text x="467.59999999999997" y="376" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="590.0" y="376" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<circle cx="712.4000000000001" cy="372" r="6" fill="#3fb950"/>
+<circle cx="834.8000000000001" cy="372" r="6" fill="#3fb950"/>
+<text x="36" y="402" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">.agents/skills/</text>
+<text x="345.2" y="402" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<circle cx="467.59999999999997" cy="398" r="6" fill="#3fb950"/>
+<circle cx="590.0" cy="398" r="6" fill="#3fb950"/>
+<circle cx="712.4000000000001" cy="398" r="6" fill="#3fb950"/>
+<circle cx="834.8000000000001" cy="398" r="6" fill="#3fb950"/>
+<text x="36" y="428" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">.codex/skills/</text>
+<text x="345.2" y="428" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<circle cx="467.59999999999997" cy="424" r="6" fill="#3fb950"/>
+<text x="590.0" y="428" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="712.4000000000001" y="428" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<circle cx="834.8000000000001" cy="424" r="6" fill="#3fb950"/>
+<text x="36" y="454" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">.gemini/skills/</text>
+<text x="345.2" y="454" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="467.59999999999997" y="454" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<circle cx="590.0" cy="450" r="6" fill="#3fb950"/>
+<text x="712.4000000000001" y="454" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="834.8000000000001" y="454" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="36" y="480" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">.opencode/skills/</text>
+<text x="345.2" y="480" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="467.59999999999997" y="480" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="590.0" y="480" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<circle cx="712.4000000000001" cy="476" r="6" fill="#3fb950"/>
+<text x="834.8000000000001" y="480" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="36" y="506" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">.cursor/skills/</text>
+<text x="345.2" y="506" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="467.59999999999997" y="506" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="590.0" y="506" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="712.4000000000001" y="506" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<circle cx="834.8000000000001" cy="502" r="6" fill="#3fb950"/>
+<path d="M24 524 H896" fill="none" stroke="#3d444d" stroke-width="1"/>
+<text x="24" y="546" font-size="12" fill="#9198a1" font-weight="600">MCP-серверы</text>
+<text x="345.2" y="546" font-size="11" fill="#f0f6fc" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">.mcp.json</text>
+<text x="467.59999999999997" y="539" font-size="11" fill="#f0f6fc" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">.codex/</text>
+<text x="467.59999999999997" y="554" font-size="11" fill="#f0f6fc" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">config.toml</text>
+<text x="590.0" y="539" font-size="11" fill="#f0f6fc" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">.gemini/</text>
+<text x="590.0" y="554" font-size="11" fill="#f0f6fc" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">settings.json</text>
+<text x="712.4000000000001" y="546" font-size="11" fill="#f0f6fc" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">opencode.json</text>
+<text x="834.8000000000001" y="546" font-size="11" fill="#f0f6fc" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">.cursor/mcp.json</text>
+<text x="24" y="586" font-size="12" fill="#9198a1" font-weight="600">Файл глубже добавляет правила</text>
+<circle cx="345.2" cy="582" r="6" fill="#3fb950"/>
+<text x="467.59999999999997" y="586" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<circle cx="590.0" cy="582" r="6" fill="#3fb950"/>
+<circle cx="712.4000000000001" cy="582" r="6" fill="#3fb950"/>
+<circle cx="834.8000000000001" cy="582" r="6" fill="#3fb950"/>
+<circle cx="30" cy="616" r="6" fill="#3fb950"/>
+<text x="44" y="620" font-size="12" fill="#9198a1">читает</text>
+<circle cx="104.32000000000001" cy="616" r="6" fill="none" stroke="#d29922" stroke-width="2"/>
+<text x="118.32000000000001" y="620" font-size="12" fill="#9198a1">только в некоторых случаях</text>
+<text x="303.6800000000001" y="620" font-size="13" fill="#3d444d" text-anchor="middle">–</text>
+<text x="317.6800000000001" y="620" font-size="12" fill="#9198a1">не читает</text>
+<text x="24" y="646" font-size="12" fill="#9198a1">1  Только если на пути от корня до стартовой папки нет CLAUDE.md.</text>
+<text x="24" y="664" font-size="12" fill="#9198a1">2  Только если его называет context.fileName в .gemini/settings.json.</text>
+<text x="24" y="682" font-size="12" fill="#9198a1">3  OpenCode берёт первое найденное имя: AGENTS.md, затем CLAUDE.md, затем CONTEXT.md.</text>
+</svg>

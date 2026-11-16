@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="320" viewBox="0 0 920 320" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" role="img">
+<title>Four kinds of activation</title>
+<desc>always loads in every session of its zone, path when the agent works with matching files, intent when the model picks it by description, manual only when you name it. The harness decides always and path, the model decides intent, and you decide manual.</desc>
+<rect x="24" y="16" width="209" height="208" rx="8" fill="#12261e" stroke="#3fb950" stroke-width="1"/>
+<rect x="38" y="30" width="63" height="24" rx="6" fill="#238636"/>
+<text x="69.5" y="46.68" font-size="13" fill="#ffffff" font-weight="600" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">always</text>
+<text x="38" y="80" font-size="14" fill="#f0f6fc" font-weight="600">In every session of its</text>
+<text x="38" y="99" font-size="14" fill="#f0f6fc" font-weight="600">zone</text>
+<text x="38" y="130" font-size="12" fill="#9198a1">CLAUDE.md and AGENTS.md on</text>
+<text x="38" y="146" font-size="12" fill="#9198a1">the way to the start folder</text>
+<text x="38" y="174" font-size="12" fill="#9198a1">alwaysApply: true in Cursor</text>
+<text x="38" y="202" font-size="12" fill="#9198a1">.claude/rules without paths</text>
+<rect x="245" y="16" width="209" height="208" rx="8" fill="#121d2f" stroke="#4493f8" stroke-width="1"/>
+<rect x="259" y="30" width="47" height="24" rx="6" fill="#1f6feb"/>
+<text x="282.5" y="46.68" font-size="13" fill="#ffffff" font-weight="600" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">path</text>
+<text x="259" y="80" font-size="14" fill="#f0f6fc" font-weight="600">When the agent works with</text>
+<text x="259" y="99" font-size="14" fill="#f0f6fc" font-weight="600">matching files</text>
+<text x="259" y="130" font-size="12" fill="#9198a1">app/CLAUDE.md once the agent</text>
+<text x="259" y="146" font-size="12" fill="#9198a1">reads a file in app/</text>
+<text x="259" y="174" font-size="12" fill="#9198a1">paths: or globs: in a rule</text>
+<rect x="466" y="16" width="209" height="208" rx="8" fill="#211a33" stroke="#ab7df8" stroke-width="1"/>
+<rect x="480" y="30" width="63" height="24" rx="6" fill="#8957e5"/>
+<text x="511.5" y="46.68" font-size="13" fill="#ffffff" font-weight="600" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">intent</text>
+<text x="480" y="80" font-size="14" fill="#f0f6fc" font-weight="600">When the model picks it by</text>
+<text x="480" y="99" font-size="14" fill="#f0f6fc" font-weight="600">its description</text>
+<text x="480" y="130" font-size="12" fill="#9198a1">every skill</text>
+<text x="480" y="158" font-size="12" fill="#9198a1">a Cursor rule with only a</text>
+<text x="480" y="174" font-size="12" fill="#9198a1">description</text>
+<rect x="687" y="16" width="209" height="208" rx="8" fill="#151b23" stroke="#9198a1" stroke-width="1"/>
+<rect x="701" y="30" width="63" height="24" rx="6" fill="#656c76"/>
+<text x="732.5" y="46.68" font-size="13" fill="#ffffff" font-weight="600" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">manual</text>
+<text x="701" y="80" font-size="14" fill="#f0f6fc" font-weight="600">Only when you name it</text>
+<text x="701" y="111" font-size="12" fill="#9198a1">a Cursor rule without</text>
+<text x="701" y="127" font-size="12" fill="#9198a1">alwaysApply, globs, or</text>
+<text x="701" y="143" font-size="12" fill="#9198a1">description</text>
+<path d="M30 240 v8 H448 v-8" fill="none" stroke="#3fb950" stroke-width="2"/>
+<text x="239.0" y="274" font-size="14" fill="#3fb950" font-weight="600" text-anchor="middle">The harness decides</text>
+<text x="239.0" y="294" font-size="12" fill="#9198a1" text-anchor="middle">from your files, checked at L3–L5</text>
+<path d="M472 240 v8 H669 v-8" fill="none" stroke="#ab7df8" stroke-width="2"/>
+<text x="570.5" y="274" font-size="14" fill="#ab7df8" font-weight="600" text-anchor="middle">The model decides</text>
+<text x="570.5" y="294" font-size="12" fill="#9198a1" text-anchor="middle">by the description, checked at L6</text>
+<path d="M693 240 v8 H890 v-8" fill="none" stroke="#9198a1" stroke-width="2"/>
+<text x="791.5" y="274" font-size="14" fill="#9198a1" font-weight="600" text-anchor="middle">You decide</text>
+<text x="791.5" y="294" font-size="12" fill="#9198a1" text-anchor="middle">by naming it in a prompt</text>
+</svg>

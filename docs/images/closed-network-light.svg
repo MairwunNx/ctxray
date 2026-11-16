@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="476" viewBox="0 0 920 476" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" role="img">
+<title>ctxray in a closed network</title>
+<desc>Harness builds cross the air gap as an archive from ctxray harness pack, or inside a runner image built from harnesses.Dockerfile. ctxray itself comes from your mirror. Models are reached through your own gateway. With offline: true, L1 to L5 run, L6 and L7 run on replay or mock, and commands that need the network stop with exit code 4.</desc>
+<defs><marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#1a7f37"/></marker></defs>
+<text x="144" y="24" font-size="13" fill="#59636e" font-weight="600">Internet</text>
+<text x="494" y="24" font-size="13" fill="#59636e" font-weight="600">Your network</text>
+<rect x="446" y="30" width="36" height="294" rx="6" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="1" stroke-dasharray="5 4"/>
+<text x="464.0" y="24" font-size="11" fill="#59636e" text-anchor="middle">air gap</text>
+<text x="24" y="74" font-size="13" fill="#1f2328" font-weight="600">Harnesses</text>
+<rect x="144" y="38" width="290" height="62" rx="8" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="1"/>
+<text x="158" y="64" font-size="12" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">ctxray harness pack</text>
+<text x="158" y="84" font-size="12" fill="#59636e">on a machine with internet</text>
+<rect x="494" y="38" width="402" height="62" rx="8" fill="#dafbe1" stroke="#1a7f37" stroke-width="1"/>
+<text x="508" y="64" font-size="12" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">ctxray harness install --from …</text>
+<text x="508" y="84" font-size="12" fill="#59636e">every build checked against ctxray.lock</text>
+<path d="M436 69.0 L492 69.0" fill="none" stroke="#1a7f37" stroke-width="2" marker-end="url(#m-green)"/>
+<rect x="434.0" y="59.0" width="60" height="20" rx="10" fill="#ffffff" stroke="#1a7f37" stroke-width="1"/>
+<text x="464.0" y="73.0" font-size="11" fill="#1a7f37" font-weight="600" text-anchor="middle">archive</text>
+<text x="24" y="146" font-size="13" fill="#1f2328" font-weight="600">Runner image</text>
+<rect x="144" y="110" width="290" height="62" rx="8" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="1"/>
+<text x="158" y="136" font-size="12" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">docker build -f harnesses.Dockerfile</text>
+<text x="158" y="156" font-size="12" fill="#59636e">the harnesses baked in</text>
+<rect x="494" y="110" width="402" height="62" rx="8" fill="#dafbe1" stroke="#1a7f37" stroke-width="1"/>
+<text x="508" y="136" font-size="12" fill="#1f2328">your container registry</text>
+<text x="508" y="156" font-size="12" fill="#59636e">the CI job runs in it</text>
+<path d="M436 141.0 L492 141.0" fill="none" stroke="#1a7f37" stroke-width="2" marker-end="url(#m-green)"/>
+<rect x="434.0" y="131.0" width="60" height="20" rx="10" fill="#ffffff" stroke="#1a7f37" stroke-width="1"/>
+<text x="464.0" y="145.0" font-size="11" fill="#1a7f37" font-weight="600" text-anchor="middle">image</text>
+<text x="24" y="218" font-size="13" fill="#1f2328" font-weight="600">ctxray</text>
+<rect x="144" y="182" width="290" height="62" rx="8" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="1"/>
+<text x="158" y="208" font-size="12" fill="#1f2328">GitHub Releases, npm, ghcr.io</text>
+<text x="158" y="228" font-size="12" fill="#59636e">the executable and images</text>
+<rect x="494" y="182" width="402" height="62" rx="8" fill="#dafbe1" stroke="#1a7f37" stroke-width="1"/>
+<text x="508" y="208" font-size="12" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">CTXRAY_DOWNLOAD_BASE, npm proxy</text>
+<text x="508" y="228" font-size="12" fill="#59636e">install.sh and the action read it</text>
+<path d="M436 213.0 L492 213.0" fill="none" stroke="#1a7f37" stroke-width="2" marker-end="url(#m-green)"/>
+<rect x="434.0" y="203.0" width="60" height="20" rx="10" fill="#ffffff" stroke="#1a7f37" stroke-width="1"/>
+<text x="464.0" y="217.0" font-size="11" fill="#1a7f37" font-weight="600" text-anchor="middle">mirror</text>
+<text x="24" y="290" font-size="13" fill="#1f2328" font-weight="600">Models</text>
+<rect x="144" y="254" width="290" height="62" rx="8" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="1"/>
+<text x="158" y="280" font-size="12" fill="#1f2328">model providers</text>
+<text x="158" y="300" font-size="12" fill="#59636e">not reached from inside</text>
+<rect x="494" y="254" width="402" height="62" rx="8" fill="#dafbe1" stroke="#1a7f37" stroke-width="1"/>
+<text x="508" y="280" font-size="12" fill="#1f2328">your LLM gateway</text>
+<text x="508" y="300" font-size="12" fill="#59636e">set as upstream in the config</text>
+<path d="M436 285.0 H492" fill="none" stroke="#cf222e" stroke-width="2" stroke-dasharray="5 4"/>
+<text x="464.0" y="290.0" font-size="16" fill="#cf222e" font-weight="700" text-anchor="middle">✕</text>
+<text x="24" y="350" font-size="14" fill="#1f2328" font-weight="600">With offline: true</text>
+<rect x="24" y="364" width="426" height="100" rx="8" fill="#dafbe1" stroke="#1a7f37" stroke-width="1"/>
+<text x="40" y="388" font-size="12" fill="#1a7f37" font-weight="700">runs</text>
+<text x="40" y="412" font-size="12" fill="#1f2328">✓  L1–L5</text>
+<text x="40" y="432" font-size="12" fill="#1f2328">✓  L6–L7 on replay or mock</text>
+<text x="40" y="452" font-size="12" fill="#1f2328">✓  inspect, diff, doctor</text>
+<rect x="470" y="364" width="426" height="100" rx="8" fill="#ffebe9" stroke="#cf222e" stroke-width="1"/>
+<text x="486" y="388" font-size="12" fill="#cf222e" font-weight="700">stops with exit code 4</text>
+<text x="486" y="412" font-size="12" fill="#1f2328">✕  test --backend real</text>
+<text x="486" y="432" font-size="12" fill="#1f2328">✕  gen-prompts, calibrate</text>
+<text x="486" y="452" font-size="12" fill="#1f2328">✕  installs from the network</text>
+</svg>

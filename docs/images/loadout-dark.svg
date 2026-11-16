@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="424" viewBox="0 0 920 424" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" role="img">
+<title>What a Loadout holds</title>
+<desc>Your project’s files go through the harness, which adds its own system prompt and tools, and the result is the model’s context: system prompt, built-in tools, rules, skills, MCP servers and tools, commands.</desc>
+<defs><marker id="m-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#d29922"/></marker></defs>
+<defs><marker id="m-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#db6d28"/></marker></defs>
+<defs><marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#4493f8"/></marker></defs>
+<defs><marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3fb950"/></marker></defs>
+<defs><marker id="m-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#9198a1"/></marker></defs>
+<text x="24" y="28" font-size="13" fill="#9198a1" font-weight="600">Your project</text>
+<text x="300" y="28" font-size="13" fill="#9198a1" font-weight="600">Harness</text>
+<text x="530" y="28" font-size="13" fill="#9198a1" font-weight="600">The model’s context</text>
+<rect x="24" y="44" width="236" height="40" rx="6" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="36" y="69" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">CLAUDE.md</text>
+<path d="M262 64 L296 64" fill="none" stroke="#9198a1" stroke-width="1.6" marker-end="url(#m-muted)"/>
+<rect x="24" y="90" width="236" height="40" rx="6" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="36" y="115" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">AGENTS.md</text>
+<path d="M262 110 L296 110" fill="none" stroke="#9198a1" stroke-width="1.6" marker-end="url(#m-muted)"/>
+<rect x="24" y="136" width="236" height="40" rx="6" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="36" y="161" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">.claude/rules/payments.md</text>
+<path d="M262 156 L296 156" fill="none" stroke="#9198a1" stroke-width="1.6" marker-end="url(#m-muted)"/>
+<rect x="24" y="182" width="236" height="40" rx="6" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="36" y="207" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">.claude/skills/refunds/</text>
+<path d="M262 202 L296 202" fill="none" stroke="#9198a1" stroke-width="1.6" marker-end="url(#m-muted)"/>
+<rect x="24" y="228" width="236" height="40" rx="6" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="36" y="253" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">.mcp.json</text>
+<path d="M262 248 L296 248" fill="none" stroke="#9198a1" stroke-width="1.6" marker-end="url(#m-muted)"/>
+<rect x="24" y="274" width="236" height="40" rx="6" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="36" y="299" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">.claude/commands/review.md</text>
+<path d="M262 294 L296 294" fill="none" stroke="#9198a1" stroke-width="1.6" marker-end="url(#m-muted)"/>
+<rect x="300" y="44" width="186" height="268" rx="8" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="316" y="70" font-size="14" fill="#f0f6fc" font-weight="600">Claude Code, Codex,</text>
+<text x="316" y="90" font-size="14" fill="#f0f6fc" font-weight="600">Cursor, Gemini CLI,</text>
+<text x="316" y="110" font-size="14" fill="#f0f6fc" font-weight="600">OpenCode</text>
+<text x="316" y="142" font-size="12" fill="#9198a1">finds your files</text>
+<text x="316" y="167" font-size="12" fill="#9198a1">lists your skills</text>
+<text x="316" y="192" font-size="12" fill="#9198a1">starts your MCP servers</text>
+<text x="316" y="217" font-size="12" fill="#9198a1">adds its own system prompt</text>
+<text x="316" y="234" font-size="12" fill="#9198a1">and tools</text>
+<path d="M488 64 L526 64" fill="none" stroke="#9198a1" stroke-width="1.6" marker-end="url(#m-muted)" stroke-dasharray="5 4"/>
+<rect x="530" y="44" width="366" height="40" rx="6" fill="none" stroke="#ab7df8" stroke-width="1" stroke-dasharray="5 4"/>
+<text x="544" y="61" font-size="13" fill="#f0f6fc" font-weight="600">System prompt</text>
+<text x="544" y="77" font-size="11" fill="#9198a1">the harness’s own instructions</text>
+<path d="M488 110 L526 110" fill="none" stroke="#9198a1" stroke-width="1.6" marker-end="url(#m-muted)" stroke-dasharray="5 4"/>
+<rect x="530" y="90" width="366" height="40" rx="6" fill="none" stroke="#ab7df8" stroke-width="1" stroke-dasharray="5 4"/>
+<text x="544" y="107" font-size="13" fill="#f0f6fc" font-weight="600">Built-in tools</text>
+<text x="544" y="123" font-size="11" fill="#9198a1">Read, Edit, Bash, and the rest</text>
+<path d="M488 156 L526 156" fill="none" stroke="#3fb950" stroke-width="1.6" marker-end="url(#m-green)"/>
+<rect x="530" y="136" width="366" height="40" rx="6" fill="#12261e" stroke="#3fb950" stroke-width="1"/>
+<text x="544" y="153" font-size="13" fill="#f0f6fc" font-weight="600">Rules</text>
+<text x="544" y="169" font-size="11" fill="#9198a1">instruction files, each with its activation</text>
+<path d="M488 202 L526 202" fill="none" stroke="#4493f8" stroke-width="1.6" marker-end="url(#m-blue)"/>
+<rect x="530" y="182" width="366" height="40" rx="6" fill="#121d2f" stroke="#4493f8" stroke-width="1"/>
+<text x="544" y="199" font-size="13" fill="#f0f6fc" font-weight="600">Skills</text>
+<text x="544" y="215" font-size="11" fill="#9198a1">listed by description, loaded when asked</text>
+<path d="M488 248 L526 248" fill="none" stroke="#db6d28" stroke-width="1.6" marker-end="url(#m-orange)"/>
+<rect x="530" y="228" width="366" height="40" rx="6" fill="#2a1c12" stroke="#db6d28" stroke-width="1"/>
+<text x="544" y="245" font-size="13" fill="#f0f6fc" font-weight="600">MCP servers and tools</text>
+<text x="544" y="261" font-size="11" fill="#9198a1">servers from the config, schemas after a run</text>
+<path d="M488 294 L526 294" fill="none" stroke="#d29922" stroke-width="1.6" marker-end="url(#m-yellow)"/>
+<rect x="530" y="274" width="366" height="40" rx="6" fill="#272115" stroke="#d29922" stroke-width="1"/>
+<text x="544" y="291" font-size="13" fill="#f0f6fc" font-weight="600">Commands</text>
+<text x="544" y="307" font-size="11" fill="#9198a1">slash commands the harness offers</text>
+<rect x="24" y="334" width="26" height="16" rx="4" fill="#151b23" stroke="#9198a1" stroke-width="1"/>
+<text x="60" y="347" font-size="12" fill="#9198a1">ctxray predicts it from your files: inspect, L1–L3</text>
+<rect x="24" y="358" width="26" height="16" rx="4" fill="none" stroke="#9198a1" stroke-width="1" stroke-dasharray="5 4"/>
+<text x="60" y="371" font-size="12" fill="#9198a1">ctxray sees it once it launches the harness: L4 and up</text>
+<text x="24" y="404" font-size="13" fill="#f0f6fc" font-weight="600">Every piece carries the file it came from, the reason it loaded, and its tokens.</text>
+</svg>

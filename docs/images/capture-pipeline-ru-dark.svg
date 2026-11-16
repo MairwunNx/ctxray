@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="448" viewBox="0 0 920 448" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" role="img">
+<title>Как проходит захват</title>
+<desc>ctxray копирует проект, ставит в каждый файл метку и даёт каждой сессии свою папку. Харнесс работает в песочнице: запросы к модели идут в прокси ctxray, MCP-серверы стоят за прослойкой ctxray, а любое другое соединение упирается в сторожа. Трейс без секретов режется на сегменты, из которых получается Loadout для вашего теста.</desc>
+<defs><marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#4493f8"/></marker></defs>
+<defs><marker id="m-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#db6d28"/></marker></defs>
+<defs><marker id="m-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#f85149"/></marker></defs>
+<defs><marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3fb950"/></marker></defs>
+<text x="24" y="22" font-size="13" fill="#9198a1" font-weight="600">1  Подготовка</text>
+<rect x="24" y="32" width="266" height="72" rx="8" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="40" y="56" font-size="14" fill="#f0f6fc" font-weight="600">Ваше рабочее дерево</text>
+<text x="40" y="75" font-size="12" fill="#9198a1">ctxray сюда не пишет</text>
+<rect x="327" y="32" width="266" height="72" rx="8" fill="#12261e" stroke="#3fb950" stroke-width="1"/>
+<rect x="327" y="40" width="4" height="56" rx="2" fill="#3fb950"/>
+<text x="343" y="56" font-size="14" fill="#f0f6fc" font-weight="600">Копия проекта</text>
+<text x="343" y="75" font-size="12" fill="#9198a1">ваши незакоммиченные изменения и</text>
+<text x="343" y="92" font-size="12" fill="#9198a1">метка ⟦ctx:path⟧ в каждом файле</text>
+<path d="M294 68 L323 68" fill="none" stroke="#3fb950" stroke-width="1.6" marker-end="url(#m-green)"/>
+<rect x="630" y="32" width="266" height="72" rx="8" fill="#12261e" stroke="#3fb950" stroke-width="1"/>
+<rect x="630" y="40" width="4" height="56" rx="2" fill="#3fb950"/>
+<text x="646" y="56" font-size="14" fill="#f0f6fc" font-weight="600">Папка сессии</text>
+<text x="646" y="75" font-size="12" fill="#9198a1">copy-on-write клон со своими home, tmp,</text>
+<text x="646" y="92" font-size="12" fill="#9198a1">bin и logs</text>
+<path d="M597 68 L626 68" fill="none" stroke="#3fb950" stroke-width="1.6" marker-end="url(#m-green)"/>
+<text x="24" y="138" font-size="13" fill="#9198a1" font-weight="600">2  Запуск</text>
+<path d="M763.0 104 V120 H134 V146" fill="none" stroke="#3fb950" stroke-width="1.6" marker-end="url(#m-green)"/>
+<rect x="24" y="148" width="220" height="150" rx="8" fill="#211a33" stroke="#ab7df8" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="40" y="174" font-size="15" fill="#f0f6fc" font-weight="600">Харнесс</text>
+<text x="40" y="198" font-size="12" fill="#9198a1">HOME, TMPDIR и XDG внутри</text>
+<text x="40" y="214" font-size="12" fill="#9198a1">сессии</text>
+<text x="40" y="238" font-size="12" fill="#9198a1">заглушка связки ключей на</text>
+<text x="40" y="254" font-size="12" fill="#9198a1">macOS</text>
+<text x="40" y="278" font-size="12" fill="#9198a1">sandbox-exec на macOS,</text>
+<text x="40" y="294" font-size="12" fill="#9198a1">контейнер в CI</text>
+<path d="M246 169 L296 169" fill="none" stroke="#f85149" stroke-width="1.6" marker-end="url(#m-red)"/>
+<rect x="300" y="148" width="280" height="42" rx="6" fill="#2d1517" stroke="#f85149" stroke-width="1"/>
+<text x="314" y="166" font-size="13" fill="#f0f6fc" font-weight="600">Сторож соединений</text>
+<text x="314" y="182" font-size="11" fill="#9198a1">отклоняет и записывает</text>
+<path d="M582 169 L616 169" fill="none" stroke="#f85149" stroke-width="1.6" marker-end="url(#m-red)" stroke-dasharray="5 4"/>
+<rect x="620" y="148" width="276" height="42" rx="6" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="636" y="174" font-size="14" fill="#f85149" font-weight="700">✕</text>
+<text x="656" y="174" font-size="12" fill="#f0f6fc">Другой хост: тест падает и называет его</text>
+<path d="M246 223 L296 223" fill="none" stroke="#db6d28" stroke-width="1.6" marker-end="url(#m-orange)"/>
+<rect x="300" y="202" width="280" height="42" rx="6" fill="#2a1c12" stroke="#db6d28" stroke-width="1"/>
+<text x="314" y="220" font-size="13" fill="#f0f6fc" font-weight="600">Прослойка MCP</text>
+<text x="314" y="236" font-size="11" fill="#9198a1">записывает инструменты</text>
+<path d="M582 223 L616 223" fill="none" stroke="#db6d28" stroke-width="1.6" marker-end="url(#m-orange)"/>
+<rect x="620" y="202" width="276" height="42" rx="6" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="636" y="228" font-size="12" fill="#f0f6fc">MCP-серверы проекта</text>
+<path d="M246 277 L296 277" fill="none" stroke="#4493f8" stroke-width="1.6" marker-end="url(#m-blue)"/>
+<rect x="300" y="256" width="280" height="42" rx="6" fill="#121d2f" stroke="#4493f8" stroke-width="1"/>
+<text x="314" y="274" font-size="13" fill="#f0f6fc" font-weight="600">Прокси модели</text>
+<text x="314" y="290" font-size="11" fill="#9198a1">отвечает и записывает</text>
+<path d="M582 277 L616 277" fill="none" stroke="#4493f8" stroke-width="1.6" marker-end="url(#m-blue)"/>
+<rect x="620" y="256" width="276" height="42" rx="6" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="636" y="282" font-size="12" fill="#f0f6fc">mock, replay или ваш upstream</text>
+<text x="24" y="352" font-size="13" fill="#9198a1" font-weight="600">3  Разбор</text>
+<path d="M440 298 V330 H122 V360" fill="none" stroke="#4493f8" stroke-width="1.6" marker-end="url(#m-blue)"/>
+<rect x="24" y="362" width="197" height="72" rx="8" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="40" y="386" font-size="13" fill="#f0f6fc" font-weight="600">Трейс без секретов</text>
+<text x="40" y="405" font-size="12" fill="#9198a1">каждый обмен, секреты</text>
+<text x="40" y="422" font-size="12" fill="#9198a1">скрыты</text>
+<rect x="249" y="362" width="197" height="72" rx="8" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="265" y="386" font-size="13" fill="#f0f6fc" font-weight="600">Сегменты</text>
+<text x="265" y="405" font-size="12" fill="#9198a1">system, rules, skills, mcp,</text>
+<text x="265" y="422" font-size="12" fill="#9198a1">commands, tools</text>
+<path d="M225 398 L245 398" fill="none" stroke="#4493f8" stroke-width="1.6" marker-end="url(#m-blue)"/>
+<rect x="474" y="362" width="197" height="72" rx="8" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="490" y="386" font-size="13" fill="#f0f6fc" font-weight="600">Loadout</text>
+<text x="490" y="405" font-size="12" fill="#9198a1">каждый кусок привязан к</text>
+<text x="490" y="422" font-size="12" fill="#9198a1">файлу по метке</text>
+<path d="M450 398 L470 398" fill="none" stroke="#4493f8" stroke-width="1.6" marker-end="url(#m-blue)"/>
+<rect x="699" y="362" width="197" height="72" rx="8" fill="#121d2f" stroke="#4493f8" stroke-width="1"/>
+<rect x="699" y="370" width="4" height="56" rx="2" fill="#4493f8"/>
+<text x="715" y="386" font-size="13" fill="#f0f6fc" font-weight="600">Ваш тест</text>
+<text x="715" y="405" font-size="12" fill="#9198a1">expect(loadout)…</text>
+<path d="M675 398 L695 398" fill="none" stroke="#4493f8" stroke-width="1.6" marker-end="url(#m-blue)"/>
+</svg>

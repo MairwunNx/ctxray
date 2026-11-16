@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="452" viewBox="0 0 920 452" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" role="img">
+<title>The Wilson interval and L6 verdicts</title>
+<desc>Four results on a scale from 0 to 1. 16 of 16 passes min 0.8, because the interval’s lower bound is 0.81. 14 of 16 is inconclusive: the rate 0.88 is above 0.8, but the lower bound is 0.64. 9 of 16 fails, because the rate 0.56 is below 0.8. 0 of 16 passes max 0.2, because the upper bound is 0.19. A perfect run needs 4 runs for 0.5, 16 for 0.8, 35 for 0.9, and 73 for 0.95.</desc>
+<text x="170" y="24" font-size="11" fill="#59636e" text-anchor="middle">0</text>
+<text x="248.0" y="24" font-size="11" fill="#59636e" text-anchor="middle">0.2</text>
+<text x="365.0" y="24" font-size="11" fill="#59636e" text-anchor="middle">0.5</text>
+<text x="482.0" y="24" font-size="11" fill="#59636e" text-anchor="middle">0.8</text>
+<text x="560" y="24" font-size="11" fill="#59636e" text-anchor="middle">1</text>
+<path d="M170 36 H560" fill="none" stroke="#d1d9e0" stroke-width="1"/>
+<path d="M482.0 36 V244" fill="none" stroke="#59636e" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="482.0" y="260" font-size="11" fill="#59636e" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">min 0.8</text>
+<path d="M248.0 36 V244" fill="none" stroke="#59636e" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="248.0" y="260" font-size="11" fill="#59636e" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">max 0.2</text>
+<text x="24" y="58" font-size="12" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">skill(refunds)</text>
+<text x="24" y="75" font-size="12" fill="#59636e">16 of 16</text>
+<rect x="484.34000000000003" y="53" width="75.65999999999997" height="14" rx="7" fill="#dafbe1" stroke="#1a7f37" stroke-width="1.5"/>
+<circle cx="560.0" cy="60" r="5" fill="#1a7f37"/>
+<text x="588" y="58" font-size="13" fill="#1a7f37" font-weight="700">Passes</text>
+<text x="588" y="75" font-size="12" fill="#59636e">the lower bound 0.81 reaches 0.8</text>
+<text x="24" y="110" font-size="12" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">skill(refunds)</text>
+<text x="24" y="127" font-size="12" fill="#59636e">14 of 16</text>
+<rect x="419.6" y="105" width="126.74999999999989" height="14" rx="7" fill="#fff8c5" stroke="#9a6700" stroke-width="1.5"/>
+<circle cx="511.25" cy="112" r="5" fill="#9a6700"/>
+<text x="588" y="110" font-size="13" fill="#9a6700" font-weight="700">Inconclusive</text>
+<text x="588" y="127" font-size="12" fill="#59636e">the rate holds, the bound doesn’t: 110 runs would tell</text>
+<text x="24" y="162" font-size="12" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">skill(refunds)</text>
+<text x="24" y="179" font-size="12" fill="#59636e">9 of 16</text>
+<rect x="299.48" y="157" width="170.43" height="14" rx="7" fill="#ffebe9" stroke="#cf222e" stroke-width="1.5"/>
+<circle cx="389.375" cy="164" r="5" fill="#cf222e"/>
+<text x="588" y="162" font-size="13" fill="#cf222e" font-weight="700">Fails</text>
+<text x="588" y="179" font-size="12" fill="#59636e">the rate 0.56 is under 0.8</text>
+<text x="24" y="214" font-size="12" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">skill(payouts)</text>
+<text x="24" y="231" font-size="12" fill="#59636e">0 of 16</text>
+<rect x="170.0" y="209" width="75.66" height="14" rx="7" fill="#dafbe1" stroke="#1a7f37" stroke-width="1.5"/>
+<circle cx="170.0" cy="216" r="5" fill="#1a7f37"/>
+<text x="588" y="214" font-size="13" fill="#1a7f37" font-weight="700">Passes</text>
+<text x="588" y="231" font-size="12" fill="#59636e">not.toActivate: the upper bound 0.19 stays under 0.2</text>
+<circle cx="176" cy="280" r="5" fill="#59636e"/>
+<text x="188" y="284" font-size="12" fill="#59636e">rate</text>
+<rect x="226.32" y="273" width="34" height="14" rx="7" fill="#f6f8fa" stroke="#59636e" stroke-width="1"/>
+<text x="268.32" y="284" font-size="12" fill="#59636e">95% interval</text>
+<text x="24" y="324" font-size="14" fill="#1f2328" font-weight="600">Runs a perfect result needs</text>
+<text x="24" y="355" font-size="12" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">min 0.5</text>
+<rect x="170" y="342" width="21.36986301369863" height="18" rx="4" fill="#ddf4ff" stroke="#0969da" stroke-width="1"/>
+<text x="201.36986301369862" y="355" font-size="12" fill="#1f2328" font-weight="600">4 runs</text>
+<text x="24" y="381" font-size="12" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">min 0.8</text>
+<rect x="170" y="368" width="85.47945205479452" height="18" rx="4" fill="#ddf4ff" stroke="#0969da" stroke-width="1"/>
+<text x="265.47945205479454" y="381" font-size="12" fill="#1f2328" font-weight="600">16 runs</text>
+<text x="24" y="407" font-size="12" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">min 0.9</text>
+<rect x="170" y="394" width="186.986301369863" height="18" rx="4" fill="#ddf4ff" stroke="#0969da" stroke-width="1"/>
+<text x="366.986301369863" y="407" font-size="12" fill="#1f2328" font-weight="600">35 runs</text>
+<text x="24" y="433" font-size="12" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">min 0.95</text>
+<rect x="170" y="420" width="390.0" height="18" rx="4" fill="#ddf4ff" stroke="#0969da" stroke-width="1"/>
+<text x="570.0" y="433" font-size="12" fill="#1f2328" font-weight="600">73 runs</text>
+</svg>

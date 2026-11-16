@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="452" viewBox="0 0 920 452" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" role="img">
+<title>Интервал Уилсона и вердикты L6</title>
+<desc>Четыре результата на шкале от 0 до 1. 16 из 16 проходит min 0,8: нижняя граница интервала 0,81. 14 из 16 не определён: доля 0,88 выше 0,8, но нижняя граница 0,64. 9 из 16 падает: доля 0,56 ниже 0,8. 0 из 16 проходит max 0,2: верхняя граница 0,19. Безупречному результату нужно 4 прогона для 0,5, 16 для 0,8, 35 для 0,9 и 73 для 0,95.</desc>
+<text x="170" y="24" font-size="11" fill="#59636e" text-anchor="middle">0</text>
+<text x="248.0" y="24" font-size="11" fill="#59636e" text-anchor="middle">0,2</text>
+<text x="365.0" y="24" font-size="11" fill="#59636e" text-anchor="middle">0,5</text>
+<text x="482.0" y="24" font-size="11" fill="#59636e" text-anchor="middle">0,8</text>
+<text x="560" y="24" font-size="11" fill="#59636e" text-anchor="middle">1</text>
+<path d="M170 36 H560" fill="none" stroke="#d1d9e0" stroke-width="1"/>
+<path d="M482.0 36 V244" fill="none" stroke="#59636e" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="482.0" y="260" font-size="11" fill="#59636e" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">min 0,8</text>
+<path d="M248.0 36 V244" fill="none" stroke="#59636e" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="248.0" y="260" font-size="11" fill="#59636e" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">max 0,2</text>
+<text x="24" y="58" font-size="12" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">skill(refunds)</text>
+<text x="24" y="75" font-size="12" fill="#59636e">16 из 16</text>
+<rect x="484.34000000000003" y="53" width="75.65999999999997" height="14" rx="7" fill="#dafbe1" stroke="#1a7f37" stroke-width="1.5"/>
+<circle cx="560.0" cy="60" r="5" fill="#1a7f37"/>
+<text x="588" y="58" font-size="13" fill="#1a7f37" font-weight="700">Проходит</text>
+<text x="588" y="75" font-size="12" fill="#59636e">нижняя граница 0,81 достигает 0,8</text>
+<text x="24" y="110" font-size="12" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">skill(refunds)</text>
+<text x="24" y="127" font-size="12" fill="#59636e">14 из 16</text>
+<rect x="419.6" y="105" width="126.74999999999989" height="14" rx="7" fill="#fff8c5" stroke="#9a6700" stroke-width="1.5"/>
+<circle cx="511.25" cy="112" r="5" fill="#9a6700"/>
+<text x="588" y="110" font-size="13" fill="#9a6700" font-weight="700">Не определён</text>
+<text x="588" y="127" font-size="12" fill="#59636e">доля выше порога, граница нет: решат 110</text>
+<text x="588" y="142" font-size="12" fill="#59636e">прогонов</text>
+<text x="24" y="162" font-size="12" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">skill(refunds)</text>
+<text x="24" y="179" font-size="12" fill="#59636e">9 из 16</text>
+<rect x="299.48" y="157" width="170.43" height="14" rx="7" fill="#ffebe9" stroke="#cf222e" stroke-width="1.5"/>
+<circle cx="389.375" cy="164" r="5" fill="#cf222e"/>
+<text x="588" y="162" font-size="13" fill="#cf222e" font-weight="700">Падает</text>
+<text x="588" y="179" font-size="12" fill="#59636e">доля 0,56 ниже 0,8</text>
+<text x="24" y="214" font-size="12" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">skill(payouts)</text>
+<text x="24" y="231" font-size="12" fill="#59636e">0 из 16</text>
+<rect x="170.0" y="209" width="75.66" height="14" rx="7" fill="#dafbe1" stroke="#1a7f37" stroke-width="1.5"/>
+<circle cx="170.0" cy="216" r="5" fill="#1a7f37"/>
+<text x="588" y="214" font-size="13" fill="#1a7f37" font-weight="700">Проходит</text>
+<text x="588" y="231" font-size="12" fill="#59636e">not.toActivate: верхняя граница 0,19 ниже 0,2</text>
+<circle cx="176" cy="280" r="5" fill="#59636e"/>
+<text x="188" y="284" font-size="12" fill="#59636e">доля</text>
+<rect x="230.88" y="273" width="34" height="14" rx="7" fill="#f6f8fa" stroke="#59636e" stroke-width="1"/>
+<text x="272.88" y="284" font-size="12" fill="#59636e">интервал 95 %</text>
+<text x="24" y="324" font-size="14" fill="#1f2328" font-weight="600">Сколько прогонов нужно безупречному результату</text>
+<text x="24" y="355" font-size="12" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">min 0,5</text>
+<rect x="170" y="342" width="21.36986301369863" height="18" rx="4" fill="#ddf4ff" stroke="#0969da" stroke-width="1"/>
+<text x="201.36986301369862" y="355" font-size="12" fill="#1f2328" font-weight="600">4 прогонов</text>
+<text x="24" y="381" font-size="12" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">min 0,8</text>
+<rect x="170" y="368" width="85.47945205479452" height="18" rx="4" fill="#ddf4ff" stroke="#0969da" stroke-width="1"/>
+<text x="265.47945205479454" y="381" font-size="12" fill="#1f2328" font-weight="600">16 прогонов</text>
+<text x="24" y="407" font-size="12" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">min 0,9</text>
+<rect x="170" y="394" width="186.986301369863" height="18" rx="4" fill="#ddf4ff" stroke="#0969da" stroke-width="1"/>
+<text x="366.986301369863" y="407" font-size="12" fill="#1f2328" font-weight="600">35 прогонов</text>
+<text x="24" y="433" font-size="12" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">min 0,95</text>
+<rect x="170" y="420" width="390.0" height="18" rx="4" fill="#ddf4ff" stroke="#0969da" stroke-width="1"/>
+<text x="570.0" y="433" font-size="12" fill="#1f2328" font-weight="600">73 прогонов</text>
+</svg>

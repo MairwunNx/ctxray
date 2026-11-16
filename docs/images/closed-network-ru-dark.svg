@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="476" viewBox="0 0 920 476" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" role="img">
+<title>ctxray в закрытом контуре</title>
+<desc>Сборки харнессов переходят воздушный зазор архивом из ctxray harness pack или внутри образа раннера из harnesses.Dockerfile. Сам ctxray приходит из вашего зеркала. Модели доступны через ваш шлюз. С offline: true работают L1–L5, L6 и L7 идут на replay или mock, а команды, которым нужна сеть, останавливаются с кодом 4.</desc>
+<defs><marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3fb950"/></marker></defs>
+<text x="144" y="24" font-size="13" fill="#9198a1" font-weight="600">Интернет</text>
+<text x="494" y="24" font-size="13" fill="#9198a1" font-weight="600">Ваша сеть</text>
+<rect x="446" y="30" width="36" height="294" rx="6" fill="#151b23" stroke="#3d444d" stroke-width="1" stroke-dasharray="5 4"/>
+<text x="464.0" y="24" font-size="11" fill="#9198a1" text-anchor="middle">зазор</text>
+<text x="24" y="74" font-size="13" fill="#f0f6fc" font-weight="600">Харнессы</text>
+<rect x="144" y="38" width="290" height="62" rx="8" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="158" y="64" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">ctxray harness pack</text>
+<text x="158" y="84" font-size="12" fill="#9198a1">на машине с интернетом</text>
+<rect x="494" y="38" width="402" height="62" rx="8" fill="#12261e" stroke="#3fb950" stroke-width="1"/>
+<text x="508" y="64" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">ctxray harness install --from …</text>
+<text x="508" y="84" font-size="12" fill="#9198a1">каждая сборка сверяется с ctxray.lock</text>
+<path d="M436 69.0 L492 69.0" fill="none" stroke="#3fb950" stroke-width="2" marker-end="url(#m-green)"/>
+<rect x="434.0" y="59.0" width="60" height="20" rx="10" fill="#151b23" stroke="#3fb950" stroke-width="1"/>
+<text x="464.0" y="73.0" font-size="11" fill="#3fb950" font-weight="600" text-anchor="middle">архив</text>
+<text x="24" y="146" font-size="13" fill="#f0f6fc" font-weight="600">Образ раннера</text>
+<rect x="144" y="110" width="290" height="62" rx="8" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="158" y="136" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">docker build -f harnesses.Dockerfile</text>
+<text x="158" y="156" font-size="12" fill="#9198a1">харнессы уже внутри</text>
+<rect x="494" y="110" width="402" height="62" rx="8" fill="#12261e" stroke="#3fb950" stroke-width="1"/>
+<text x="508" y="136" font-size="12" fill="#f0f6fc">ваш реестр контейнеров</text>
+<text x="508" y="156" font-size="12" fill="#9198a1">задача CI работает в нём</text>
+<path d="M436 141.0 L492 141.0" fill="none" stroke="#3fb950" stroke-width="2" marker-end="url(#m-green)"/>
+<rect x="434.0" y="131.0" width="60" height="20" rx="10" fill="#151b23" stroke="#3fb950" stroke-width="1"/>
+<text x="464.0" y="145.0" font-size="11" fill="#3fb950" font-weight="600" text-anchor="middle">образ</text>
+<text x="24" y="218" font-size="13" fill="#f0f6fc" font-weight="600">ctxray</text>
+<rect x="144" y="182" width="290" height="62" rx="8" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="158" y="208" font-size="12" fill="#f0f6fc">GitHub Releases, npm, ghcr.io</text>
+<text x="158" y="228" font-size="12" fill="#9198a1">исполняемый файл и образы</text>
+<rect x="494" y="182" width="402" height="62" rx="8" fill="#12261e" stroke="#3fb950" stroke-width="1"/>
+<text x="508" y="208" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">CTXRAY_DOWNLOAD_BASE, npm-прокси</text>
+<text x="508" y="228" font-size="12" fill="#9198a1">его читают install.sh и action</text>
+<path d="M436 213.0 L492 213.0" fill="none" stroke="#3fb950" stroke-width="2" marker-end="url(#m-green)"/>
+<rect x="434.0" y="203.0" width="60" height="20" rx="10" fill="#151b23" stroke="#3fb950" stroke-width="1"/>
+<text x="464.0" y="217.0" font-size="11" fill="#3fb950" font-weight="600" text-anchor="middle">зеркало</text>
+<text x="24" y="290" font-size="13" fill="#f0f6fc" font-weight="600">Модели</text>
+<rect x="144" y="254" width="290" height="62" rx="8" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="158" y="280" font-size="12" fill="#f0f6fc">провайдеры моделей</text>
+<text x="158" y="300" font-size="12" fill="#9198a1">изнутри недоступны</text>
+<rect x="494" y="254" width="402" height="62" rx="8" fill="#12261e" stroke="#3fb950" stroke-width="1"/>
+<text x="508" y="280" font-size="12" fill="#f0f6fc">ваш LLM-шлюз</text>
+<text x="508" y="300" font-size="12" fill="#9198a1">указан как upstream в конфиге</text>
+<path d="M436 285.0 H492" fill="none" stroke="#f85149" stroke-width="2" stroke-dasharray="5 4"/>
+<text x="464.0" y="290.0" font-size="16" fill="#f85149" font-weight="700" text-anchor="middle">✕</text>
+<text x="24" y="350" font-size="14" fill="#f0f6fc" font-weight="600">С offline: true</text>
+<rect x="24" y="364" width="426" height="100" rx="8" fill="#12261e" stroke="#3fb950" stroke-width="1"/>
+<text x="40" y="388" font-size="12" fill="#3fb950" font-weight="700">работает</text>
+<text x="40" y="412" font-size="12" fill="#f0f6fc">✓  L1–L5</text>
+<text x="40" y="432" font-size="12" fill="#f0f6fc">✓  L6–L7 на replay или mock</text>
+<text x="40" y="452" font-size="12" fill="#f0f6fc">✓  inspect, diff, doctor</text>
+<rect x="470" y="364" width="426" height="100" rx="8" fill="#2d1517" stroke="#f85149" stroke-width="1"/>
+<text x="486" y="388" font-size="12" fill="#f85149" font-weight="700">останавливается с кодом 4</text>
+<text x="486" y="412" font-size="12" fill="#f0f6fc">✕  test --backend real</text>
+<text x="486" y="432" font-size="12" fill="#f0f6fc">✕  gen-prompts, calibrate</text>
+<text x="486" y="452" font-size="12" fill="#f0f6fc">✕  установка из сети</text>
+</svg>

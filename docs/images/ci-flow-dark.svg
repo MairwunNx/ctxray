@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="406" viewBox="0 0 920 406" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" role="img">
+<title>ctxray in CI</title>
+<desc>Every push runs ctxray test, layers L1 to L5 on the mock model. A pull request replays recorded answers for L6 and L7 and compares the context with the base branch. You record the answers once with a real model and commit them. A weekly job runs L6 against the real model with a budget. Every job writes reports and a job summary.</desc>
+<defs><marker id="m-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#ab7df8"/></marker></defs>
+<defs><marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#4493f8"/></marker></defs>
+<rect x="24" y="16" width="170" height="70" rx="8" fill="#121d2f" stroke="#4493f8" stroke-width="1"/>
+<text x="40" y="46" font-size="13" fill="#f0f6fc" font-weight="600">Every push</text>
+<path d="M196 51.0 L216 51.0" fill="none" stroke="#4493f8" stroke-width="1.6" marker-end="url(#m-blue)"/>
+<rect x="220" y="16" width="400" height="70" rx="8" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="236" y="44" font-size="12" fill="#f0f6fc" font-weight="600" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">ctxray test</text>
+<text x="236" y="66" font-size="12" fill="#9198a1">L1–L5 on the mock model, free, no key</text>
+<path d="M622 51.0 L650 51.0" fill="none" stroke="#4493f8" stroke-width="1.6" marker-end="url(#m-blue)"/>
+<rect x="24" y="100" width="170" height="70" rx="8" fill="#121d2f" stroke="#4493f8" stroke-width="1"/>
+<text x="40" y="130" font-size="13" fill="#f0f6fc" font-weight="600">Pull request</text>
+<path d="M196 135.0 L216 135.0" fill="none" stroke="#4493f8" stroke-width="1.6" marker-end="url(#m-blue)"/>
+<rect x="220" y="100" width="400" height="70" rx="8" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="236" y="128" font-size="12" fill="#f0f6fc" font-weight="600" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">ctxray test --backend replay --base origin/main</text>
+<text x="236" y="150" font-size="12" fill="#9198a1">L6–L7 from cassettes, and what the change did to the context</text>
+<path d="M622 135.0 L650 135.0" fill="none" stroke="#4493f8" stroke-width="1.6" marker-end="url(#m-blue)"/>
+<rect x="24" y="184" width="170" height="70" rx="8" fill="#211a33" stroke="#ab7df8" stroke-width="1" stroke-dasharray="5 4"/>
+<text x="40" y="214" font-size="13" fill="#f0f6fc" font-weight="600">Once, on your machine</text>
+<path d="M196 219.0 L216 219.0" fill="none" stroke="#ab7df8" stroke-width="1.6" marker-end="url(#m-purple)"/>
+<rect x="220" y="184" width="400" height="70" rx="8" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="236" y="212" font-size="12" fill="#f0f6fc" font-weight="600" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">ctxray test --backend real --record</text>
+<text x="236" y="234" font-size="12" fill="#9198a1">commit __cassettes__/ next to the tests</text>
+<rect x="24" y="268" width="170" height="70" rx="8" fill="#121d2f" stroke="#4493f8" stroke-width="1"/>
+<text x="40" y="298" font-size="13" fill="#f0f6fc" font-weight="600">Every week</text>
+<path d="M196 303.0 L216 303.0" fill="none" stroke="#4493f8" stroke-width="1.6" marker-end="url(#m-blue)"/>
+<rect x="220" y="268" width="400" height="70" rx="8" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<text x="236" y="296" font-size="12" fill="#f0f6fc" font-weight="600" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">ctxray test --layer L6 --backend real --budget 5</text>
+<text x="236" y="318" font-size="12" fill="#9198a1">a real model, a key from the secrets, a capped spend</text>
+<path d="M622 303.0 L650 303.0" fill="none" stroke="#4493f8" stroke-width="1.6" marker-end="url(#m-blue)"/>
+<path d="M620 204 h16 V154 h-14" fill="none" stroke="#ab7df8" stroke-width="1.6" marker-end="url(#m-purple)"/>
+<rect x="654" y="16" width="242" height="322" rx="8" fill="#12261e" stroke="#3fb950" stroke-width="1"/>
+<text x="670" y="44" font-size="14" fill="#f0f6fc" font-weight="600">Reports</text>
+<text x="670" y="72" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">.ctxray/report/</text>
+<text x="670" y="91" font-size="12" fill="#9198a1">console, JSON, JUnit, Markdown,</text>
+<text x="670" y="108" font-size="12" fill="#9198a1">HTML</text>
+<text x="670" y="133" font-size="12" fill="#9198a1">the job summary on GitHub</text>
+<text x="670" y="158" font-size="12" fill="#9198a1">exit code 1 fails the job</text>
+<text x="24" y="370" font-size="12" fill="#9198a1">ctxray.lock pins the harness builds, and the cache key follows it</text>
+</svg>

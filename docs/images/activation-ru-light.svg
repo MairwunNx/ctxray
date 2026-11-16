@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="320" viewBox="0 0 920 320" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" role="img">
+<title>Четыре вида активации</title>
+<desc>always загружается в каждой сессии своей зоны, path — когда агент работает с подходящими файлами, intent — когда модель выбирает по описанию, manual — только когда вы его назовёте. always и path решает харнесс, intent — модель, manual — вы.</desc>
+<rect x="24" y="16" width="209" height="208" rx="8" fill="#dafbe1" stroke="#1a7f37" stroke-width="1"/>
+<rect x="38" y="30" width="63" height="24" rx="6" fill="#1a7f37"/>
+<text x="69.5" y="46.68" font-size="13" fill="#ffffff" font-weight="600" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">always</text>
+<text x="38" y="80" font-size="14" fill="#1f2328" font-weight="600">В каждой сессии своей</text>
+<text x="38" y="99" font-size="14" fill="#1f2328" font-weight="600">зоны</text>
+<text x="38" y="130" font-size="12" fill="#59636e">CLAUDE.md и AGENTS.md на</text>
+<text x="38" y="146" font-size="12" fill="#59636e">пути к стартовой папке</text>
+<text x="38" y="174" font-size="12" fill="#59636e">alwaysApply: true в Cursor</text>
+<text x="38" y="202" font-size="12" fill="#59636e">.claude/rules без paths</text>
+<rect x="245" y="16" width="209" height="208" rx="8" fill="#ddf4ff" stroke="#0969da" stroke-width="1"/>
+<rect x="259" y="30" width="47" height="24" rx="6" fill="#0969da"/>
+<text x="282.5" y="46.68" font-size="13" fill="#ffffff" font-weight="600" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">path</text>
+<text x="259" y="80" font-size="14" fill="#1f2328" font-weight="600">Когда агент работает с</text>
+<text x="259" y="99" font-size="14" fill="#1f2328" font-weight="600">подходящими файлами</text>
+<text x="259" y="130" font-size="12" fill="#59636e">app/CLAUDE.md, когда агент</text>
+<text x="259" y="146" font-size="12" fill="#59636e">читает файл в app/</text>
+<text x="259" y="174" font-size="12" fill="#59636e">paths: или globs: в правиле</text>
+<rect x="466" y="16" width="209" height="208" rx="8" fill="#fbefff" stroke="#8250df" stroke-width="1"/>
+<rect x="480" y="30" width="63" height="24" rx="6" fill="#8250df"/>
+<text x="511.5" y="46.68" font-size="13" fill="#ffffff" font-weight="600" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">intent</text>
+<text x="480" y="80" font-size="14" fill="#1f2328" font-weight="600">Когда модель выбирает</text>
+<text x="480" y="99" font-size="14" fill="#1f2328" font-weight="600">его по описанию</text>
+<text x="480" y="130" font-size="12" fill="#59636e">любой скилл</text>
+<text x="480" y="158" font-size="12" fill="#59636e">правило Cursor только с</text>
+<text x="480" y="174" font-size="12" fill="#59636e">description</text>
+<rect x="687" y="16" width="209" height="208" rx="8" fill="#f6f8fa" stroke="#59636e" stroke-width="1"/>
+<rect x="701" y="30" width="63" height="24" rx="6" fill="#59636e"/>
+<text x="732.5" y="46.68" font-size="13" fill="#ffffff" font-weight="600" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">manual</text>
+<text x="701" y="80" font-size="14" fill="#1f2328" font-weight="600">Только когда вы его</text>
+<text x="701" y="99" font-size="14" fill="#1f2328" font-weight="600">назовёте</text>
+<text x="701" y="130" font-size="12" fill="#59636e">правило Cursor без</text>
+<text x="701" y="146" font-size="12" fill="#59636e">alwaysApply, globs и description</text>
+<path d="M30 240 v8 H448 v-8" fill="none" stroke="#1a7f37" stroke-width="2"/>
+<text x="239.0" y="274" font-size="14" fill="#1a7f37" font-weight="600" text-anchor="middle">Решает харнесс</text>
+<text x="239.0" y="294" font-size="12" fill="#59636e" text-anchor="middle">по вашим файлам, проверяют L3–L5</text>
+<path d="M472 240 v8 H669 v-8" fill="none" stroke="#8250df" stroke-width="2"/>
+<text x="570.5" y="274" font-size="14" fill="#8250df" font-weight="600" text-anchor="middle">Решает модель</text>
+<text x="570.5" y="294" font-size="12" fill="#59636e" text-anchor="middle">по описанию, проверяет L6</text>
+<path d="M693 240 v8 H890 v-8" fill="none" stroke="#59636e" stroke-width="2"/>
+<text x="791.5" y="274" font-size="14" fill="#59636e" font-weight="600" text-anchor="middle">Решаете вы</text>
+<text x="791.5" y="294" font-size="12" fill="#59636e" text-anchor="middle">называете его в промпте</text>
+</svg>
