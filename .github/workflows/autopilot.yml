@@ -41,7 +41,7 @@ jobs:
             1. Run /update-deps.
             2. If it pushed anything, start CI on the new head with `gh workflow run ci.yml --ref master` (a push made with this token starts no workflow by itself), watch it with `gh run watch`, and fix what it reports.
 
-            Don't release: ctxray has no release workflow yet. If nothing was behind, stop without a commit. Never print a secret. End with the report the skill describes.
+            Don't release: the owner starts the Release workflow by hand. If nothing was behind, stop without a commit. Never print a secret. End with the report the skill describes.
       - name: Report
         if: always() && steps.claude.outputs.execution_file != ''
         # Only Claude's final message, the skill's report: never the tool output, which may hold anything.
