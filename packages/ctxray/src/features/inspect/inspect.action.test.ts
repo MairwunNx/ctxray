@@ -84,6 +84,18 @@ describe("one harness", () => {
     expect(provenance["command:changelog"]?.source).toBe(".claude/commands/changelog.md");
   });
 
+  test("a server declared twice comes from the config nearest the start folder", async () => {
+    const capture = realpathSync(mkdtempSync(join(tmpdir(), "ctxray-inspect-")));
+    cpSync(join(import.meta.dir, "../../../fixtures/capture/payments"), capture, { recursive: true });
+    Bun.spawnSync(["git", "init", "-q"], { cwd: capture });
+    try {
+      const result = await inspect({ harnesses: ["gemini-cli"], cwd: "app" }, {}, capture);
+      expect(harness(result, "gemini-cli").provenance["mcp:github"]?.source).toBe("app/.gemini/settings.json");
+    } finally {
+      rmSync(capture, { recursive: true, force: true });
+    }
+  });
+
   test("problems come sorted by file and line", async () => {
     const paths = harness(await inspect({}), "claude-code").problems.map((problem) => problem.path);
     expect(paths).toEqual(paths.toSorted((a, b) => a.localeCompare(b)));
