@@ -24,7 +24,7 @@ const discovered = async (harness: HarnessId, files: Record<string, string>) => 
   if (!inventory) throw new Error(harness);
   return {
     skills: inventory.skills.filter((skill) => skill.listed).map((skill) => skill.path),
-    rules: inventory.instructions.map((rule) => `${rule.path} ${rule.globs?.join(",") ?? "always"}`),
+    rules: inventory.instructions.map((rule) => `${rule.path} ${rule.globs?.join(",") ?? rule.activation ?? "always"}`),
   };
 };
 
@@ -70,6 +70,11 @@ test.each<[HarnessId, Record<string, string>, string[]]>([
 test.each<[HarnessId, Record<string, string>, string[]]>([
   ["cursor-cli", { ".cursor/rules/web.MDC": "---\nalwaysApply: true\n---\nWeb.\n" }, [".cursor/rules/web.MDC always"]],
   ["cursor-cli", { ".cursor/rules/web.md": "---\nalwaysApply: true\n---\nWeb.\n" }, []],
+  [
+    "cursor-cli",
+    { ".cursor/rules/web.mdc": '---\nalwaysApply: "true"\n---\nWeb.\n' },
+    [".cursor/rules/web.mdc manual"],
+  ],
   // Claude Code takes a tab in a rule for indentation, and drops the frontmatter when that still fails.
   ["claude-code", { ".claude/rules/web.md": "---\npaths:\n\t- web/**\n---\nWeb.\n" }, [".claude/rules/web.md web/**"]],
   [

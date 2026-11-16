@@ -16,9 +16,11 @@ const MCP = /^(?:(.*)\/)?\.cursor\/mcp\.json$/;
 
 // Cursor picks a rule by a fixed order (ADR 0009): `alwaysApply` first, then `globs`, then a `description`
 // the model fetches it by, and a rule with none of them waits for the user to attach it. Only a real `true`
-// counts: `alwaysApply: yes` stays a string to Cursor.
-const ruleOf = (path: string, dir: string, text: string): Instruction => {
+// counts: `alwaysApply: yes`, `"true"`, and `True` stay strings to Cursor, which then ignores the field.
+const ruleOf = (path: string, dir: string, text: string, problems: Problem[]): Instruction => {
   const { data, body } = cursorFrontmatter(text);
+  const always = data["alwaysApply"];
+  if (typeof always === "string") problems.push(problem("lint.alwaysApplyText", "warning", path, { value: always }));
   const globs = listOf(data["globs"])?.filter((glob) => glob !== "");
   const description = textOf(data["description"]);
   const base = { path, dir, kind: "rule" as const, imports: [], text: body };
@@ -108,7 +110,7 @@ export const discoverCursor = async (project: Project, harness: "cursor-cli" | "
         const kind = kinds[match[2] as keyof typeof kinds];
         return { path, dir: match[1] ?? "", kind, imports: [], text };
       }),
-    ...rules.map(({ path, match, text }) => ruleOf(path, match[1] ?? "", text)),
+    ...rules.map(({ path, match, text }) => ruleOf(path, match[1] ?? "", text, problems)),
     // The legacy .cursorrules at the root always applies.
     ...(legacy === undefined
       ? []

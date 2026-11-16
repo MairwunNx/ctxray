@@ -15,7 +15,10 @@ const ROOT = [
 
 describe("Cursor on its fixture", () => {
   test("L1 findings", async () => {
-    expect(await findingsOf("cursor", "cursor-cli")).toEqual(["error lint.mcpTransport .cursor/mcp.json"]);
+    expect(await findingsOf("cursor", "cursor-cli")).toEqual([
+      "error lint.mcpTransport .cursor/mcp.json",
+      "warning lint.alwaysApplyText .cursor/rules/yes.mdc",
+    ]);
   });
 
   test("the four kinds of rule by their frontmatter, `alwaysApply: yes` not counting as true", async () => {

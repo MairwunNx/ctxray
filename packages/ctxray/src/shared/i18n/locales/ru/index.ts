@@ -182,6 +182,8 @@ export const ru: Catalog = {
     "Файл начинается с метки порядка байтов (BOM), и {harness} пропускает скилл. Сохраните его в UTF-8 без BOM",
   "lint.frontmatterTab":
     "Frontmatter отбит табуляцией, а YAML её запрещает. Харнессы читают такой файл по-разному: Claude Code и Codex пропускают такой скилл, остальные берут. Сделайте отступы пробелами",
+  "lint.alwaysApplyText":
+    "Cursor понимает alwaysApply только как true или false без кавычек, поэтому „{value}“ ничего не делает, и правило само не применяется",
   "lint.misnamed": "{harness} не читает этот файл. Вы, видимо, имели в виду „{expected}“?",
   "lint.letterCase":
     "Вы, видимо, имели в виду „{expected}“? {harness} ищет это имя: на macOS и Windows файл может под него подойти, в Linux и CI — нет",

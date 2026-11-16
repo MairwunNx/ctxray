@@ -18,6 +18,7 @@ const RULES: Partial<Record<MessageKey, LintRule>> = {
   "lint.frontmatter": "frontmatter",
   "lint.looseFrontmatter": "loose-frontmatter",
   "lint.ruleField": "rule-field",
+  "lint.alwaysApplyText": "rule-field",
   "lint.tooLarge": "too-large",
   "lint.importMissing": "import-missing",
   "lint.importDepth": "import-depth",

@@ -157,6 +157,8 @@ export const en = {
     "The file starts with a byte order mark, so {harness} skips the skill. Save it as UTF-8 without BOM",
   "lint.frontmatterTab":
     "A tab indents the frontmatter, which YAML forbids. The harnesses read it differently: Claude Code and Codex skip such a skill, the others take it. Indent with spaces",
+  "lint.alwaysApplyText":
+    "Cursor reads alwaysApply only as true or false without quotes, so “{value}” does nothing and the rule never applies on its own",
   "lint.misnamed": "{harness} never reads this file. Did you mean “{expected}”?",
   "lint.letterCase":
     "Did you mean “{expected}”? {harness} looks for that name: macOS and Windows may take this file for it, Linux and CI won't",
