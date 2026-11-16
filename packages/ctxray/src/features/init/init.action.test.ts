@@ -27,14 +27,11 @@ test("creates the config and the example test", async () => {
   expect(await read(cwd, CONFIG_PATH)).toContain("defineConfig");
 });
 
-test.each([
-  [{}, "AGENTS.md"],
-  [{ "CLAUDE.md": "" }, "CLAUDE.md"],
-  [{ "CLAUDE.md": "", "AGENTS.md": "" }, "AGENTS.md"],
-])("with %p the example checks %s", async (files, rulesFile) => {
-  const cwd = await project(files);
+// Claude Code reads CLAUDE.md and Codex reads AGENTS.md: the example expects each harness's own file.
+test.each(['"claude-code": "CLAUDE.md"', 'codex: "AGENTS.md"'])("the example expects %s", async (pair) => {
+  const cwd = await project({});
   await createInitAction(cwd)({ force: false });
-  expect(await read(cwd, TEST_PATH)).toContain(`toInclude("${rulesFile}")`);
+  expect(await read(cwd, TEST_PATH)).toContain(pair);
 });
 
 describe("existing files", () => {

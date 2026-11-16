@@ -1,5 +1,5 @@
 import { join } from "node:path";
-import { CONFIG_PATH, CONFIG_TEMPLATE, TEST_PATH, testTemplate } from "./templates.ts";
+import { CONFIG_PATH, CONFIG_TEMPLATE, TEST_PATH, TEST_TEMPLATE } from "./templates.ts";
 
 export type InitOutcome = "created" | "overwritten" | "exists" | "ignoreAdded" | "ignorePresent";
 export type InitStep = { readonly path: string; readonly outcome: InitOutcome };
@@ -8,12 +8,6 @@ export type InitAction = (options: { force: boolean }) => Promise<readonly InitS
 const IGNORED = ".ctxray/";
 
 const exists = (path: string) => Bun.file(path).exists();
-
-// Prefers AGENTS.md, the file most harnesses read, unless the project only has CLAUDE.md.
-const rootRulesFile = async (cwd: string) => {
-  const [claude, agents] = await Promise.all([exists(join(cwd, "CLAUDE.md")), exists(join(cwd, "AGENTS.md"))]);
-  return claude && !agents ? "CLAUDE.md" : "AGENTS.md";
-};
 
 const writeFile = async (cwd: string, path: string, content: string, force: boolean): Promise<InitStep> => {
   const target = join(cwd, path);
@@ -43,7 +37,7 @@ export const createInitAction =
   async ({ force }) => {
     const [config, test, ignore] = await Promise.all([
       writeFile(cwd, CONFIG_PATH, CONFIG_TEMPLATE, force),
-      rootRulesFile(cwd).then((rules) => writeFile(cwd, TEST_PATH, testTemplate(rules), force)),
+      writeFile(cwd, TEST_PATH, TEST_TEMPLATE, force),
       ignoreTraces(cwd),
     ]);
     return [config, test, ...ignore];
