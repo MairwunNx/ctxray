@@ -1,6 +1,6 @@
 import type { HarnessId } from "#shared/contract/index.ts";
 import type { Instruction, Inventory } from "../inventory.ts";
-import { chainTo, isInside, matchingGlob, parentDirs } from "../project.ts";
+import { anchored, chainTo, isInside, isWithin, matchingGlob, parentDirs } from "../project.ts";
 import {
   createRules,
   listingLine,
@@ -25,7 +25,9 @@ export const resolveCursor =
     const { rules, add } = createRules(counter);
     const at = (dir: string) => inventory.instructions.filter((file) => file.dir === dir);
     for (const dir of chain) for (const file of at(dir).filter(always)) add(file.path, "always", "cwd", file.text);
-    for (const file of inventory.instructions.filter((one) => one.activation === "intent" && chain.includes(one.dir))) {
+    // The model can fetch a described rule from anywhere in the workspace, not only from the folders on the way.
+    const fetchable = (dir: string) => chain.includes(dir) || isWithin(dir, cwd);
+    for (const file of inventory.instructions.filter((one) => one.activation === "intent" && fetchable(one.dir))) {
       add(file.path, "intent", "description", file.description ?? "");
     }
     const below = new Set<string>();
@@ -37,9 +39,9 @@ export const resolveCursor =
     }
     const reachable = new Set([...chain, ...below]);
     for (const rule of inventory.instructions.filter((one) => one.activation === "path" && reachable.has(one.dir))) {
-      const hit = files
-        .map((file) => matchingGlob(rule.globs ?? [], rule.dir, file))
-        .find((glob) => glob !== undefined);
+      const hit = (rule.globs ?? []).find((glob) =>
+        files.some((file) => matchingGlob([anchored(glob)], rule.dir, file) !== undefined),
+      );
       if (hit !== undefined) add(rule.path, "path", `glob:${hit}`, rule.text);
     }
     // Skills of the cwd show at launch, the ones of a folder below it once the agent reads a file there.

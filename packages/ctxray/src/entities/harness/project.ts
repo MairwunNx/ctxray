@@ -128,6 +128,10 @@ export const isWithin = (dir: string, ancestor: string): boolean => dir === ance
 // The root, the cwd, and every directory between them, from the top down.
 export const chainTo = (cwd: string): string[] => (cwd === "" ? [""] : parentDirs(`${cwd}/.`));
 
+// Cursor matches a rule's glob against the path from the rule's folder: `docker-compose*.yml` takes the one
+// beside the rules, not one a folder deeper, as a .gitignore pattern would.
+export const anchored = (glob: string) => (glob.includes("/") ? glob : `/${glob}`);
+
 // The first pattern of `globs` that matches the file, relative to `dir`.
 export const matchingGlob = (globs: readonly string[], dir: string, file: string): string | undefined => {
   if (!isInside(file, dir)) return undefined;

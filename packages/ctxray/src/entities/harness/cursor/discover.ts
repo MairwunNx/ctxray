@@ -1,3 +1,5 @@
+import { realpath } from "node:fs/promises";
+import { join } from "node:path";
 import { firstLine, listOf, splitFrontmatter, textOf } from "#shared/markdown/index.ts";
 import type { Command, Instruction, Inventory, McpDeclaration, Problem, Skill } from "../inventory.ts";
 import { problem } from "../inventory.ts";
@@ -63,6 +65,21 @@ const findCommands = async (project: Project): Promise<Command[]> =>
     return { name: match[2] ?? "", path, dir: match[1] ?? "", description, body };
   });
 
+// A CLAUDE.md that is the same file as the AGENTS.md beside it, through a symlink either way, loads once, as
+// AGENTS.md. Two files with the same text both load: Cursor goes by the file, not by what it says.
+const sameFiles = async (project: Project, paths: readonly string[]) => {
+  const real = (path: string) => realpath(join(project.root, path)).catch(() => path);
+  const twins = await Promise.all(
+    paths
+      .filter((path) => /(^|\/)CLAUDE\.md$/.test(path))
+      .map(async (path) => {
+        const agents = path.replace(/CLAUDE\.md$/, "AGENTS.md");
+        return paths.includes(agents) && (await real(path)) === (await real(agents)) ? path : undefined;
+      }),
+  );
+  return new Set(twins.filter((path) => path !== undefined));
+};
+
 // Cursor CLI and the Cursor editor share one rules system: one discovery serves both (ADR 0010).
 export const discoverCursor = async (project: Project, harness: "cursor-cli" | "cursor-ide"): Promise<Inventory> => {
   const problems: Problem[] = [];
@@ -77,11 +94,17 @@ export const discoverCursor = async (project: Project, harness: "cursor-cli" | "
     findMcp(project, mcpProblems),
   ]);
   const kinds = { "AGENTS.md": "agents", "CLAUDE.md": "memory", "CLAUDE.local.md": "local" } as const;
+  const twins = await sameFiles(
+    project,
+    contexts.map((context) => context.path),
+  );
   const instructions: Instruction[] = [
-    ...contexts.map(({ path, match, text }): Instruction => {
-      const kind = kinds[match[2] as keyof typeof kinds];
-      return { path, dir: match[1] ?? "", kind, imports: [], text };
-    }),
+    ...contexts
+      .filter(({ path }) => !twins.has(path))
+      .map(({ path, match, text }): Instruction => {
+        const kind = kinds[match[2] as keyof typeof kinds];
+        return { path, dir: match[1] ?? "", kind, imports: [], text };
+      }),
     ...rules.map(({ path, match, text }) => ruleOf(path, match[1] ?? "", text)),
     // The legacy .cursorrules at the root always applies.
     ...(legacy === undefined
