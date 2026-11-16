@@ -26,8 +26,8 @@ const run = (skills: string[], rules: string[] = [], error?: Run["error"]): Run 
 const times = (count: number, make: () => Run) => Array.from({ length: count }, make);
 const BROKEN = { kind: "error" as const, message: "crashed", where: undefined };
 
-const outcome = async (check: () => void): Promise<(string | string[])[]> => {
-  const scope = await scopeIn("claude-code");
+const outcome = async (check: () => void, activate?: { min: number; max: number }) => {
+  const scope = { ...(await scopeIn("claude-code")), ...(activate && { activate }) };
   try {
     inCell(scope, check);
     settle(scope);
@@ -54,7 +54,7 @@ describe("toActivate", () => {
       ["failed", "activate.failed"],
     ],
     [
-      "10 of 10 can't settle min 0.9 yet",
+      "10 of 10 can't settle the default min 0.8 yet",
       times(10, () => run(["refunds"])),
       (runs) => expect(runs).skill("refunds").toActivate(),
       ["inconclusive", "activate.inconclusive"],
@@ -92,6 +92,20 @@ describe("toActivate", () => {
     ["only runs", [], () => expect({}).skill("refunds").toActivate(), ["failed", "activate.notRuns"]],
   ])("%s", async (_, runs, check, expected) => {
     bunExpect(await outcome(() => check(runsOf(runs, [], [])))).toEqual(expected);
+  });
+
+  // 16 runs prove the default 0.8, as many as an L6 test makes by default. The config's thresholds win.
+  test.each<[string, { min: number; max: number } | undefined, string]>([
+    ["the defaults", undefined, "passed"],
+    ["the config's min 0.9", { min: 0.9, max: 0.1 }, "inconclusive"],
+  ])("16 of 16 with %s", async (_, activate, verdict) => {
+    const runs = runsOf(
+      times(16, () => run(["refunds"])),
+      [],
+      [],
+    );
+    const [result] = await outcome(() => expect(runs).skill("refunds").toActivate(), activate);
+    bunExpect(result).toBe(verdict);
   });
 
   test("every run broken fails with the first one's failure", () => {

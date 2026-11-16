@@ -1,4 +1,5 @@
 import pMap from "p-map";
+import type { Config } from "#entities/user-config/index.ts";
 import { judge } from "#shared/stats/index.ts";
 import { type Failure, toFailure } from "./attempt.ts";
 import { runSample } from "./autonomous.ts";
@@ -9,9 +10,16 @@ import type { TestDefinition } from "./model.ts";
 import { type Run, runsOf } from "./runs.ts";
 import type { CellScope } from "./scope.ts";
 
-export type EvalContext = { capture: Capture; backend: Backend; concurrency: number };
+export type EvalContext = {
+  capture: Capture;
+  backend: Backend;
+  concurrency: number;
+  activate: Config["activate"]; // the config's L6 defaults
+};
 
-export const DEFAULT_SAMPLES = { activate: 5, scenario: 1 } as const;
+// A scenario runs once a prompt. L6 gives each group of prompts, the positive and the negative ones, the
+// config's `activate.runs`, split between the group's prompts: each group's rate gets enough runs to be proved.
+const SCENARIO_SAMPLES = 1;
 // A skill loads one turn after the model asks for it, a rule after a read: two turns tell. A scenario needs room.
 export const DEFAULT_TURNS = { activate: 2, scenario: 30 } as const;
 export const SAMPLE_TIMEOUT = 300_000;
@@ -33,8 +41,14 @@ export const collectRuns = async (definition: TestDefinition, key: string, scope
   const kind = definition.kind === "scenario" ? "scenario" : "activate";
   const prompts = promptsOf(definition);
   if (prompts.length === 0) fail("activate.noPrompts");
-  const samples = definition.options.samples ?? DEFAULT_SAMPLES[kind];
-  const jobs = prompts.flatMap((prompt) => Array.from({ length: samples }, (_, at) => ({ prompt, sample: at + 1 })));
+  const samplesOf = (prompt: Prompt) =>
+    definition.options.samples ??
+    (kind === "scenario"
+      ? SCENARIO_SAMPLES
+      : Math.ceil(context.activate.runs / prompts.filter((one) => one.group === prompt.group).length));
+  const jobs = prompts.flatMap((prompt) =>
+    Array.from({ length: samplesOf(prompt) }, (_, at) => ({ prompt, sample: at + 1 })),
+  );
   const runs = await pMap(
     jobs,
     async ({ prompt, sample }) => {

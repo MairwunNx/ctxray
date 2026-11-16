@@ -94,6 +94,7 @@ export const createTestRunAction =
         : {
             capture,
             concurrency: 4,
+            activate: config.activate,
             backend: createBackend({
               kind,
               record: kind === "real" && request.record === true,

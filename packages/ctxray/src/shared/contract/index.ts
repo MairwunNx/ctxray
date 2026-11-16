@@ -1,5 +1,6 @@
 export { Activation } from "./activation.ts";
 export {
+  ActivateDefaults,
   Backend,
   Budget,
   HarnessSettings,

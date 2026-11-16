@@ -108,6 +108,7 @@ export const runDefinition = async (
       stats: [],
       sessions: [],
       seen: context.seen(harness),
+      ...(context.evals && { activate: context.evals.activate }),
     });
     return { scopeOf, cells: cellsOf(definition, scopeOf(definition.key)) };
   };

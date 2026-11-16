@@ -1,11 +1,9 @@
+import { DEFAULT_CONFIG } from "#entities/user-config/index.ts";
 import { judge, type Threshold } from "#shared/stats/index.ts";
 import { CheckFailure, fail, show } from "./failure.ts";
 import { isRuleSet, type RuleSet, selectRules } from "./rules.ts";
 import { isRunList, type Run } from "./runs.ts";
 import { currentCell } from "./scope.ts";
-
-const DEFAULT_MIN = 0.9;
-const DEFAULT_MAX = 0.1;
 
 const fixed = (value: number) => value.toFixed(2);
 const thresholdText = (threshold: Threshold) => ("min" in threshold ? `min ${threshold.min}` : `max ${threshold.max}`);
@@ -14,7 +12,8 @@ const thresholdText = (threshold: Threshold) => ("min" in threshold ? `min ${thr
 // inconclusive rate waits for the test to end, so one unsettled check doesn't hide a failed one.
 const activation = (runs: readonly Run[], subject: string, loaded: (run: Run) => boolean) => {
   const toActivate = (negated: boolean) => (threshold?: Threshold) => {
-    const settled = threshold ?? (negated ? { max: DEFAULT_MAX } : { min: DEFAULT_MIN });
+    const { min, max } = currentCell().activate ?? DEFAULT_CONFIG.activate;
+    const settled = threshold ?? (negated ? { max } : { min });
     const counted = runs.filter((run) => run.error === undefined);
     const judged = judge(counted.filter(loaded).length, counted.length, settled);
     const named = negated ? `not ${subject}` : subject;

@@ -25,7 +25,7 @@ suite("payments", { fixture: "../payments" }, () => {
     "refund prompt → refunds skill",
     { prompt: "Make a partial refund for order 123", samples: 20, requires: ["skills"] },
     ({ runs }) => {
-      expect(runs).skill("refunds").toActivate({ min: 0.9 });
+      expect(runs).skill("refunds").toActivate({ min: 0.8 });
     },
   );
 });

@@ -35,6 +35,7 @@ export type CellScope = {
   stats: Stat[]; // filled by the checks of L6 and L7
   sessions: SessionRecord[]; // filled as sessions end
   seen: Set<string>; // rules and skills a test looked at, by path, for the coverage of the report
+  activate?: { min: number; max: number }; // the config's thresholds for toActivate(), with a model backend
 };
 
 // `expect.on()` and `discover` sets are module functions, so they find their harness here.

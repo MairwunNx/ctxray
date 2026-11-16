@@ -26,11 +26,12 @@ suite("payments rules", { fixture: "../payments" }, () => {
 
   test.activate(
     "payments intents activate payments skills",
-    { positive: prompts.positive, negative: prompts.negative, samples: 5 },
+    // Without `samples`, the positive prompts share 16 runs: the fewest that can prove the default 0.8.
+    { positive: prompts.positive, negative: prompts.negative },
     ({ runs }) => {
       expect(runs.positive)
         .anyOf(payments.where({ activation: "intent" }))
-        .toActivate({ min: 0.9 });
+        .toActivate();
     },
   );
 });

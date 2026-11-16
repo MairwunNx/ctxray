@@ -103,6 +103,23 @@ export const Budget = z
   .describe("Limits of a run with the real backend");
 export type Budget = z.output<typeof Budget>;
 
+const share = z.number().min(0).max(1);
+export const ActivateDefaults = z
+  .strictObject({
+    min: share.optional().describe("Share of runs a skill or rule must load in for toActivate(): 0.8 by default"),
+    max: share.optional().describe("Share of runs it may load in at most for .not.toActivate(): 0.2 by default"),
+    runs: z
+      .number()
+      .int()
+      .positive()
+      .optional()
+      .describe(
+        "Runs of an L6 test without `samples`, split between its prompts. By default the fewest that can prove the thresholds",
+      ),
+  })
+  .describe("Defaults of L6 Activate: its thresholds, and how many runs a test makes");
+export type ActivateDefaults = z.output<typeof ActivateDefaults>;
+
 export const Reporter = z.enum(["console", "html", "junit", "allure", "json", "markdown"]);
 
 // What a config file holds. Every field is optional: `extends` fills the gaps, and defaults fill the rest.
@@ -125,6 +142,7 @@ export const UserConfig = z
       .describe("Forbid every network request: no installs, no real runs. CTXRAY_OFFLINE=1 sets it too"),
     network: Network.optional(),
     budget: Budget.optional(),
+    activate: ActivateDefaults.optional(),
     exactTokens: z
       .boolean()
       .optional()

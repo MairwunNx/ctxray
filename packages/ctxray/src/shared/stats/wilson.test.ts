@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { judge, type Threshold, type Verdict, wilson } from "./wilson.ts";
+import { fewestToProve, judge, type Threshold, type Verdict, wilson } from "./wilson.ts";
 
 const round = (value: number) => Math.round(value * 1000) / 1000;
 
@@ -44,4 +44,17 @@ describe("judge", () => {
     expect(wilson(0.95 * needed, needed).low).toBeGreaterThanOrEqual(0.8);
     expect(wilson(0.95 * (needed - 1), needed - 1).low).toBeLessThan(0.8);
   });
+});
+
+// A perfect run passes from this many samples on, and one fewer leaves it inconclusive.
+test.each<[Threshold, number]>([
+  [{ min: 0.9 }, 35],
+  [{ min: 0.8 }, 16],
+  [{ max: 0.2 }, 16],
+  [{ max: 0.1 }, 35],
+])("%p needs %i samples to be proved", (threshold, samples) => {
+  expect(fewestToProve(threshold)).toBe(samples);
+  const perfect = (count: number) => ("min" in threshold ? count : 0);
+  expect(judge(perfect(samples), samples, threshold).verdict).toBe("passed");
+  expect(judge(perfect(samples - 1), samples - 1, threshold).verdict).toBe("inconclusive");
 });

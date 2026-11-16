@@ -55,3 +55,13 @@ export const judge = (successes: number, samples: number, threshold: Threshold):
   const needed = neededFor(interval.rate, samples, threshold);
   return { ...base, verdict: "inconclusive", ...(needed !== undefined && { needed }) };
 };
+
+// The fewest samples that can pass the threshold at all: every one a success for `min`, none for `max`. Fewer
+// leave even a perfect run inconclusive, so L6 makes at least this many by default.
+export const fewestToProve = (threshold: Threshold): number => {
+  for (let samples = 1; samples <= LIMIT; samples++) {
+    const perfect = "min" in threshold ? samples : 0;
+    if (holds(wilson(perfect, samples), threshold)) return samples;
+  }
+  return LIMIT;
+};
