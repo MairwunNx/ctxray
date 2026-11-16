@@ -168,6 +168,9 @@ export const en = {
   "lint.uncommittedFile": "{harness} reads this file here, but it isn't committed yet: the team and CI don't have it",
   "lint.brokenSymlink": "The link points to {target}, which doesn't exist, so {harness} reads nothing here",
   "lint.outsideLink": "The link leads outside the repository, to {target}: the team and CI don't have it",
+  "lint.secret":
+    "A secret sits on this line ({kind}): everyone with the repository and every model that reads the file sees it. Move it to an environment variable",
+  "lint.personalData": "Personal data sits on this line ({kind}), and every model that reads the file sees it",
   "lint.misnamed": "{harness} never reads this file. Did you mean “{expected}”?",
   "lint.letterCase":
     "Did you mean “{expected}”? {harness} looks for that name: macOS and Windows may take this file for it, Linux and CI won't",

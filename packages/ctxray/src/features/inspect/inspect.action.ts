@@ -92,6 +92,7 @@ export const createInspectAction =
         inspectOne(project, adapter, inventories[index] as Inventory, scope, unread[id] ?? [], {
           lint: config.lint,
           limits: config.limitsInput,
+          redact: config.redact.patterns,
         }),
       ),
     );

@@ -21,6 +21,7 @@ export const createBaselineAction =
       policies: config.policies,
       lint: config.lint,
       limits: config.limitsInput,
+      redact: config.redact.patterns,
       differences: !config.ignoreHarnessDifferences,
     });
     const count = await writeBaseline(root, results);

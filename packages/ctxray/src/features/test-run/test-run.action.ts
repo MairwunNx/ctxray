@@ -114,6 +114,7 @@ export const createTestRunAction =
       policies: config.policies,
       lint: errorOnWarnings ? { ...config.lint, errorOnWarnings } : config.lint,
       limits: config.limitsInput,
+      redact: config.redact.patterns,
       differences,
     });
     const known = await loadBaseline(root);

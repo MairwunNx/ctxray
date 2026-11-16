@@ -32,6 +32,8 @@ export const LINT_RULES = [
   "byte-order-mark",
   "not-shared",
   "broken-symlink",
+  "secret",
+  "personal-data",
   "dead-rule",
   "size",
   "unread",

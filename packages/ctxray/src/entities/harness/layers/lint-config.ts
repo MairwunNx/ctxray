@@ -51,6 +51,8 @@ const RULES: Partial<Record<MessageKey, LintRule>> = {
   "lint.ignoredFolder": "not-shared",
   "lint.outsideLink": "not-shared",
   "lint.brokenSymlink": "broken-symlink",
+  "lint.secret": "secret",
+  "lint.personalData": "personal-data",
   "resolve.deadRule": "dead-rule",
   "resolve.deadPattern": "dead-rule",
   "size.lines": "size",

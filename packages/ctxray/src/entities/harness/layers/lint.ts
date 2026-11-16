@@ -5,10 +5,12 @@ import { type GlobProblem, globProblem } from "#shared/glob/index.ts";
 import type { MessageKey } from "#shared/i18n/index.ts";
 import { inParallel } from "#shared/infra/index.ts";
 import { findLinks } from "#shared/markdown/index.ts";
+import { createRedactor, type Redactor } from "#shared/redact/index.ts";
 import { countTokens } from "#shared/tokens/index.ts";
 import { type Inventory, type Problem, problem } from "../inventory.ts";
 import { dirOf, joinPath, type Project } from "../project.ts";
 import { absolutePaths } from "./portable.ts";
+import { secretsIn } from "./secrets.ts";
 
 // The Agent Skills format: lowercase letters, digits, and single hyphens, up to 64 characters.
 const PORTABLE_NAME = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -119,6 +121,7 @@ export const lint = async (
   project: Project,
   inventory: Inventory,
   limitsOf: LimitsOf = () => DEFAULT_LIMITS,
+  redactor: Redactor = createRedactor(),
 ): Promise<Problem[]> => [
   ...inventory.problems,
   ...badGlobs(inventory),
@@ -127,4 +130,5 @@ export const lint = async (
   ...oversized(inventory, limitsOf),
   ...(await brokenLinks(project, inventory)),
   ...(await absolutePaths(project, inventory)),
+  ...(await secretsIn(project, inventory, redactor)),
 ];
