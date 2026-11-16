@@ -8,7 +8,7 @@
   <img alt="TypeScript 7" src="https://img.shields.io/badge/TypeScript-7-3178C6?logo=typescript&logoColor=white">
   <img alt="Languages: English, Russian" src="https://img.shields.io/badge/languages-en%20%7C%20ru-blue">
   <img alt="Telemetry: none" src="https://img.shields.io/badge/telemetry-none-brightgreen">
-  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/MairwunNx/ctxray"></a>
+  <a href="https://github.com/MairwunNx/ctxray/blob/master/LICENSE"><img alt="License" src="https://img.shields.io/github/license/MairwunNx/ctxray"></a>
   <br>
   <img alt="Claude Code" src="https://img.shields.io/badge/Claude%20Code-D97757?logo=claude&logoColor=white">
   <img alt="Codex" src="https://img.shields.io/badge/Codex-412991">
@@ -21,29 +21,10 @@
 
 [Русская версия](https://github.com/MairwunNx/ctxray/blob/master/README.RU.md)
 
-<!-- Demo: a recording of `ctxray inspect` goes here, docs/images/inspect.gif -->
-
-```text
-$ ctxray inspect --harness claude-code --files app/src/main/kotlin/payments/Charge.kt
-
- Claude Code                                       ≈ 286
-   Rules                                           ≈ 219
-     CLAUDE.md                                      ≈ 63  always · cwd
-     AGENTS.md                                      ≈ 23  always · import:CLAUDE.md
-     app/src/main/kotlin/payments/CLAUDE.md         ≈ 36  path · nested:app/src/main/kotlin/payments/Charge.kt
-     .claude/rules/payments.md                      ≈ 15  path · glob:**/payments/**/*.kt
-     …
-   Skills                                           ≈ 48
-     refunds                                        ≈ 19  .claude/skills/refunds/SKILL.md
-     …
-   MCP servers                               after a run
-     github                                               .mcp.json
-
-   ⚠ .claude/rules/web.md  No file in the repository matches frontend/**/*.tsx, so the rule never loads  dead-rule
-```
+<p align="center"><img alt="ctxray inspect shows what Claude Code loads for a payments file, then ctxray test catches that Codex never reads the nested AGENTS.md" src="https://raw.githubusercontent.com/MairwunNx/ctxray/master/docs/images/inspect.gif" width="900"></p>
 
 > [!NOTE]
-> Until 1.0, a minor version may change the config and the test API. [CHANGELOG.md](CHANGELOG.md) names every such change.
+> Until 1.0, a minor version may change the config and the test API. [CHANGELOG.md](https://github.com/MairwunNx/ctxray/blob/master/CHANGELOG.md) names every such change.
 
 ## What you get
 
@@ -80,8 +61,8 @@ ctxray reads each agent's files without launching it. Where the agent allows it,
 ctxray checks your agent setup in seven layers, from cheap to expensive. The first three only read files and run on every commit in milliseconds. L4 and L5 launch the agent against a mock model, so they cost nothing either. Only L6 and L7 ask a real model, or replay its answers you recorded once.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/loadout-stack-dark.svg">
-  <img alt="The Loadout Stack: L1 Lint, L2 Policy, and L3 Resolve read files. L4 Assemble and L5 Wire launch the agent with a mock model. L6 Activate and L7 Scenario ask a model." src="docs/images/loadout-stack-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/MairwunNx/ctxray/master/docs/images/loadout-stack-dark.svg">
+  <img alt="The Loadout Stack: L1 Lint, L2 Policy, and L3 Resolve read files. L4 Assemble and L5 Wire launch the agent with a mock model. L6 Activate and L7 Scenario ask a model." src="https://raw.githubusercontent.com/MairwunNx/ctxray/master/docs/images/loadout-stack-light.svg">
 </picture>
 
 The [Loadout Stack](https://github.com/MairwunNx/ctxray/wiki/The-Loadout-Stack) page explains each layer with examples.

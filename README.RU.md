@@ -8,7 +8,7 @@
   <img alt="TypeScript 7" src="https://img.shields.io/badge/TypeScript-7-3178C6?logo=typescript&logoColor=white">
   <img alt="Языки: английский, русский" src="https://img.shields.io/badge/languages-en%20%7C%20ru-blue">
   <img alt="Телеметрии нет" src="https://img.shields.io/badge/telemetry-none-brightgreen">
-  <a href="LICENSE"><img alt="Лицензия" src="https://img.shields.io/github/license/MairwunNx/ctxray"></a>
+  <a href="https://github.com/MairwunNx/ctxray/blob/master/LICENSE"><img alt="Лицензия" src="https://img.shields.io/github/license/MairwunNx/ctxray"></a>
   <br>
   <img alt="Claude Code" src="https://img.shields.io/badge/Claude%20Code-D97757?logo=claude&logoColor=white">
   <img alt="Codex" src="https://img.shields.io/badge/Codex-412991">
@@ -21,29 +21,10 @@
 
 [English version](https://github.com/MairwunNx/ctxray/blob/master/README.md)
 
-<!-- Демо: запись `ctxray inspect`, docs/images/inspect.gif -->
-
-```text
-$ ctxray inspect --harness claude-code --files app/src/main/kotlin/payments/Charge.kt
-
- Claude Code                                          ≈ 286
-   Правила                                            ≈ 219
-     CLAUDE.md                                         ≈ 63  always · cwd
-     AGENTS.md                                         ≈ 23  always · import:CLAUDE.md
-     app/src/main/kotlin/payments/CLAUDE.md            ≈ 36  path · nested:app/src/main/kotlin/payments/Charge.kt
-     .claude/rules/payments.md                         ≈ 15  path · glob:**/payments/**/*.kt
-     …
-   Скиллы                                              ≈ 48
-     refunds                                           ≈ 19  .claude/skills/refunds/SKILL.md
-     …
-   MCP-серверы                                после запуска
-     github                                                  .mcp.json
-
-   ⚠ .claude/rules/web.md  Ни один файл репозитория не подходит под frontend/**/*.tsx, правило никогда не загрузится  dead-rule
-```
+<p align="center"><img alt="ctxray inspect показывает, что Claude Code загружает для файла платежей, а ctxray test ловит, что Codex не читает вложенный AGENTS.md" src="https://raw.githubusercontent.com/MairwunNx/ctxray/master/docs/images/inspect.gif" width="900"></p>
 
 > [!NOTE]
-> До версии 1.0 минорная версия может поменять конфиг и API тестов. Каждое такое изменение описано в [CHANGELOG.md](CHANGELOG.md).
+> До версии 1.0 минорная версия может поменять конфиг и API тестов. Каждое такое изменение описано в [CHANGELOG.md](https://github.com/MairwunNx/ctxray/blob/master/CHANGELOG.md).
 
 ## Что вы получаете
 
@@ -80,8 +61,8 @@ ctxray читает файлы ИИ-харнесса, не запуская ег
 ctxray проверяет настройку агента в семь слоёв, от дешёвых к дорогим. Первые три только читают файлы и проходят на каждом коммите за миллисекунды. L4 и L5 запускают ИИ-харнесс с mock-моделью, поэтому тоже ничего не стоят. Только L6 и L7 обращаются к настоящей модели или воспроизводят её ответы, записанные один раз.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/loadout-stack-ru-dark.svg">
-  <img alt="The Loadout Stack: L1 Lint, L2 Policy и L3 Resolve читают файлы. L4 Assemble и L5 Wire запускают ИИ-харнесс с mock-моделью. L6 Activate и L7 Scenario спрашивают модель." src="docs/images/loadout-stack-ru-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/MairwunNx/ctxray/master/docs/images/loadout-stack-ru-dark.svg">
+  <img alt="The Loadout Stack: L1 Lint, L2 Policy и L3 Resolve читают файлы. L4 Assemble и L5 Wire запускают ИИ-харнесс с mock-моделью. L6 Activate и L7 Scenario спрашивают модель." src="https://raw.githubusercontent.com/MairwunNx/ctxray/master/docs/images/loadout-stack-ru-light.svg">
 </picture>
 
 Страница [Loadout Stack](https://github.com/MairwunNx/ctxray/wiki/The-Loadout-Stack-RU) разбирает каждый слой на примерах.
