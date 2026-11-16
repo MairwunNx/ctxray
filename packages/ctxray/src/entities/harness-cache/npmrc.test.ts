@@ -100,6 +100,7 @@ test.each<[string, Record<string, string>, string]>([
   ["linux", { XDG_CACHE_HOME: "/xdg" }, "/xdg/ctxray"],
   ["win32", { LOCALAPPDATA: "C:/Users/u/AppData/Local" }, "C:/Users/u/AppData/Local/ctxray/Cache"],
   ["linux", { CTXRAY_CACHE_DIR: "/ci/.ctxray-cache" }, "/ci/.ctxray-cache"],
+  ["linux", { CTXRAY_CACHE_DIR: ".ctxray-cache" }, `${process.cwd()}/.ctxray-cache`.replaceAll("\\", "/")],
 ])("the cache on %s with %p", (os, env, expected) => {
   expect(defaultCacheDir(env, os, "/home/u").replaceAll("\\", "/")).toBe(expected);
 });
