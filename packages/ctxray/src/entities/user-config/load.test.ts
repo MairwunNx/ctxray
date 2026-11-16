@@ -47,6 +47,22 @@ describe("createConfigLoader", () => {
     expect(result).toMatchObject({ ok: true, config: { files: ["ctxray.config.ts"], harnesses: { codex: {} } } });
   });
 
+  test("from a subfolder, the project's config applies", async () => {
+    const root = project({ "ctxray.config.ts": `export default { harnesses: { codex: {} } };`, "tests/a.ctxray.ts": "" });
+    expect(await createConfigLoader(join(root, "tests"), {})(undefined, "en")).toMatchObject({
+      ok: true,
+      config: { harnesses: { codex: {} } },
+    });
+  });
+
+  test("the search stops at the repository root", async () => {
+    const outer = project({ "ctxray.config.ts": `export default { harnesses: { codex: {} } };`, "repo/.git/HEAD": "" });
+    expect(await createConfigLoader(join(outer, "repo"), {})(undefined, "en")).toMatchObject({
+      ok: true,
+      config: { files: [] },
+    });
+  });
+
   test("reads JSONC with comments, trailing commas, and $schema", async () => {
     const jsonc = `{
       "$schema": "https://github.com/MairwunNx/ctxray/releases/latest/download/config.schema.json",

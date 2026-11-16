@@ -1,3 +1,4 @@
+import { access } from "node:fs/promises";
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { POLICY_CHECKS, type Policy, UserConfig } from "#shared/contract/index.ts";
 import { allInOrder, type Env } from "#shared/infra/index.ts";
@@ -15,6 +16,24 @@ const checksNothing = (policy: Policy) => POLICY_CHECKS.every((check) => policy[
 
 const message = (error: unknown) => (error instanceof Error ? error.message : String(error));
 const exists = (file: string) => Bun.file(file).exists();
+// .git is a folder in a clone and a file in a worktree or submodule.
+const isRepoRoot = (dir: string) => access(join(dir, ".git")).then(() => true, () => false);
+
+const configIn = async (dir: string): Promise<string | undefined> => {
+  const present = await Promise.all(CONFIG_FILES.map((name) => exists(join(dir, name))));
+  const found = CONFIG_FILES.filter((_, index) => present[index]);
+  if (found.length > 1) fail("config.ambiguous", { files: found.join(", ") });
+  return found[0] === undefined ? undefined : join(dir, found[0]);
+};
+
+// From a subfolder, like tests/, the project's config still applies: the search goes up to the repository root.
+const findUp = async (dir: string): Promise<string | undefined> => {
+  const file = await configIn(dir);
+  if (file !== undefined) return file;
+  const parent = dirname(dir);
+  if (parent === dir || (await isRepoRoot(dir))) return undefined;
+  return findUp(parent);
+};
 
 export const createConfigLoader = (cwd: string, env: Env): ConfigLoader => {
   const show = (file: string) => {
@@ -27,10 +46,7 @@ export const createConfigLoader = (cwd: string, env: Env): ConfigLoader => {
       const file = resolve(cwd, path);
       return (await exists(file)) ? file : fail("config.missing", { file: path });
     }
-    const present = await Promise.all(CONFIG_FILES.map((name) => exists(join(cwd, name))));
-    const found = CONFIG_FILES.filter((_, index) => present[index]);
-    if (found.length > 1) fail("config.ambiguous", { files: found.join(", ") });
-    return found[0] === undefined ? undefined : join(cwd, found[0]);
+    return findUp(cwd);
   };
 
   // A path in a config is relative to that config, so an org package can ship its own CA file.
