@@ -516,7 +516,7 @@ export const en = {
   "command.diff": "Show how the loadout changed against another revision, origin/master by default",
   "option.base": "The revision to compare with, like origin/master",
   "diff.title": "Against {ref} ({commit}), as L3 predicts at the project root",
-  "diff.total": "{before} → {after} tokens of files",
+  "diff.total": "≈ {before} → ≈ {after} tokens of files",
   "diff.same": "Nothing changed",
   "diff.unknownBase": "Git knows no revision “{ref}”: fetch it, or name another with --base",
   "option.watch": "Run again after each change of the project's files",

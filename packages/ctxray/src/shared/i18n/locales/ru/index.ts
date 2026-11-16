@@ -623,7 +623,7 @@ export const ru: Catalog = {
   "command.diff": "Показать, как loadout изменился относительно другой ревизии, по умолчанию origin/master",
   "option.base": "Ревизия для сравнения, например origin/master",
   "diff.title": "Относительно {ref} ({commit}), как предсказывает L3 в корне проекта",
-  "diff.total": "{before} → {after} токенов файлов",
+  "diff.total": "≈ {before} → ≈ {after} токенов файлов",
   "diff.same": "Ничего не изменилось",
   "diff.unknownBase": "Git не знает ревизию «{ref}»: подтяните её или укажите другую через --base",
   "option.watch": "Запускать заново после каждого изменения файлов проекта",

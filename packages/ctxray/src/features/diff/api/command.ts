@@ -1,4 +1,4 @@
-import { UnknownRevision } from "#entities/harness/index.ts";
+import { PROFILES, UnknownRevision } from "#entities/harness/index.ts";
 import { CONFIG_OPTION } from "#entities/user-config/index.ts";
 import type { CommandSpec, Handler } from "#shared/cli/index.ts";
 import { ExitCode, HarnessId } from "#shared/contract/index.ts";
@@ -24,7 +24,7 @@ export const diffView = (result: DiffResult, t: Translate): View =>
   result.diffs.flatMap(({ harness, diff }) => {
     const delta = diff.total.after - diff.total.before;
     const head = [
-      span(` ${harness}  `, "strong"),
+      span(` ${PROFILES[harness].title}  `, "strong"),
       span(t("diff.total", { before: diff.total.before, after: diff.total.after })),
       span(`  ${signed(delta)}`, delta > 0 ? "warning" : delta < 0 ? "success" : "muted"),
     ];
