@@ -1,8 +1,8 @@
 import { expect, test } from "bun:test";
 import { join } from "node:path";
-import { countTokens } from "#shared/tokens/index.ts";
 import { STATIC_ADAPTERS } from "../adapters.ts";
 import { openProject } from "../project.ts";
+import { tokenCounterOf } from "../static-loadout.ts";
 import { buildLoadout } from "./loadout.ts";
 import type { Segment } from "./model.ts";
 import { listing } from "./sections.ts";
@@ -48,7 +48,7 @@ test("ctxray's own plugin is listed, marked, and left out of every total", () =>
   expect(Object.keys(loadout.tokens.byMcpServer)).toEqual(["github"]);
   const counted = segments.filter((one) => !one.id.includes("ctxray")).map((one) => one.text);
   const own = segments.filter((one) => one.id.includes("ctxray")).map((one) => one.text);
-  const sum = (texts: string[]) => texts.reduce((total, text) => total + countTokens(text), 0);
+  const sum = (texts: string[]) => texts.reduce((total, text) => total + tokenCounterOf("claude-code").count(text), 0);
   expect(loadout.tokens.total).toBe(sum(counted));
   expect(loadout.tokens.own).toBe(sum(own));
 });

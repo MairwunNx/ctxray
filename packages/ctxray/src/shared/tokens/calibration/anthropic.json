@@ -1,1 +1,39 @@
-{ "status": "unmeasured" }
+{
+  "status": "measured",
+  "provider": "anthropic",
+  "model": "claude-sonnet-5-5",
+  "date": "2026-11-16",
+  "ctxray": "0.1.0",
+  "classes": {
+    "prose": {
+      "factor": 1.65,
+      "low": -0.068,
+      "high": 0.029,
+      "pieces": 7
+    },
+    "nonLatin": {
+      "factor": 1.538,
+      "low": -0.147,
+      "high": 0.085,
+      "pieces": 8
+    },
+    "code": {
+      "factor": 1.68,
+      "low": -0.107,
+      "high": 0.092,
+      "pieces": 6
+    },
+    "json": {
+      "factor": 1.629,
+      "low": -0.034,
+      "high": 0.035,
+      "pieces": 10
+    },
+    "metadata": {
+      "factor": 1.613,
+      "low": -0.165,
+      "high": 0.177,
+      "pieces": 6
+    }
+  }
+}

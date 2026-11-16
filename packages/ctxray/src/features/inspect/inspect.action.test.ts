@@ -67,7 +67,8 @@ describe("one harness", () => {
   test("tokens add up, and what files can't tell stays unknown", async () => {
     const { tokens } = harness(await inspect({}), "claude-code");
     const sum = Object.values(tokens.byComponent).reduce((total, count) => total + count, 0);
-    expect(tokens).toMatchObject({ known: sum, exact: false, calibration: "none" });
+    expect(tokens).toMatchObject({ known: sum, exact: false });
+    expect(tokens.calibration).toBeUndefined();
     expect(tokens.unknown).toEqual(["system", "tools", "mcp"]);
   });
 

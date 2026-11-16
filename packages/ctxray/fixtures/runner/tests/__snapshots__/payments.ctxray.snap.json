@@ -4,45 +4,50 @@
       "CLAUDE.md": {
         "activation": "always",
         "reason": "cwd",
-        "tokens": 38
+        "tokens": 63
       },
       ".claude/rules/style.md": {
         "activation": "always",
         "reason": "always",
-        "tokens": 7
+        "tokens": 12
       },
       "app/CLAUDE.md": {
         "activation": "always",
         "reason": "cwd",
-        "tokens": 14
+        "tokens": 23
       },
       "app/AGENTS.md": {
         "activation": "always",
         "reason": "import:app/CLAUDE.md",
-        "tokens": 10
+        "tokens": 17
       }
     },
     "skills": {
       "payouts": {
         "path": ".claude/skills/payouts/SKILL.md",
-        "tokens": 7
+        "tokens": 11
       },
       "refunds": {
         "path": ".claude/skills/refunds/SKILL.md",
-        "tokens": 12
+        "tokens": 19
       },
       "android-build": {
         "path": "app/.claude/skills/android-build/SKILL.md",
-        "tokens": 11
+        "tokens": 18
       }
     },
-    "mcp": ["github", "jira"],
-    "commands": ["changelog"],
+    "mcp": [
+      "github",
+      "jira"
+    ],
+    "commands": [
+      "changelog"
+    ],
     "tokens": {
-      "rules": 69,
-      "skills": 30,
-      "commands": 12,
-      "method": "local:o200k_base"
+      "rules": 115,
+      "skills": 48,
+      "commands": 19,
+      "method": "local:o200k_base+calibrated:claude-sonnet-5-5"
     }
   },
   "payments › instructions of the app load in app › codex@static": {
@@ -76,7 +81,10 @@
         "tokens": 7
       }
     },
-    "mcp": ["github", "jira"],
+    "mcp": [
+      "github",
+      "jira"
+    ],
     "commands": [],
     "tokens": {
       "rules": 24,
