@@ -19,8 +19,11 @@ const contextOf = (path: string) => {
 };
 
 const ruleOf = (path: string, dir: string, text: string, problems: Problem[]): Instruction => {
-  const { data, body, error, loose } = splitFrontmatter(text);
-  if (error !== undefined) {
+  const { data: parsed, body, error, loose, tabs, tabsAsIndent } = splitFrontmatter(text);
+  const data = tabs ? (tabsAsIndent ?? {}) : parsed;
+  // Claude Code reads a rule's frontmatter past the tabs that YAML forbids (spike 0017).
+  if (tabs) problems.push(problem("lint.frontmatterTab", "warning", path));
+  else if (error !== undefined) {
     problems.push(problem(loose ? "lint.looseFrontmatter" : "lint.frontmatter", "warning", path, { message: error }));
   }
   // `paths` is the only field Claude Code reads from a rule. Cursor's `globs` here does nothing.

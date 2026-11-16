@@ -9,7 +9,7 @@ import { type OpencodeConfig, readOpencodeConfigs } from "./config.ts";
 // Per folder OpenCode reads the first of these it finds. CLAUDE.md is the fallback Claude Code users get.
 export const CONTEXT_NAMES = ["AGENTS.md", "CLAUDE.md", "CONTEXT.md"];
 const CONTEXT = /^(?:(.*)\/)?(AGENTS|CLAUDE|CONTEXT)\.md$/;
-const SKILL = /^(?:(.*)\/)?\.(?:opencode\/skills?|claude\/skills|agents\/skills)\/([^/]+)\/SKILL\.md$/;
+const SKILL = /^(?:(.*)\/)?\.(?:opencode\/skills?|claude\/skills|agents\/skills)\/(?:.+\/)?([^/]+)\/SKILL\.md$/;
 const COMMAND = /^(?:(.*)\/)?\.opencode\/commands?\/(.+)\.md$/;
 
 // A file an `instructions` glob names, relative to the folder it matched from.
@@ -25,15 +25,20 @@ const instructionFiles = async (project: Project, configs: readonly OpencodeConf
   return matched.map(({ path, dir }, index) => ({ path, dir, kind: "rule", imports: [], text: texts[index] ?? "" }));
 };
 
-// OpenCode skips a skill without a name. The description is what the model picks it by.
+// OpenCode skips a skill without a name or without a description string: `description: ""` passes, a bare
+// `description:` doesn't (spike 0017). Skills sit in subfolders too.
 const findSkills = async (project: Project, problems: Problem[]): Promise<Skill[]> =>
   (await readSkillFiles(project, SKILL, problems)).map(({ path, dir, folder, frontmatter: { data, body } }) => {
     const name = textOf(data["name"]);
+    const given = typeof data["description"] === "string";
     const description = textOf(data["description"]);
     if (name === undefined)
       problems.push(problem("lint.skillField", "error", path, { harness: "OpenCode", field: "name" }));
+    else if (!given)
+      problems.push(problem("lint.skillField", "error", path, { harness: "OpenCode", field: "description" }));
     else if (description === undefined) problems.push(problem("lint.noDescription", "warning", path, { name }));
-    return { name: name ?? folder, path, dir, description: description ?? "", listed: name !== undefined, body };
+    const listed = name !== undefined && given;
+    return { name: name ?? folder, path, dir, description: description ?? "", listed, body };
   });
 
 const findCommands = async (project: Project): Promise<Command[]> =>

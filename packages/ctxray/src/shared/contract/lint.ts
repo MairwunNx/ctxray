@@ -26,6 +26,7 @@ export const LINT_RULES = [
   "duplicate-skill",
   "duplicate-text",
   "broken-link",
+  "byte-order-mark",
   "dead-rule",
   "size",
   "unread",

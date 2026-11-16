@@ -7,7 +7,8 @@ import { type Project, readMatching } from "../project.ts";
 import { readSkillFiles } from "../skill-file.ts";
 import { cursorFrontmatter } from "./frontmatter.ts";
 
-const RULE = /^(?:(.*)\/)?\.cursor\/rules\/(?:.+\/)?[^/]+\.mdc$/;
+// Cursor takes the extension in any case, .MDC too, on every system (spike 0017).
+const RULE = /^(?:(.*)\/)?\.cursor\/rules\/(?:.+\/)?[^/]+\.[mM][dD][cC]$/;
 const CONTEXT = /^(?:(.*)\/)?(AGENTS\.md|CLAUDE\.md|CLAUDE\.local\.md)$/;
 const SKILL = /^(?:(.*)\/)?\.(?:cursor|agents|claude|codex|grok)\/skills\/(?:.+\/)?([^/]+)\/SKILL\.md$/;
 const COMMAND = /^(?:(.*)\/)?\.cursor\/commands\/(.+)\.md$/;
@@ -27,13 +28,15 @@ const ruleOf = (path: string, dir: string, text: string): Instruction => {
   return { ...base, activation: "manual" };
 };
 
+// Cursor skips a skill without a description (spike 0017).
 const findSkills = async (project: Project, problems: Problem[]): Promise<Skill[]> =>
   (await readSkillFiles(project, SKILL, problems)).map(({ path, dir, folder, frontmatter: { data, body } }) => {
     const name = textOf(data["name"]) ?? folder;
-    const description = textOf(data["description"]) ?? firstLine(body);
-    if (description === undefined) problems.push(problem("lint.noDescription", "warning", path, { name }));
+    const description = textOf(data["description"]);
+    if (description === undefined)
+      problems.push(problem("lint.skillField", "error", path, { harness: "Cursor", field: "description" }));
     const globs = listOf(data["paths"]);
-    const listed = data["disable-model-invocation"] !== true;
+    const listed = description !== undefined && data["disable-model-invocation"] !== true;
     return { name, path, dir, description: description ?? "", listed, body, ...(globs ? { globs } : {}) };
   });
 

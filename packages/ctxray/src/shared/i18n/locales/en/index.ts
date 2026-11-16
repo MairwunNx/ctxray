@@ -152,6 +152,10 @@ export const en = {
   "lint.duplicateSkill": "Another skill here has the name “{name}”: {other}",
   "lint.duplicateText": "Same text as {other}, so the model reads it twice",
   "lint.brokenLink": "The link to {target} leads nowhere",
+  "lint.byteOrderMark":
+    "The file starts with a byte order mark, so {harness} skips the skill. Save it as UTF-8 without BOM",
+  "lint.frontmatterTab":
+    "A tab indents the frontmatter, which YAML forbids. The harnesses read it differently: Claude Code and Codex skip such a skill, the others take it. Indent with spaces",
   "resolve.deadRule": "No file in the repository matches {patterns}, so the rule never loads",
   "resolve.deadPattern": "No file in the repository matches {pattern}",
   "policy.needsCapture": "The {component} limit needs a real run, a static view doesn't know these tokens",

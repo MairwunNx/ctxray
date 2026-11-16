@@ -9,7 +9,7 @@ const COMMAND = /^(?:(.*)\/)?\.claude\/commands\/(?:.+\/)?([^/]+)\.md$/;
 const LISTING_LIMIT = 1536;
 
 export const findSkills = async (project: Project, problems: Problem[]): Promise<Skill[]> =>
-  (await readSkillFiles(project, SKILL, problems)).map(({ path, dir, folder, frontmatter: { data, body } }) => {
+  (await readSkillFiles(project, SKILL, problems)).map(({ path, dir, folder, frontmatter: { data, body, tabs } }) => {
     // Claude Code 2.1 names a skill by its folder and shows a different `name` after it: `- folder (name):`.
     const name = folder;
     const declared = textOf(data["name"]);
@@ -26,7 +26,8 @@ export const findSkills = async (project: Project, problems: Problem[]): Promise
       );
     }
     const globs = listOf(data["paths"]);
-    const listed = flagOf(data["disable-model-invocation"]) !== true;
+    // A tab in the frontmatter makes Claude Code skip the skill (spike 0017).
+    const listed = !tabs && flagOf(data["disable-model-invocation"]) !== true;
     return {
       name,
       path,

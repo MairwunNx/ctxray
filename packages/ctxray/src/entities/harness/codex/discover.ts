@@ -6,8 +6,9 @@ import { readSkillFiles } from "../skill-file.ts";
 import { type CodexConfig, readCodexConfig } from "./config.ts";
 import { withinBudget } from "./resolve.ts";
 
-const SKILL = /^(?:(.*)\/)?\.agents\/skills\/([^/]+)\/SKILL\.md$/;
-const PROJECT_SKILL = /^()\.codex\/skills\/([^/]+)\/SKILL\.md$/;
+// Codex looks into subfolders too: .agents/skills/payments/refunds/SKILL.md is the skill refunds (spike 0017).
+const SKILL = /^(?:(.*)\/)?\.agents\/skills\/(?:.+\/)?([^/]+)\/SKILL\.md$/;
+const PROJECT_SKILL = /^()\.codex\/skills\/(?:.+\/)?([^/]+)\/SKILL\.md$/;
 
 // Per directory Codex takes the first non-empty file of AGENTS.override.md, AGENTS.md, and the fallbacks.
 const findInstructions = async (project: Project, config: CodexConfig, problems: Problem[]) => {
@@ -28,21 +29,23 @@ const findInstructions = async (project: Project, config: CodexConfig, problems:
   });
 };
 
-// Codex refuses a SKILL.md without a name or a description.
+// Codex refuses a SKILL.md without a name or a description, one that starts with a byte order mark, and one
+// with tabs in its frontmatter.
 const findSkills = async (project: Project, config: CodexConfig, problems: Problem[]): Promise<Skill[]> => {
   const [nested, own] = await Promise.all([
     readSkillFiles(project, SKILL, problems),
     readSkillFiles(project, PROJECT_SKILL, problems),
   ]);
   const files = [...nested, ...own];
-  return files.map(({ path, dir, folder, frontmatter: { data, body } }) => {
+  return files.map(({ path, dir, folder, bom, frontmatter: { data, body, tabs } }) => {
     const name = textOf(data["name"]);
     const description = textOf(data["description"]);
     if (name === undefined)
       problems.push(problem("lint.skillField", "error", path, { harness: "Codex", field: "name" }));
     if (description === undefined)
       problems.push(problem("lint.skillField", "error", path, { harness: "Codex", field: "description" }));
-    const valid = name !== undefined && description !== undefined;
+    if (bom) problems.push(problem("lint.byteOrderMark", "error", path, { harness: "Codex" }));
+    const valid = name !== undefined && description !== undefined && !bom && !tabs;
     const listed = valid && !config.disabledSkills(name, join(project.root, path));
     return { name: name ?? folder, path, dir, description: description ?? "", listed, body };
   });

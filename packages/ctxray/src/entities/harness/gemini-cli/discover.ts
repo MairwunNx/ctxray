@@ -28,16 +28,20 @@ const findInstructions = async (project: Project, settings: readonly GeminiSetti
   return expandImports(project, roots, problems, 5);
 };
 
-// A skill without a name or a description never loads: Gemini CLI drops it silently.
+// A skill without a name or a description key never loads: Gemini CLI drops it silently. A bare
+// `description:` still lists it, with nothing to pick it by (spike 0017).
 const findSkills = async (project: Project, problems: Problem[]): Promise<Skill[]> =>
   (await readSkillFiles(project, SKILL, problems)).map(({ path, dir, folder, frontmatter: { data, body } }) => {
     const name = textOf(data["name"])?.replace(/[:\\/<>*?"|]/g, "-");
     const description = textOf(data["description"]);
+    const given = "description" in data;
     if (name === undefined)
       problems.push(problem("lint.skillField", "error", path, { harness: "Gemini CLI", field: "name" }));
-    if (description === undefined)
+    if (!given)
       problems.push(problem("lint.skillField", "error", path, { harness: "Gemini CLI", field: "description" }));
-    const listed = name !== undefined && description !== undefined;
+    else if (description === undefined)
+      problems.push(problem("lint.noDescription", "warning", path, { name: name ?? folder }));
+    const listed = name !== undefined && given;
     return { name: name ?? folder, path, dir, description: description ?? "", listed, body };
   });
 

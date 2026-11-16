@@ -177,6 +177,10 @@ export const ru: Catalog = {
   "lint.duplicateSkill": "Здесь уже есть скилл с именем «{name}»: {other}",
   "lint.duplicateText": "Тот же текст, что в {other}, модель прочитает его дважды",
   "lint.brokenLink": "Ссылка на {target} никуда не ведёт",
+  "lint.byteOrderMark":
+    "Файл начинается с метки порядка байтов (BOM), и {harness} пропускает скилл. Сохраните его в UTF-8 без BOM",
+  "lint.frontmatterTab":
+    "Frontmatter отбит табуляцией, а YAML её запрещает. Харнессы читают такой файл по-разному: Claude Code и Codex пропускают такой скилл, остальные берут. Сделайте отступы пробелами",
   "resolve.deadRule": "Ни один файл репозитория не подходит под {patterns}, правило никогда не загрузится",
   "resolve.deadPattern": "Ни один файл репозитория не подходит под {pattern}",
   "policy.needsCapture":
