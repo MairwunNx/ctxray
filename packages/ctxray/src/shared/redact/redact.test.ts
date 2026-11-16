@@ -46,8 +46,13 @@ describe("URL credentials", () => {
     expect(redactor.text(url)).toBe(expected);
   });
 
-  test("a URL without credentials stays", () => {
-    expect(redactor.text("http://proxy.corp.test:3128/path?a=b:c")).toBe("http://proxy.corp.test:3128/path?a=b:c");
+  test.each([
+    "http://proxy.corp.test:3128/path?a=b:c",
+    "http://admin:$GRAFANA_PASSWORD@localhost:3000/api",
+    "postgres://app:<password>@localhost/app",
+    "jdbc:mysql://u:p@localhost/db",
+  ])("%s stays: no credentials, or only a variable or a placeholder", (url) => {
+    expect(redactor.text(url)).toBe(url);
   });
 });
 
