@@ -1,0 +1,29 @@
+# ctxray in GitLab CI. Include this file and extend its hidden job:
+#
+#   include:
+#     - remote: https://github.com/MairwunNx/ctxray/releases/download/v__VERSION__/ctxray.gitlab-ci.yml
+#   ctxray:
+#     extends: .ctxray
+#
+# In a closed network, keep a copy in a project of your own and include it with `project:` and `file:`. Point
+# CTXRAY_IMAGE at your registry's mirror of the image, or at the image harnesses.Dockerfile builds.
+.ctxray:
+  image:
+    name: $CTXRAY_IMAGE
+    entrypoint: [""]
+  variables:
+    CTXRAY_IMAGE: ghcr.io/mairwunnx/ctxray:__VERSION__-runtime
+    CTXRAY_ARGS: ""
+    # GitLab caches only inside the project's folder.
+    CTXRAY_CACHE_DIR: $CI_PROJECT_DIR/.ctxray-cache
+  cache:
+    key:
+      files: [ctxray.lock]
+    paths: [.ctxray-cache/]
+  script:
+    - ctxray test $CTXRAY_ARGS
+  artifacts:
+    when: always
+    paths: [.ctxray/report/]
+    reports:
+      junit: .ctxray/report/junit.xml
