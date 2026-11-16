@@ -103,7 +103,7 @@ jobs:
     env:
       VERSION: ${{ needs.build.outputs.version }}
       DRY_RUN: ${{ inputs.dry-run }}
-      PACKAGING_TOKEN: ${{ secrets.PACKAGING_TOKEN }}
+      PACKAGING_TOKEN: ${{ secrets.FAMILY_ACTIONS_TOKEN }}
       GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
       GITLAB_PROJECT: ${{ vars.GITLAB_PROJECT || 'mairwunnx/ctxray' }}
     steps:
@@ -135,7 +135,7 @@ jobs:
             # The major tag users pin, v0 until 1.0.
             [ "$DRY_RUN" = true ] || push "$github/ctxray-action.git" packages/packaging/action "v${VERSION%%.*}"
           else
-            echo "::warning::No PACKAGING_TOKEN: the tap, the bucket, and the action stay as they were"
+            echo "::warning::No FAMILY_ACTIONS_TOKEN: the tap, the bucket, and the action stay as they were"
           fi
           if [ -n "$GITLAB_TOKEN" ]; then
             # The CI/CD Catalog takes tags without the v.
