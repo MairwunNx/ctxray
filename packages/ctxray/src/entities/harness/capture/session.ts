@@ -6,6 +6,7 @@ import type { Inventory } from "../inventory.ts";
 import { isolate, type ProjectCopy, type RunDirs, settleCopy } from "./isolate.ts";
 import { type McpRouting, type RemoteMcp, routeMcp } from "./mcp.ts";
 import type { CaptureAdapter, Intent } from "./model.ts";
+import { ownsGroup, watchGroup } from "./process-group.ts";
 import { sandboxed } from "./sandbox.ts";
 import type { UserScope } from "./user-scope.ts";
 
@@ -103,7 +104,9 @@ export const startSession = async (options: SessionOptions): Promise<HarnessSess
     stdin: launch.stdin === undefined ? "ignore" : new Blob([launch.stdin]),
     stdout: "pipe",
     stderr: "pipe",
+    detached: ownsGroup,
   });
+  const endGroup = watchGroup(child);
   // Headless harnesses print JSON events, one per line: Claude Code's stream-json, Codex's --json.
   const lines: string[] = [];
   const events: unknown[] = [];
@@ -169,9 +172,10 @@ export const startSession = async (options: SessionOptions): Promise<HarnessSess
     },
     end: async () => {
       port.finish({ text: "done" });
-      const stop = setTimeout(() => child.kill("SIGKILL"), options.timeout);
+      const stop = setTimeout(endGroup, options.timeout);
       const code = await child.exited;
       clearTimeout(stop);
+      endGroup();
       port.close();
       closeRemotes();
       const records = await servers();
