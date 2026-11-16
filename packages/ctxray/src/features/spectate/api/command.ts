@@ -4,7 +4,9 @@ import type { Translate } from "#shared/i18n/index.ts";
 import { type Renderer, span } from "#shared/render/index.ts";
 import type { SpectateHooksAction } from "../install.action.ts";
 import { type Family, familyOf } from "../lib/places.ts";
+import type { SpectateSessionAction } from "../session.action.ts";
 import type { SpectateShowAction } from "../show.action.ts";
+import { sessionLoadoutView } from "./session-view.ts";
 import { hooksView, sessionsView } from "./view.ts";
 
 export const spectateSpec: CommandSpec = {
@@ -15,6 +17,8 @@ export const spectateSpec: CommandSpec = {
   options: {
     harness: { type: "string", summary: "option.spectateHarness", value: "ids" },
     last: { type: "string", summary: "option.last", value: "count" },
+    session: { type: "string", summary: "option.session", value: "id" },
+    "plugin-root": { type: "string", summary: "option.pluginRoot", value: "dir" },
     json: { type: "boolean", summary: "option.json" },
   },
 };
@@ -28,7 +32,13 @@ const idsOf = (value: Values[string]) =>
     : undefined;
 
 export const createSpectateCommand =
-  (hooks: SpectateHooksAction, show: SpectateShowAction, t: Translate, renderer: Renderer): Handler =>
+  (
+    hooks: SpectateHooksAction,
+    show: SpectateShowAction,
+    session: SpectateSessionAction,
+    t: Translate,
+    renderer: Renderer,
+  ): Handler =>
   async (values, [sub = "show"]) => {
     const fail = (key: Parameters<Translate>[0], params?: Parameters<Translate>[1]) => {
       renderer.print([[span(t(key, params), "failure")]]);
@@ -46,6 +56,13 @@ export const createSpectateCommand =
       renderer.print(hooksView(changes, hooks.dir, sub === "install", t));
       return changes.some((change) => "error" in change) ? ExitCode.failed : ExitCode.ok;
     }
+    if (typeof values["session"] === "string" && values["session"] !== "") {
+      const root = values["plugin-root"];
+      const result = await session(values["session"], typeof root === "string" && root !== "" ? [root] : []);
+      if (values["json"] === true) renderer.print([[span(JSON.stringify(result, null, 2))]]);
+      else renderer.print(sessionLoadoutView(result, t));
+      return result.found ? ExitCode.ok : ExitCode.failed;
+    }
     const last = typeof values["last"] === "string" ? Number(values["last"]) : 5;
     if (!Number.isInteger(last) || last < 1) return fail("spectate.badLast", { value: String(values["last"]) });
     const { dir, sessions } = await show({ last, ...(harnesses && { harnesses }) });
@@ -53,4 +70,10 @@ export const createSpectateCommand =
     else renderer.print(sessionsView(sessions, dir, t));
     return ExitCode.ok;
   };
-createSpectateCommand.inject = ["spectateHooksAction", "spectateShowAction", "t", "renderer"] as const;
+createSpectateCommand.inject = [
+  "spectateHooksAction",
+  "spectateShowAction",
+  "spectateSessionAction",
+  "t",
+  "renderer",
+] as const;

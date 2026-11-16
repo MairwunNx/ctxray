@@ -1,7 +1,8 @@
 import { appendFile, mkdir } from "node:fs/promises";
+import { homedir } from "node:os";
 import { join } from "node:path";
 import { createRedactor } from "#shared/redact/index.ts";
-import type { Family } from "./places.ts";
+import { type Family, spectateDir } from "./places.ts";
 
 // What a hook keeps of an event: who and where, which file loaded and why, which file the agent read. Never a
 // prompt's text, only its length.
@@ -10,6 +11,7 @@ const KEEP = [
   "session_id",
   "conversation_id",
   "cwd",
+  "transcript_path",
   "workspace_roots",
   "model",
   "source",
@@ -33,16 +35,17 @@ export const lineOf = (family: Family, payload: Record<string, unknown>, env: Re
   return line;
 };
 
-// `ctxray __spectate-hook <family> <dir>`: a harness runs it on every event it observes. It writes one line to
+// `ctxray __spectate-hook <family> [dir]`: a harness runs it on every event it observes. It writes one line to
 // ctxray's log, prints nothing, since Claude Code would put the output into the context, and never fails the
-// harness: a broken payload is only skipped.
+// harness: a broken payload is only skipped. The plugin's hooks name no folder: the log goes to ctxray's own.
 export const runSpectateHook = async (
   args: readonly string[],
   input: string,
   env: Record<string, string | undefined>,
 ) => {
-  const [family, dir] = args;
-  if ((family !== "claude" && family !== "cursor") || !dir) return 0;
+  const [family, given] = args;
+  if (family !== "claude" && family !== "cursor") return 0;
+  const dir = given || spectateDir(env, process.platform, env["HOME"] || homedir());
   try {
     const payload = JSON.parse(input) as Record<string, unknown>;
     const line = createRedactor([]).value(lineOf(family, payload, env));

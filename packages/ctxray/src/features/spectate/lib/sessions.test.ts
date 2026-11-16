@@ -52,7 +52,15 @@ test("sessions from both logs, newest first, each harness told apart", async () 
   ]);
 });
 
-test("a hook for something else, or without a folder, does nothing and never fails", async () => {
+test("a hook for something else does nothing, a broken payload never fails", async () => {
   expect(await runSpectateHook(["codex", dir], "{}", {})).toBe(0);
-  expect(await runSpectateHook(["claude"], "{}", {})).toBe(0);
+  expect(await runSpectateHook(["claude", dir], "not json", {})).toBe(0);
+});
+
+test("the plugin's hook names no folder and writes to ctxray's own, with the transcript's path", async () => {
+  const state = join(dir, "state");
+  const payload = { hook_event_name: "SessionStart", session_id: "p", transcript_path: "/t/p.jsonl" };
+  expect(await runSpectateHook(["claude"], JSON.stringify(payload), { CTXRAY_STATE_DIR: state })).toBe(0);
+  const [session] = await readSessions(join(state, "spectate"));
+  expect([session?.id, session?.transcript]).toEqual(["p", "/t/p.jsonl"]);
 });

@@ -14,6 +14,7 @@ export type Session = {
   started: number;
   last: number;
   cwd: string | undefined;
+  transcript: string | undefined; // Claude Code's transcript of the session, with the requests it sent
   model: string | undefined;
   version: string | undefined; // Cursor's, from its payloads
   entrypoint: string | undefined; // Claude Code's, from the hook's environment
@@ -50,6 +51,7 @@ const add = (session: Session, line: SpectateLine) => {
   session.last = Math.max(session.last, line.at);
   session.cwd ??=
     text(line["cwd"]) ?? (Array.isArray(line["workspace_roots"]) ? text(line["workspace_roots"][0]) : undefined);
+  session.transcript ??= text(line["transcript_path"]);
   session.model ??= text(line["model"]);
   session.version ??= text(line["cursor_version"]);
   session.entrypoint ??= text(line["entrypoint"]);
@@ -85,6 +87,7 @@ export const readSessions = async (dir: string): Promise<Session[]> => {
           started: line.at,
           last: line.at,
           cwd: undefined,
+          transcript: undefined,
           model: undefined,
           version: undefined,
           entrypoint: undefined,
