@@ -38,7 +38,7 @@ export const createCalibrateCommand =
       });
     } catch (error) {
       renderer.print([[span(t("calibrate.failed", { message: (error as Error).message }), "failure")]]);
-      return ExitCode.failed;
+      return ExitCode.environment;
     }
     if (calibration.status !== "measured") return ExitCode.failed;
     const rows = CONTENT_CLASSES.map((name) => {

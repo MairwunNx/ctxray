@@ -36,7 +36,7 @@ export const createGenPromptsCommand =
     }
     if (config.offline) {
       renderer.print([[span(t("genPrompts.offline"), "failure")]]);
-      return ExitCode.usage;
+      return ExitCode.environment;
     }
     const file = resolve(cwd, out);
     if ((await Bun.file(file).exists()) && values["force"] !== true) {
