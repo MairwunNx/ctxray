@@ -63,7 +63,7 @@ jobs:
           RELEASE_NOTES: ${{ inputs.changelog }}
         run: bun scripts/release/notes.ts "$RUNNER_TEMP/notes.md"
       # Keyless: Sigstore's certificate names this workflow, and the signature goes to its public log.
-      - uses: sigstore/cosign-installer@v4
+      - uses: sigstore/cosign-installer@v4.1.3
         if: inputs.dry-run == false
       - name: Sign SHA256SUMS
         if: inputs.dry-run == false
