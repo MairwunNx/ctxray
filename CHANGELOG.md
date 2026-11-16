@@ -4,4 +4,21 @@ The “Release” workflow takes the notes for a version from its section here, 
 
 ## 0.1.0
 
-Not released yet.
+The first release. ctxray shows what your AI agents load into a model's context and tests it in CI.
+
+- 🔍 **`ctxray inspect` shows what loads here.** Rules, skills, commands, and MCP servers of Claude Code, Codex, Gemini CLI, OpenCode, and Cursor CLI, each with its tokens and the reason it loaded: always, for a file path you pass with `--files`, or by its description. Claude Code Desktop and the Cursor editor read the same files, ask for them with `--harness`. A warning names what one agent sees and another doesn't, like a `CLAUDE.md` Codex never reads.
+- 🪙 **Tokens counted each agent's way.** Claude's count comes from o200k with factors measured on `claude-sonnet-5-5`, Gemini's from the Gemma vocabulary, the others' from o200k. Every local count carries ≈. With `exactTokens`, ctxray asks the provider for the exact number through your key.
+- ✅ **Tests in seven layers.** `*.ctxray.ts` files hold `test.resolve`, `test.assemble`, `test.wire`, `test.activate`, and `test.scenario`, from what the files predict (L3) to a task the agent solves end to end (L7). ctxray runs L1 Lint and L2 Policy itself. `ctxray init` writes a config and a first test that passes.
+- 🧪 **One test, every agent.** A test runs once per harness in the config, and `expect.on` narrows a check to some of them. `discover.rules()` turns one test into one per rule, by CODEOWNERS owner, folder, or activation.
+- 🎯 **Does the model pick the right skill?** `test.activate` sends prompts to a real model several times and checks the share of runs that loaded the skill, with a 95% Wilson interval. Too few runs to tell gives `inconclusive`, not a guess. `--record` keeps the model's answers, and `--backend replay` plays them back for free on every merge request. `ctxray gen-prompts` writes prompts from the descriptions for you to review.
+- 🛰️ **What the agent really sent.** L4 and L5 launch the agent on a copy of your project behind ctxray's proxy, with an isolated home, no network but the proxy, and a mock model: free and the same every run. You see the system prompt, the built-in tools, and every MCP tool with its schema's tokens.
+- 📦 **Pinned agents.** `ctxray harness add` pins versions in `ctxray.lock` with integrity for every platform, and CI installs exactly those from npm or your registry. `harness upgrade` shows how a new version changes the context. `harness pack` and `install --from` carry them into a network without internet.
+- 📋 **Your organisation's rules.** Policies limit tokens per component, ban or require MCP servers, and require files. `extends` shares them from an npm package. `ctxray baseline` lets an old repository adopt ctxray and fail only on new problems. 27 lint checks catch broken frontmatter, dead rules, missing imports, and skills an agent never sees.
+- 📉 **What a merge request changes.** `ctxray diff` compares the loadout with `origin/master` or the `--base` you name.
+- 👀 **Your own sessions.** `ctxray spectate install` adds hooks to Claude Code and Cursor, and `ctxray spectate` shows what your latest sessions loaded. Prompts never get stored.
+- 🧩 **A plugin for Claude Code.** `/ctxray` shows what the current session loaded, `/ctxray-test` runs the tests, and the `write-tests` skill writes them. `ctxray mcp` serves `inspect`, `run`, and `diff` to any agent.
+- 📊 **Reports.** A live view in the terminal, an HTML report in English and Russian that `ctxray show-report` keeps live while tests run, JUnit, Allure, JSON, and a Markdown summary that lands in the GitHub job summary.
+- 🏢 **Closed networks.** LLM gateways, proxies, your CA certificates, internal npm registries with `.npmrc` auth, read-only shared harness caches, and an `offline` switch. `ctxray doctor` checks all of it first.
+- 🔒 **Secrets stay out.** Keys, tokens, emails, phone and card numbers are hidden before anything reaches a trace, a report, a snapshot, or a cassette, with gitleaks' rules on top of ctxray's own.
+- 🚚 **Install it your way.** npm, Homebrew, Scoop, `install.sh` and `install.ps1`, Docker images on ghcr.io, a GitHub Action, a GitLab CI template, and release archives that work as offline bundles. Executables for Linux (glibc and musl, x64 and arm64, and x64 without AVX2), macOS, and Windows on x64 and arm64. Checksums are signed with Sigstore and the files carry build attestations and an SBOM.
+- 🌍 **English and Russian.** ctxray follows your system's language, or `--lang`.
