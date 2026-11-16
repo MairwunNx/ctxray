@@ -80,6 +80,14 @@ jobs:
       - name: Install the harnesses
         working-directory: packages/ctxray/fixtures/capture
         run: $GITHUB_WORKSPACE/dist/ctxray harness install
+      # The plugin and the marketplace, checked by the Claude Code the capture fixture pins, in a HOME of its own.
+      - name: Check the Claude Code plugin
+        run: |
+          claude="$(find "${{ steps.harness-cache.outputs.dir }}/harnesses/claude-code" -name claude -type f | head -1)"
+          export HOME="$(mktemp -d)"
+          "$claude" plugin validate --strict packages/claude-plugin
+          "$claude" plugin validate --strict .
+          bun scripts/plugin-zip.ts
       # L4 and L5: the binary launches every harness from its cache on the mock model, with their MCP servers
       # behind its shim. CI makes the run frozen: it needs the lockfile and never installs past it.
       - name: Smoke test capture
