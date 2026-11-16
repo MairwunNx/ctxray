@@ -579,6 +579,9 @@ export const ru: Catalog = {
   "option.promptCount": "Сколько промптов каждого вида на правило или скилл, по умолчанию 5",
   "genPrompts.usage": "ctxray gen-prompts --from-descriptions --out prompts/intents.json пишет промпты в файл",
   "genPrompts.offline": "Чтобы написать промпты, нужно спросить модель, а ctxray работает офлайн",
+  "test.offline":
+    "--backend real обращается к модели, а ctxray работает офлайн: записанные ответы воспроизводит --backend replay",
+  "calibrate.offline": "Калибровка считает токены у провайдера, а ctxray работает офлайн",
   "genPrompts.exists": "{file} уже есть: проверьте его или передайте --force, чтобы записать заново",
   "genPrompts.sameModel": {
     one: "{harnesses} тоже работает на {model}: промпты от тестируемой модели завышают её recall",

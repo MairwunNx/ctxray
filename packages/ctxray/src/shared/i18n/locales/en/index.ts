@@ -483,6 +483,8 @@ export const en = {
   "option.promptCount": "Prompts of each kind per rule or skill, 5 by default",
   "genPrompts.usage": "ctxray gen-prompts --from-descriptions --out prompts/intents.json writes the prompts to a file",
   "genPrompts.offline": "Writing prompts asks a model, and ctxray is offline",
+  "test.offline": "--backend real asks a model, and ctxray is offline: replay recorded answers with --backend replay",
+  "calibrate.offline": "Calibrating counts tokens with the provider, and ctxray is offline",
   "genPrompts.exists": "{file} exists: review it, or pass --force to write it again",
   "genPrompts.sameModel": {
     one: "{harnesses} runs {model} too: prompts from the model under test make its recall look better than it is",

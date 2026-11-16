@@ -56,6 +56,10 @@ export const createTestCommand =
       if ("key" in chosen) renderer.print([[span(t(chosen.key, chosen.params), "failure")]]);
     }
     if ("key" in selection || "key" in reporting) return ExitCode.usage;
+    if (selection.backend.kind === "real" && config.offline) {
+      renderer.print([[span(t("test.offline"), "failure")]]);
+      return ExitCode.environment;
+    }
     if (budget !== undefined && !(Number.isFinite(budget) && budget >= 0)) {
       renderer.print([[span(t("test.badBudget", { value: String(values["budget"]) }), "failure")]]);
       return ExitCode.usage;

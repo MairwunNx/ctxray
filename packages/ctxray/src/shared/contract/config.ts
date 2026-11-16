@@ -139,7 +139,9 @@ export const UserConfig = z
     offline: z
       .boolean()
       .optional()
-      .describe("Forbid every network request: no installs, no real runs. CTXRAY_OFFLINE=1 sets it too"),
+      .describe(
+        "Forbid every network request: no installs, no real runs, no exact counts, no calibration. CTXRAY_OFFLINE=1 sets it too",
+      ),
     network: Network.optional(),
     budget: Budget.optional(),
     activate: ActivateDefaults.optional(),

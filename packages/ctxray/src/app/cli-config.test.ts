@@ -58,3 +58,13 @@ test("--config points at another file", async () => {
   const { stdout } = await runIn(cwd, ["config", "--config", "ci.jsonc"]);
   expect(stdout).toContain('"offline": true');
 });
+
+// Offline, nothing leaves the machine: not a real model's run, not a provider's token count.
+test.each([
+  [["test", "--backend", "real"], "--backend real asks a model, and ctxray is offline"],
+  [["calibrate", "--provider", "anthropic", "--model", "claude-sonnet-5-5"], "Calibrating counts tokens"],
+])("offline, %p stops before the network", async (args, message) => {
+  const { code, stdout } = await runIn(project({ "ctxray.config.jsonc": `{ "offline": true }` }), args);
+  expect(code).toBe(4);
+  expect(stdout).toContain(message);
+});

@@ -1,4 +1,4 @@
-import { CONFIG_OPTION } from "#entities/user-config/index.ts";
+import { CONFIG_OPTION, type Config } from "#entities/user-config/index.ts";
 import type { CommandSpec, Handler } from "#shared/cli/index.ts";
 import { ExitCode } from "#shared/contract/index.ts";
 import type { Translate } from "#shared/i18n/index.ts";
@@ -21,8 +21,12 @@ export const calibrateSpec: CommandSpec = {
 const percent = (value: number) => `${value >= 0 ? "+" : ""}${Math.round(value * 100)} %`;
 
 export const createCalibrateCommand =
-  (calibrate: CalibrateAction, t: Translate, renderer: Renderer): Handler =>
+  (calibrate: CalibrateAction, t: Translate, renderer: Renderer, config: Config): Handler =>
   async (values) => {
+    if (config.offline) {
+      renderer.print([[span(t("calibrate.offline"), "failure")]]);
+      return ExitCode.environment;
+    }
     const provider = values["provider"];
     const model = values["model"];
     if (typeof provider !== "string" || !(provider in PROVIDERS) || typeof model !== "string" || model === "") {
@@ -64,4 +68,4 @@ export const createCalibrateCommand =
     }
     return ExitCode.ok;
   };
-createCalibrateCommand.inject = ["calibrateAction", "t", "renderer"] as const;
+createCalibrateCommand.inject = ["calibrateAction", "t", "renderer", "config"] as const;
