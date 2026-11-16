@@ -2,7 +2,8 @@
 
 <p align="center">
   <a href="https://github.com/MairwunNx/ctxray/actions/workflows/ci.yml"><img alt="Сборка" src="https://img.shields.io/github/actions/workflow/status/MairwunNx/ctxray/ci.yml?branch=master&label=build"></a>
-  <img alt="Статус: ранняя разработка" src="https://img.shields.io/badge/status-early%20development-orange">
+  <a href="https://www.npmjs.com/package/@mairwunnx/ctxray"><img alt="npm" src="https://img.shields.io/npm/v/@mairwunnx/ctxray"></a>
+  <a href="https://github.com/MairwunNx/ctxray/releases/latest"><img alt="Релиз" src="https://img.shields.io/github/v/release/MairwunNx/ctxray"></a>
   <img alt="Bun 1.4" src="https://img.shields.io/badge/Bun-1.4-000000?logo=bun&logoColor=white">
   <img alt="TypeScript 7" src="https://img.shields.io/badge/TypeScript-7-3178C6?logo=typescript&logoColor=white">
   <img alt="Языки: английский, русский" src="https://img.shields.io/badge/languages-en%20%7C%20ru-blue">
@@ -20,8 +21,29 @@
 
 [English version](https://github.com/MairwunNx/ctxray/blob/master/README.md)
 
-> [!WARNING]
-> ctxray в ранней разработке, релизов пока нет. До версии 1.0 API может меняться в минорных версиях.
+<!-- Демо: запись `ctxray inspect`, docs/images/inspect.gif -->
+
+```text
+$ ctxray inspect --harness claude-code --files app/src/main/kotlin/payments/Charge.kt
+
+ Claude Code                                          ≈ 286
+   Правила                                            ≈ 219
+     CLAUDE.md                                         ≈ 63  always · cwd
+     AGENTS.md                                         ≈ 23  always · import:CLAUDE.md
+     app/src/main/kotlin/payments/CLAUDE.md            ≈ 36  path · nested:app/src/main/kotlin/payments/Charge.kt
+     .claude/rules/payments.md                         ≈ 15  path · glob:**/payments/**/*.kt
+     …
+   Скиллы                                              ≈ 48
+     refunds                                           ≈ 19  .claude/skills/refunds/SKILL.md
+     …
+   MCP-серверы                                после запуска
+     github                                                  .mcp.json
+
+   ⚠ .claude/rules/web.md  Ни один файл репозитория не подходит под frontend/**/*.tsx, правило никогда не загрузится  dead-rule
+```
+
+> [!NOTE]
+> До версии 1.0 минорная версия может поменять конфиг и API тестов. Каждое такое изменение описано в [CHANGELOG.md](CHANGELOG.md).
 
 ## Что вы получаете
 
@@ -55,40 +77,94 @@ ctxray читает файлы ИИ-харнесса, не запуская ег
 
 ## The Loadout Stack
 
-ctxray проверяет настройку агента в семь слоёв, от дешёвых к дорогим. Первые три только читают файлы, остальные запускают ИИ-харнесс.
+ctxray проверяет настройку агента в семь слоёв, от дешёвых к дорогим. Первые три только читают файлы и проходят на каждом коммите за миллисекунды. L4 и L5 запускают ИИ-харнесс с mock-моделью, поэтому тоже ничего не стоят. Только L6 и L7 обращаются к настоящей модели или воспроизводят её ответы, записанные один раз.
 
-| Слой | Что проверяет |
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/loadout-stack-ru-dark.svg">
+  <img alt="The Loadout Stack: L1 Lint, L2 Policy и L3 Resolve читают файлы. L4 Assemble и L5 Wire запускают ИИ-харнесс с mock-моделью. L6 Activate и L7 Scenario спрашивают модель." src="docs/images/loadout-stack-ru-light.svg">
+</picture>
+
+Страница [Loadout Stack](https://github.com/MairwunNx/ctxray/wiki/The-Loadout-Stack-RU) разбирает каждый слой на примерах.
+
+## Установка
+
+ctxray — один исполняемый файл, никакой среды выполнения ставить не нужно. Выберите канал, которым уже пользуетесь:
+
+| Где | Команда |
 |---|---|
-| L1 Lint | Файлы правил, скиллов и конфигов валидны |
-| L2 Policy | Настройка соответствует правилам вашей компании |
-| L3 Resolve | К файлам, с которыми вы работаете, применяются нужные правила |
-| L4 Assemble | Харнесс действительно отправил их модели |
-| L5 Wire | Харнесс подкладывает нужное правило, когда агент читает файл или вызывает скилл |
-| L6 Activate | Модель выбирает нужный скилл по промпту |
-| L7 Scenario | Агент решает задачу правильным путём |
+| npm | `npm install -g @mairwunnx/ctxray` или разовый запуск через `npx @mairwunnx/ctxray` и `bunx @mairwunnx/ctxray` |
+| Homebrew | `brew install mairwunnx/tap/ctxray` |
+| Scoop | `scoop bucket add mairwunnx https://github.com/MairwunNx/scoop-bucket`, затем `scoop install mairwunnx/ctxray` |
+| macOS и Linux | `curl -fsSL https://github.com/MairwunNx/ctxray/releases/latest/download/install.sh \| sh` |
+| Windows | `irm https://github.com/MairwunNx/ctxray/releases/latest/download/install.ps1 \| iex` |
+| Docker | `docker run --rm -v "$PWD:/work" ghcr.io/mairwunnx/ctxray inspect` |
+
+Зеркала, Alpine и машины без интернета описаны на странице [Getting Started](https://github.com/MairwunNx/ctxray/wiki/Getting-Started-RU).
 
 ## Быстрый старт
 
-Эти команды заработают с первым релизом.
-
-1. Посмотрите, что загружает ваш ИИ-харнесс:
+1. Посмотрите, что загружают ваши ИИ-харнессы в этом репозитории:
 
    ```sh
-   bunx @mairwunnx/ctxray inspect
+   npx @mairwunnx/ctxray inspect
    ```
 
-2. Создайте конфиг и пример теста командой `ctxray init`.
-3. Запустите `ctxray test` локально, а потом добавьте в CI.
-4. Добавьте плагин в Claude Code:
+2. Создайте конфиг и пример теста:
+
+   ```sh
+   ctxray init
+   ```
+
+   Команда пишет `ctxray.config.ts` с Claude Code и Codex и `ctxray/loadout.ctxray.ts` — тест, который проверяет, что каждый харнесс загружает свой корневой файл правил. Редактор увидит типы после `npm install -D @mairwunnx/ctxray`, но запускать тесты ctxray умеет и без этого.
+
+3. Запустите тесты:
+
+   ```sh
+   ctxray test
+   ```
+
+   Слоям L1–L3 больше ничего не нужно. L4 запускает те ИИ-харнессы, что есть у вас в `PATH`.
+
+4. Закрепите версии харнессов, чтобы CI запускал те же сборки, что и вы, и закоммитьте `ctxray.lock`:
+
+   ```sh
+   ctxray harness add claude-code codex
+   ```
+
+5. Запускайте тесты в CI. На GitHub:
+
+   ```yaml
+   - uses: actions/checkout@v7
+   - uses: MairwunNx/ctxray-action@v0
+   ```
+
+   В GitLab подключите шаблон из релиза:
+
+   ```yaml
+   include:
+     - remote: https://github.com/MairwunNx/ctxray/releases/latest/download/ctxray.gitlab-ci.yml
+
+   ctxray:
+     extends: .ctxray
+   ```
+
+6. Добавьте плагин в Claude Code:
 
    ```sh
    claude plugin marketplace add MairwunNx/ctxray
    claude plugin install ctxray@ctxray
    ```
 
+   `/ctxray` показывает, что загрузила текущая сессия, а `/ctxray-test` запускает тесты.
+
 ## Документация
 
-Руководство — в [вики](https://github.com/MairwunNx/ctxray/wiki). Оно растёт вместе с ctxray.
+Руководство — в [вики](https://github.com/MairwunNx/ctxray/wiki/Home-RU):
+
+- [Writing Tests](https://github.com/MairwunNx/ctxray/wiki/Writing-Tests-RU): API тестов, от одного правила до сотни промптов.
+- [Configuration](https://github.com/MairwunNx/ctxray/wiki/Configuration-RU) и [Policies](https://github.com/MairwunNx/ctxray/wiki/Policies-RU): все настройки и правила вашей компании.
+- [Harnesses](https://github.com/MairwunNx/ctxray/wiki/Harnesses-RU): какие файлы читает каждый ИИ-харнесс и как ctxray это узнаёт.
+- [CI Integration](https://github.com/MairwunNx/ctxray/wiki/CI-Integration-RU) и [Enterprise](https://github.com/MairwunNx/ctxray/wiki/Enterprise-RU): GitHub, GitLab, шлюзы, прокси и закрытые контуры.
 
 ## Связанные проекты
 

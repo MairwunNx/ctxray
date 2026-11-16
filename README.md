@@ -2,7 +2,8 @@
 
 <p align="center">
   <a href="https://github.com/MairwunNx/ctxray/actions/workflows/ci.yml"><img alt="Build" src="https://img.shields.io/github/actions/workflow/status/MairwunNx/ctxray/ci.yml?branch=master&label=build"></a>
-  <img alt="Status: early development" src="https://img.shields.io/badge/status-early%20development-orange">
+  <a href="https://www.npmjs.com/package/@mairwunnx/ctxray"><img alt="npm" src="https://img.shields.io/npm/v/@mairwunnx/ctxray"></a>
+  <a href="https://github.com/MairwunNx/ctxray/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/MairwunNx/ctxray"></a>
   <img alt="Bun 1.4" src="https://img.shields.io/badge/Bun-1.4-000000?logo=bun&logoColor=white">
   <img alt="TypeScript 7" src="https://img.shields.io/badge/TypeScript-7-3178C6?logo=typescript&logoColor=white">
   <img alt="Languages: English, Russian" src="https://img.shields.io/badge/languages-en%20%7C%20ru-blue">
@@ -20,8 +21,29 @@
 
 [Русская версия](https://github.com/MairwunNx/ctxray/blob/master/README.RU.md)
 
-> [!WARNING]
-> ctxray is in early development, and nothing is released yet. Until 1.0, minor versions may change the API.
+<!-- Demo: a recording of `ctxray inspect` goes here, docs/images/inspect.gif -->
+
+```text
+$ ctxray inspect --harness claude-code --files app/src/main/kotlin/payments/Charge.kt
+
+ Claude Code                                       ≈ 286
+   Rules                                           ≈ 219
+     CLAUDE.md                                      ≈ 63  always · cwd
+     AGENTS.md                                      ≈ 23  always · import:CLAUDE.md
+     app/src/main/kotlin/payments/CLAUDE.md         ≈ 36  path · nested:app/src/main/kotlin/payments/Charge.kt
+     .claude/rules/payments.md                      ≈ 15  path · glob:**/payments/**/*.kt
+     …
+   Skills                                           ≈ 48
+     refunds                                        ≈ 19  .claude/skills/refunds/SKILL.md
+     …
+   MCP servers                               after a run
+     github                                               .mcp.json
+
+   ⚠ .claude/rules/web.md  No file in the repository matches frontend/**/*.tsx, so the rule never loads  dead-rule
+```
+
+> [!NOTE]
+> Until 1.0, a minor version may change the config and the test API. [CHANGELOG.md](CHANGELOG.md) names every such change.
 
 ## What you get
 
@@ -55,40 +77,94 @@ ctxray reads each agent's files without launching it. Where the agent allows it,
 
 ## The Loadout Stack
 
-ctxray checks your agent setup in seven layers, from cheap to expensive. The first three only read files. The rest launch the agent.
+ctxray checks your agent setup in seven layers, from cheap to expensive. The first three only read files and run on every commit in milliseconds. L4 and L5 launch the agent against a mock model, so they cost nothing either. Only L6 and L7 ask a real model, or replay its answers you recorded once.
 
-| Layer | What it checks |
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/loadout-stack-dark.svg">
+  <img alt="The Loadout Stack: L1 Lint, L2 Policy, and L3 Resolve read files. L4 Assemble and L5 Wire launch the agent with a mock model. L6 Activate and L7 Scenario ask a model." src="docs/images/loadout-stack-light.svg">
+</picture>
+
+The [Loadout Stack](https://github.com/MairwunNx/ctxray/wiki/The-Loadout-Stack) page explains each layer with examples.
+
+## Install
+
+ctxray is one executable with no runtime to install. Pick the channel you already use:
+
+| Where | Command |
 |---|---|
-| L1 Lint | The rule, skill, and config files are valid |
-| L2 Policy | The setup follows your organisation's rules |
-| L3 Resolve | The right rules apply to the files you work on |
-| L4 Assemble | The agent really sent them to the model |
-| L5 Wire | The agent adds the right rule when it reads a file or calls a skill |
-| L6 Activate | The model picks the right skill for a prompt |
-| L7 Scenario | The agent gets the task done the right way |
+| npm | `npm install -g @mairwunnx/ctxray`, or run it once with `npx @mairwunnx/ctxray` or `bunx @mairwunnx/ctxray` |
+| Homebrew | `brew install mairwunnx/tap/ctxray` |
+| Scoop | `scoop bucket add mairwunnx https://github.com/MairwunNx/scoop-bucket` and then `scoop install mairwunnx/ctxray` |
+| macOS and Linux | `curl -fsSL https://github.com/MairwunNx/ctxray/releases/latest/download/install.sh \| sh` |
+| Windows | `irm https://github.com/MairwunNx/ctxray/releases/latest/download/install.ps1 \| iex` |
+| Docker | `docker run --rm -v "$PWD:/work" ghcr.io/mairwunnx/ctxray inspect` |
+
+[Getting Started](https://github.com/MairwunNx/ctxray/wiki/Getting-Started) covers mirrors, Alpine, and offline machines.
 
 ## Get started
 
-These commands work from the first release on.
-
-1. See what your agent loads:
+1. See what your agents load in this repository:
 
    ```sh
-   bunx @mairwunnx/ctxray inspect
+   npx @mairwunnx/ctxray inspect
    ```
 
-2. Create a config and an example test with `ctxray init`.
-3. Run `ctxray test` locally, then add it to CI.
-4. Add the plugin to Claude Code:
+2. Create a config and an example test:
+
+   ```sh
+   ctxray init
+   ```
+
+   It writes `ctxray.config.ts` with Claude Code and Codex, and `ctxray/loadout.ctxray.ts`, a test that checks each one loads its root rules file. Your editor gets the types after `npm install -D @mairwunnx/ctxray`, but ctxray runs the tests without it.
+
+3. Run the tests:
+
+   ```sh
+   ctxray test
+   ```
+
+   Layers L1–L3 need nothing else. L4 launches the agents you have on your `PATH`.
+
+4. Pin the agents' versions, so CI runs the same builds as you, and commit `ctxray.lock`:
+
+   ```sh
+   ctxray harness add claude-code codex
+   ```
+
+5. Run the tests in CI. On GitHub:
+
+   ```yaml
+   - uses: actions/checkout@v7
+   - uses: MairwunNx/ctxray-action@v0
+   ```
+
+   On GitLab, include the template from the release:
+
+   ```yaml
+   include:
+     - remote: https://github.com/MairwunNx/ctxray/releases/latest/download/ctxray.gitlab-ci.yml
+
+   ctxray:
+     extends: .ctxray
+   ```
+
+6. Add the plugin to Claude Code:
 
    ```sh
    claude plugin marketplace add MairwunNx/ctxray
    claude plugin install ctxray@ctxray
    ```
 
+   `/ctxray` shows what your current session loaded, and `/ctxray-test` runs the tests.
+
 ## Documentation
 
-The [wiki](https://github.com/MairwunNx/ctxray/wiki) holds the manual. It grows with ctxray.
+The [wiki](https://github.com/MairwunNx/ctxray/wiki) holds the manual:
+
+- [Writing Tests](https://github.com/MairwunNx/ctxray/wiki/Writing-Tests): the test API, from one rule to a hundred prompts.
+- [Configuration](https://github.com/MairwunNx/ctxray/wiki/Configuration) and [Policies](https://github.com/MairwunNx/ctxray/wiki/Policies): every setting, and your organisation's rules.
+- [Harnesses](https://github.com/MairwunNx/ctxray/wiki/Harnesses): which files each agent reads, and how ctxray finds out.
+- [CI Integration](https://github.com/MairwunNx/ctxray/wiki/CI-Integration) and [Enterprise](https://github.com/MairwunNx/ctxray/wiki/Enterprise): GitHub, GitLab, gateways, proxies, and closed networks.
 
 ## Related projects
 
