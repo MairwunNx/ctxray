@@ -19,7 +19,7 @@ export type SystemSection = z.infer<typeof SystemSection>;
 export const RuleEntry = z.object({
   path: z.string().describe("Path relative to the project root"),
   activation: Activation,
-  reason: z.string().describe("Why it loaded, like `glob:**/payments/**/*.kt` or `cwd:app`"),
+  reason: z.string().describe("Why it loaded, like `glob:**/payments/**/*.kt` or `nested:app/src/Charge.kt`"),
   tokens,
 });
 export type RuleEntry = z.infer<typeof RuleEntry>;
