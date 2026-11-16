@@ -234,8 +234,8 @@ export const en = {
   "capture.trace": "Trace",
   "capture.ended": "The session has ended: start another with startSession()",
   "capture.egress": "{harness} tried to reach {hosts} past ctxray",
-  "activate.failed": "{subject} loaded at a rate of {rate} [{low}–{high}, 95 % CI]",
-  "activate.inconclusive": "{subject} loaded at a rate of {rate} [{low}–{high}, 95 % CI]: too few samples to tell",
+  "activate.failed": "{subject} loaded at a rate of {rate} [{low}–{high}, 95% CI]",
+  "activate.inconclusive": "{subject} loaded at a rate of {rate} [{low}–{high}, 95% CI]: too few samples to tell",
   "activate.runs": "Runs",
   "activate.threshold": "Threshold",
   "activate.needed": "Samples in all to tell",
@@ -317,7 +317,7 @@ export const en = {
   "html.provenance": "Source · reason · evidence",
   "html.rates": "Activation rates",
   "html.ratesHint":
-    "The dot is the rate, the bar its 95 % interval, the line the threshold. A pass needs the whole bar on the threshold's side.",
+    "The dot is the rate, the bar its 95% interval, the line the threshold. A pass needs the whole bar on the threshold's side.",
   "html.untested": {
     one: "{count} rule or skill no test looked at",
     other: "{count} rules and skills no test looked at",

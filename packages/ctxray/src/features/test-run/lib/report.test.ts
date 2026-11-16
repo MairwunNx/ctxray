@@ -84,7 +84,7 @@ test("the report fits its schema, groups cells by test, and leaves filtered ones
     ["tests/a.ctxray.ts#payments › refunds", ["inconclusive"]],
   ]);
   expect(report.tests[1]?.cells[0]?.failure?.message).toBe(
-    "skill(refunds) loaded at a rate of 0.80 [0.38–0.96, 95 % CI]: too few samples to tell",
+    "skill(refunds) loaded at a rate of 0.80 [0.38–0.96, 95% CI]: too few samples to tell",
   );
   expect(report.summary).toMatchObject({ passed: 1, skipped: 1, inconclusive: 1 });
   expect(report.run).toMatchObject({ backend: { kind: "replay", name: "pr" }, layers: ["L3", "L6"], duration: 1235 });

@@ -13,7 +13,7 @@ export type Interval = {
 
 const pct = (value: number) => `${(value * 100).toFixed(2)}%`;
 
-// A rate per row with its 95 % interval as a bar and the threshold as a tick: a pass needs the whole bar on
+// A rate per row with its 95% interval as a bar and the threshold as a tick: a pass needs the whole bar on
 // the threshold's side.
 export const forest = (rows: readonly Interval[]) =>
   h(

@@ -2,7 +2,7 @@ import { type App, titleOf } from "./app.ts";
 import { forest } from "./charts/forest.ts";
 import { h } from "./dom.ts";
 
-// Every rate L6 and L7 judged, on one axis: the dot is the rate, the bar its 95 % interval, the tick the threshold.
+// Every rate L6 and L7 judged, on one axis: the dot is the rate, the bar its 95% interval, the tick the threshold.
 export const evalsView = (app: App) => {
   const rows = app.report.tests.flatMap((test) =>
     test.cells.flatMap((cell) =>

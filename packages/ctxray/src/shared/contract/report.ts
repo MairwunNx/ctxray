@@ -33,7 +33,7 @@ export const ReportStat = z.object({
   successes: z.number().int().nonnegative(),
   samples: z.number().int().nonnegative(),
   rate: z.number(),
-  low: z.number().describe("Wilson 95 % interval"),
+  low: z.number().describe("Wilson 95% interval"),
   high: z.number(),
   threshold: z.union([z.object({ min: z.number() }), z.object({ max: z.number() })]),
   verdict: z.enum(["passed", "failed", "inconclusive"]),

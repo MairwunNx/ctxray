@@ -1,4 +1,4 @@
-// z for a two-sided 95 % interval.
+// z for a two-sided 95% interval.
 const Z = 1.959_963_984_540_054;
 
 export type Interval = { rate: number; low: number; high: number };
