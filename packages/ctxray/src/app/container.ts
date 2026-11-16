@@ -14,6 +14,7 @@ import {
 } from "#features/harness-install/index.ts";
 import { createInitAction } from "#features/init/index.ts";
 import { createInspectAction } from "#features/inspect/index.ts";
+import { createMcpCallAction } from "#features/mcp-serve/index.ts";
 import { createShowConfigAction } from "#features/show-config/index.ts";
 import { createShowReportAction } from "#features/show-report/index.ts";
 import {
@@ -65,6 +66,7 @@ export const createRunInjector = (
     .provideFactory("spectateHooksAction", createSpectateHooksAction)
     .provideFactory("spectateShowAction", createSpectateShowAction)
     .provideFactory("spectateSessionAction", createSpectateSessionAction)
+    .provideFactory("mcpCallAction", createMcpCallAction)
     .provideFactory("doctorAction", createDoctorAction)
     .provideFactory("calibrateAction", createCalibrateAction)
     .provideFactory("genPromptsAction", createGenPromptsAction)

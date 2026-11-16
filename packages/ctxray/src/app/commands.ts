@@ -6,6 +6,7 @@ import { createGenPromptsCommand, genPromptsSpec } from "#features/gen-prompts/i
 import { createHarnessCommand, harnessSpec } from "#features/harness-install/index.ts";
 import { createInitCommand, initSpec } from "#features/init/index.ts";
 import { createInspectCommand, inspectSpec } from "#features/inspect/index.ts";
+import { createMcpCommand, mcpSpec } from "#features/mcp-serve/index.ts";
 import { createShowConfigCommand, showConfigSpec } from "#features/show-config/index.ts";
 import { createShowReportCommand, showReportSpec } from "#features/show-report/index.ts";
 import { createSpectateCommand, spectateSpec } from "#features/spectate/index.ts";
@@ -26,6 +27,7 @@ export const COMMANDS: readonly Command[] = [
   { spec: showReportSpec, handler: (injector) => injector.injectFunction(createShowReportCommand) },
   { spec: harnessSpec, handler: (injector) => injector.injectFunction(createHarnessCommand) },
   { spec: spectateSpec, handler: (injector) => injector.injectFunction(createSpectateCommand) },
+  { spec: mcpSpec, handler: (injector) => injector.injectFunction(createMcpCommand) },
   { spec: cacheSpec, handler: (injector) => injector.injectFunction(createCacheCommand) },
   { spec: doctorSpec, handler: (injector) => injector.injectFunction(createDoctorCommand) },
   { spec: genPromptsSpec, handler: (injector) => injector.injectFunction(createGenPromptsCommand) },
