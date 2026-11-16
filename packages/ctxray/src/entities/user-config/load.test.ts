@@ -48,7 +48,10 @@ describe("createConfigLoader", () => {
   });
 
   test("from a subfolder, the project's config applies", async () => {
-    const root = project({ "ctxray.config.ts": `export default { harnesses: { codex: {} } };`, "tests/a.ctxray.ts": "" });
+    const root = project({
+      "ctxray.config.ts": `export default { harnesses: { codex: {} } };`,
+      "tests/a.ctxray.ts": "",
+    });
     expect(await createConfigLoader(join(root, "tests"), {})(undefined, "en")).toMatchObject({
       ok: true,
       config: { harnesses: { codex: {} } },

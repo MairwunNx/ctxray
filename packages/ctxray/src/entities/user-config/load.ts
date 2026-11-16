@@ -17,7 +17,11 @@ const checksNothing = (policy: Policy) => POLICY_CHECKS.every((check) => policy[
 const message = (error: unknown) => (error instanceof Error ? error.message : String(error));
 const exists = (file: string) => Bun.file(file).exists();
 // .git is a folder in a clone and a file in a worktree or submodule.
-const isRepoRoot = (dir: string) => access(join(dir, ".git")).then(() => true, () => false);
+const isRepoRoot = (dir: string) =>
+  access(join(dir, ".git")).then(
+    () => true,
+    () => false,
+  );
 
 const configIn = async (dir: string): Promise<string | undefined> => {
   const present = await Promise.all(CONFIG_FILES.map((name) => exists(join(dir, name))));
