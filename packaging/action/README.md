@@ -3,7 +3,7 @@
 [ctxray](https://github.com/MairwunNx/ctxray) shows what Claude Code, Codex, Cursor, Gemini CLI, and OpenCode load into a model's context, and tests it in CI. This action installs ctxray, caches the harnesses your `ctxray.lock` pins, and runs `ctxray test`:
 
 ```yaml
-- uses: actions/checkout@v5
+- uses: actions/checkout@v7
 - uses: MairwunNx/ctxray-action@v__VERSION__
 ```
 
@@ -18,7 +18,7 @@
 On a pull request, `ctxray diff` shows what the change adds to the agent's context:
 
 ```yaml
-- uses: actions/checkout@v5
+- uses: actions/checkout@v7
   with:
     fetch-depth: 0
 - uses: MairwunNx/ctxray-action@v__VERSION__
