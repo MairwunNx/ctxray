@@ -36,7 +36,7 @@ One Bun workspace. `packages/ctxray` is the CLI and the npm package `@mairwunnx/
 |---|---|
 | `app/` | CLI entry (`main.ts`), command router, DI container (`container.ts`), Elysia app assembly, `Bun.plugin` setup for user test files |
 | `features/` | One user-facing use case per CLI command: `inspect`, `test-run`, `diff`, `spectate`, `show-report`, `harness-install`, … Each has `<verb>.action.ts`, a thin `api/command.ts` (parse flags, call the action, hand the result to a renderer) or `api/routes.ts`, and `index.ts` as its public boundary |
-| `entities/` | Domain logic two or more features reuse: `harness` (adapter contract and one subfolder per harness), `loadout` (diff, snapshots), `lockfile`, `harness-cache`, `user-config`, `trace` |
+| `entities/` | Domain logic two or more features reuse: `harness` (adapter contract and one subfolder per harness), `loadout` (diff, snapshots), `lockfile`, `harness-cache`, `user-config`, `proxy` (capture proxy and traces), `report` |
 | `shared/` | No ctxray domain: `i18n`, `redact`, `tokens`, `markdown` (frontmatter, `@` imports, links), `glob`, `stats`, `render` (Ink and plain), `infra` (fs, process, http, env), and `contract` (the versioned Loadout, Result, and Trace schemas every layer reads) |
 
 Imports go only downward: app → features → entities → shared. Never feature → feature, never entity → entity. Imports keep the `.ts` extension. Another slice or layer comes through its `index.ts` by alias: `#shared/i18n/index.ts`, `#entities/user-config/index.ts` (the `imports` map in `packages/ctxray/package.json`, `#ctxray/*` for root scripts). Inside a slice use `./` or one `../`, never `../../`. No global barrels.
