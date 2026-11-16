@@ -63,6 +63,7 @@ test("frozen, and so in CI, a lockfile behind the config stops before any downlo
   expect(frozen.code).toBe(4);
   expect(frozen.stdout).toContain("В ctxray.lock codex 0.168.x, а конфиг просит 0.169.x");
   expect(registry.downloads.length).toBe(downloads);
+  expect((await runIn(dir, ["harness", "install", "--ci"], env)).code).toBe(4);
   const local = await runIn(dir, ["harness", "install"], env);
   expect(local.code).toBe(0);
   expect(local.stdout).toContain("! ctxray.lock has codex 0.168.x, the config asks for 0.169.x");

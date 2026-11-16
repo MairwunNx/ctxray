@@ -49,6 +49,8 @@ export const createRunInjector = (
   config: Config,
 ) =>
   container
+    // `--ci` runs as in CI everywhere: the lockfile frozen too, not only the plain output.
+    .provideValue("env", settings.ci ? { ...container.resolve("env"), CI: "true" } : container.resolve("env"))
     .provideValue("settings", settings)
     .provideValue("t", t)
     .provideValue("renderer", renderer)
