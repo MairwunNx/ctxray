@@ -1,32 +1,8 @@
 {
-  "version": "2.1.311",
+  "version": "2.1.325",
   "model": "claude-sonnet-5-5",
   "read": "app/src/main/kotlin/payments/Charge.kt",
   "servers": {
-    "jira": {
-      "info": {
-        "name": "jira",
-        "version": "1.0.0"
-      },
-      "instructions": "Use the jira tools to look up tickets of the PAY project.",
-      "tools": [
-        {
-          "name": "search_issues",
-          "description": "Search Jira issues with JQL.",
-          "inputSchema": {
-            "type": "object",
-            "properties": {
-              "jql": {
-                "type": "string",
-                "description": "JQL query"
-              }
-            },
-            "required": ["jql"]
-          }
-        }
-      ],
-      "calls": []
-    },
     "github": {
       "info": {
         "name": "github",
@@ -53,7 +29,11 @@
                 "description": "Markdown body"
               }
             },
-            "required": ["repo", "title", "body"]
+            "required": [
+              "repo",
+              "title",
+              "body"
+            ]
           }
         },
         {
@@ -67,7 +47,35 @@
                 "description": "owner/name"
               }
             },
-            "required": ["repo"]
+            "required": [
+              "repo"
+            ]
+          }
+        }
+      ],
+      "calls": []
+    },
+    "jira": {
+      "info": {
+        "name": "jira",
+        "version": "1.0.0"
+      },
+      "instructions": "Use the jira tools to look up tickets of the PAY project.",
+      "tools": [
+        {
+          "name": "search_issues",
+          "description": "Search Jira issues with JQL.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "jql": {
+                "type": "string",
+                "description": "JQL query"
+              }
+            },
+            "required": [
+              "jql"
+            ]
           }
         }
       ],
