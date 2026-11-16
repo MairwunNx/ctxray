@@ -17,6 +17,10 @@ export type Project = {
 };
 
 const SKIPPED = /(^|\/)(\.git|node_modules)\//;
+// ctxray's own folders: reports, and the harness cache CI keeps inside the project (the GitLab template does).
+// No harness reads them, and a cached build is thousands of files.
+const OWN = [".ctxray", ".ctxray-cache"];
+const NOT_OWN = OWN.map((folder) => `:(exclude)${folder}`);
 
 const nulSeparated = (text: string) => text.split("\0").filter((entry) => entry !== "");
 
@@ -41,7 +45,7 @@ const behindLinks = async (root: string, links: readonly string[]) => {
 
 // Outside a repository, or without git installed, the exit code is not 0 and the walk takes over.
 const gitFiles = async (root: string): Promise<string[] | undefined> => {
-  const git = await $`git ls-files -z --cached --others --exclude-standard`.cwd(root).quiet().nothrow();
+  const git = await $`git ls-files -z --cached --others --exclude-standard -- . ${NOT_OWN}`.cwd(root).quiet().nothrow();
   if (git.exitCode !== 0) return undefined;
   // git lists what the index holds: a file deleted from the working tree, or hidden by skip-worktree, isn't
   // there for any harness to read.
@@ -56,7 +60,9 @@ const gitFiles = async (root: string): Promise<string[] | undefined> => {
   const files = nulSeparated(git.stdout.toString()).filter((path) => !deleted.has(path));
   // Tracked links carry mode 120000. Untracked ones git knows nothing about, so lstat tells.
   const staged = nulSeparated(await $`git ls-files -s -z`.cwd(root).quiet().text());
-  const untracked = nulSeparated(await $`git ls-files -z --others --exclude-standard`.cwd(root).quiet().text());
+  const untracked = nulSeparated(
+    await $`git ls-files -z --others --exclude-standard -- . ${NOT_OWN}`.cwd(root).quiet().text(),
+  );
   const untrackedLinks = await inParallel(untracked, async (path) =>
     (await lstat(join(root, path)).catch(() => undefined))?.isSymbolicLink() ? path : undefined,
   );
@@ -72,7 +78,7 @@ const walkFiles = async (root: string): Promise<string[]> => {
   const files: string[] = [];
   for await (const path of new Bun.Glob("**").scan({ cwd: root, dot: true, onlyFiles: true, followSymlinks: true })) {
     const normal = path.replaceAll("\\", "/");
-    if (!SKIPPED.test(normal)) files.push(normal);
+    if (!SKIPPED.test(normal) && !OWN.some((folder) => normal.startsWith(`${folder}/`))) files.push(normal);
   }
   return files.sort();
 };
