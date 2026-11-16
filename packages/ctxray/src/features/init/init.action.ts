@@ -17,7 +17,7 @@ const writeFile = async (cwd: string, path: string, content: string, force: bool
   return { path, outcome: existed ? "overwritten" : "created" };
 };
 
-// Traces and reports land in .ctxray/. An existing .gitignore learns to skip it, a missing one stays missing.
+// Reports land in .ctxray/. An existing .gitignore learns to skip it, a missing one stays missing.
 const ignoreTraces = async (cwd: string): Promise<InitStep[]> => {
   const path = ".gitignore";
   const file = Bun.file(join(cwd, path));

@@ -19,8 +19,8 @@ export type Kind = keyof typeof KIND_LAYERS;
 export type TestOptions = {
   requires?: readonly Capability[]; // a harness without one of these skips the test as unsupported
   retries?: number; // runs again after a failure, and a later pass marks the test flaky
-  timeout?: number; // milliseconds, 30 s by default, 120 s for tests that launch a harness
-  cwd?: string; // L5: where the session's harness starts, relative to the project root
+  timeout?: number; // milliseconds: 30 s for L3, 120 s for L4–L5, and 300 s per sample for L6–L7
+  cwd?: string; // L4–L7: where the harness starts, relative to the project root
   // L6: what the agent gets asked, and how many times.
   prompt?: string;
   positive?: readonly string[];
