@@ -1,0 +1,37 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "ctxray",
+            "args": ["__spectate-hook", "claude"]
+          }
+        ]
+      }
+    ],
+    "InstructionsLoaded": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "ctxray",
+            "args": ["__spectate-hook", "claude"]
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "ctxray",
+            "args": ["__spectate-hook", "claude"]
+          }
+        ]
+      }
+    ]
+  }
+}

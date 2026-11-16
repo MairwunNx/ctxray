@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "ctxray": {
+      "command": "ctxray",
+      "args": ["mcp", "--harness", "claude-code"]
+    }
+  }
+}
