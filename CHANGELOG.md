@@ -2,6 +2,16 @@
 
 The “Release” workflow takes the notes for a version from its section here, unless you type them into its `changelog` field.
 
+## 0.1.1
+
+L1 now catches the files a harness silently skips, and the secrets nobody meant to give a model. Every check here was confirmed on the harnesses themselves, on macOS and Linux.
+
+- 🔤 **Files named almost right.** `misnamed-file` names the file a harness looks for when yours is `AGENT.md`, `.cursorrule`, `.claude/rule/`, a skill as a lone `.md` file, or `mcp.json` in the root. `letter-case` catches `claude.md` and `skill.md`: macOS and Windows read them, Linux CI doesn't.
+- 🔑 **Secrets in agent files.** `secret` and `personal-data` find keys, tokens, passwords, emails, and phone numbers in the files the model reads, with ctxray's redactor and the gitleaks rules. A finding names the kind and the line, never the value.
+- 🏠 **Paths only you have.** `absolute-path` flags `/Users/…`, `~/…`, and `C:\…` in imports, links, globs, and MCP configs. `not-shared` names agent files that `.gitignore` hides, that aren't committed yet, or that sit behind a symlink out of the repository, and `broken-symlink` a link that points nowhere.
+- 🧭 **inspect sees what the harnesses see.** Skills in subfolders for Codex, OpenCode, and Cursor. Cursor and OpenCode skip a skill without a description, Codex one with a byte order mark or tabs in its frontmatter. Cursor reads `.MDC` rules, and `alwaysApply: "true"` gets a warning. A Mac now reads a project the way Linux CI does.
+- 🧹 **No leftovers after a capture.** ctxray ends the harness's whole process group, so Cursor CLI's helpers no longer pile up over hundreds of sessions.
+
 ## 0.1.0
 
 The first release. ctxray shows what your AI agents load into a model's context and tests it in CI.
