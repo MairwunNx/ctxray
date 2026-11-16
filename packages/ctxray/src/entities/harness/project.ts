@@ -1,4 +1,4 @@
-import { lstat, realpath, stat } from "node:fs/promises";
+import { lstat, readdir, realpath, stat } from "node:fs/promises";
 import { join, posix, resolve } from "node:path";
 import { $ } from "bun";
 import { matchesGitignore } from "#shared/glob/index.ts";
@@ -102,12 +102,32 @@ export const openProject = async (root: string): Promise<Project> => {
   const files = (await gitFiles(root)) ?? (await walkFiles(root));
   const known = new Set(files);
   const dirs = [...new Set(files.flatMap(parentDirs))].sort();
+  // macOS and Windows open claude.md when asked for CLAUDE.md, Linux doesn't. CI runs on Linux, so ctxray
+  // takes a file only under its exact name, and the same project reads the same on every system.
+  const listings = new Map<string, Promise<Set<string>>>();
+  const listing = (dir: string) => {
+    const names =
+      listings.get(dir) ??
+      readdir(join(root, dir)).then(
+        (entries) => new Set(entries),
+        () => new Set<string>(),
+      );
+    listings.set(dir, names);
+    return names;
+  };
+  const exactly = async (path: string) => {
+    if (known.has(path)) return true;
+    const parts = path.split("/");
+    const names = await Promise.all(parts.map((_, index) => listing(parts.slice(0, index).join("/"))));
+    return parts.every((part, index) => names[index]?.has(part));
+  };
   const read = async (path: string) => {
     const file = Bun.file(join(root, path));
-    return (await file.exists()) ? file.text() : undefined;
+    return (await exactly(path)) && (await file.exists()) ? file.text() : undefined;
   };
   // Ignored files like CLAUDE.local.md are missing from the list but still count.
-  const exists = async (path: string) => known.has(path) || Bun.file(join(root, path)).exists();
+  const exists = async (path: string) =>
+    known.has(path) || ((await exactly(path)) && Bun.file(join(root, path)).exists());
   const readAll = (paths: readonly string[]) => inParallel(paths, read);
   return { root, files, dirs, read, readAll, exists };
 };
