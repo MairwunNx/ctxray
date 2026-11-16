@@ -5,7 +5,7 @@ import type { Translate } from "#shared/i18n/index.ts";
 export const bytes = (count: number, t: Translate) =>
   count >= 1e9
     ? t("units.gigabytes", { value: (Math.round(count / 1e8) / 10).toString() })
-    : t("units.megabytes", { value: Math.max(1, Math.round(count / 1e6)).toString() });
+    : t("units.megabytes", { value: Math.max(1, Math.round(count / 1e6)) });
 
 export const seconds = (ms: number, t: Translate) => t("test.seconds", { seconds: Math.round(ms / 100) / 10 });
 

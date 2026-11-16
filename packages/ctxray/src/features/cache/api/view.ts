@@ -3,7 +3,7 @@ import type { Translate } from "#shared/i18n/index.ts";
 import { columns, span, type View } from "#shared/render/index.ts";
 
 const megabytes = (bytes: number, t: Translate) =>
-  t("units.megabytes", { value: Math.max(1, Math.round(bytes / 1e6)).toString() });
+  t("units.megabytes", { value: Math.max(1, Math.round(bytes / 1e6)) });
 
 const day = (date: Date) => date.toISOString().slice(0, 10);
 
