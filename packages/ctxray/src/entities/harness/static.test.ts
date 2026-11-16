@@ -1,6 +1,8 @@
 import { describe, expect, test } from "bun:test";
+import { join } from "node:path";
 import type { HarnessId } from "#shared/contract/index.ts";
-import { findingsOf, resolveIn } from "./static.fixture.ts";
+import { FIXTURES, findingsOf, resolveIn } from "./static.fixture.ts";
+import { tokenCounterOf } from "./static-loadout.ts";
 
 const CHARGE = "app/src/main/kotlin/payments/Charge.kt";
 
@@ -130,9 +132,11 @@ describe("L3 resolve on the payments fixture", () => {
     expect(loadout.commands.map((command) => command.name)).toEqual(commands);
   });
 
-  test("tokens are local estimates and never claim to be exact", async () => {
+  test("tokens are local estimates scaled to Claude and never claim to be exact", async () => {
     const { loadout } = await resolveIn("payments", "claude-code");
-    expect(loadout.tokens).toMatchObject({ exact: false, method: "local:o200k_base", calibration: "none" });
+    expect(loadout.tokens.exact).toBe(false);
+    expect(loadout.tokens.calibration).toBeUndefined();
+    expect(loadout.tokens.method).toStartWith("local:o200k_base+calibrated:");
     const rules = loadout.rules.reduce((sum, rule) => sum + rule.tokens, 0);
     expect(loadout.tokens.byComponent.rules).toBe(rules);
     expect(rules).toBeGreaterThan(0);
@@ -152,3 +156,13 @@ test("Claude Code Desktop reads what Claude Code reads, under its own name", asy
   expect(desktop.harness).toBe("claude-code-desktop");
   expect({ ...desktop, harness: "claude-code" }).toEqual(cli);
 });
+
+// Each harness counts in its model's tokenizer: Claude's calibration must not leak into Codex and the rest.
+test.each<HarnessId>(["claude-code", "codex", "opencode", "cursor-cli"])(
+  "%s counts AGENTS.md its own way",
+  async (harness) => {
+    const { loadout } = await resolveIn("payments", harness);
+    const text = await Bun.file(join(FIXTURES, "payments", "AGENTS.md")).text();
+    expect(loadout.rules.find((rule) => rule.path === "AGENTS.md")?.tokens).toBe(tokenCounterOf(harness).count(text));
+  },
+);

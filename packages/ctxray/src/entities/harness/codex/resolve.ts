@@ -1,7 +1,13 @@
-import { countTokens } from "#shared/tokens/index.ts";
 import type { Instruction, Inventory } from "../inventory.ts";
 import { chainTo } from "../project.ts";
-import { createRules, listingLine, type Scope, type StaticLoadout, withTokens } from "../static-loadout.ts";
+import {
+  createRules,
+  listingLine,
+  type Scope,
+  type StaticLoadout,
+  tokenCounterOf,
+  withTokens,
+} from "../static-loadout.ts";
 
 // What fits into the byte budget: the file that crosses it gets cut, the ones after it stay out.
 export const withinBudget = (chain: readonly Instruction[], budget: number) => {
@@ -21,7 +27,8 @@ export const withinBudget = (chain: readonly Instruction[], budget: number) => {
 // start, so the files the agent works with change nothing.
 export const resolveCodex = (inventory: Inventory, { cwd }: Scope): StaticLoadout => {
   const chain = chainTo(cwd);
-  const { rules, add } = createRules();
+  const counter = tokenCounterOf("codex");
+  const { rules, add } = createRules(counter);
   const files = chain.flatMap((dir) => inventory.instructions.filter((file) => file.dir === dir));
   for (const { instruction, text } of withinBudget(files, inventory.budget ?? Number.POSITIVE_INFINITY)) {
     add(instruction.path, "always", "cwd", text);
@@ -37,7 +44,7 @@ export const resolveCodex = (inventory: Inventory, { cwd }: Scope): StaticLoadou
         listed: skills.map((skill) => ({
           name: skill.name,
           path: skill.path,
-          tokens: countTokens(listingLine(skill.name, skill.description)),
+          tokens: counter.count(listingLine(skill.name, skill.description)),
         })),
         loaded: [],
       },

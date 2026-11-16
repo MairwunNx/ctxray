@@ -1,8 +1,14 @@
 import type { HarnessId } from "#shared/contract/index.ts";
-import { countTokens } from "#shared/tokens/index.ts";
 import type { Instruction, Inventory } from "../inventory.ts";
 import { chainTo, isInside, matchingGlob, parentDirs } from "../project.ts";
-import { createRules, listingLine, type Scope, type StaticLoadout, withTokens } from "../static-loadout.ts";
+import {
+  createRules,
+  listingLine,
+  type Scope,
+  type StaticLoadout,
+  tokenCounterOf,
+  withTokens,
+} from "../static-loadout.ts";
 
 const always = (file: Instruction) =>
   file.kind !== "rule" || file.activation === "always" || file.activation === undefined;
@@ -15,7 +21,8 @@ export const resolveCursor =
   (harness: HarnessId) =>
   (inventory: Inventory, { cwd, files }: Scope): StaticLoadout => {
     const chain = chainTo(cwd);
-    const { rules, add } = createRules();
+    const counter = tokenCounterOf(harness);
+    const { rules, add } = createRules(counter);
     const at = (dir: string) => inventory.instructions.filter((file) => file.dir === dir);
     for (const dir of chain) for (const file of at(dir).filter(always)) add(file.path, "always", "cwd", file.text);
     for (const file of inventory.instructions.filter((one) => one.activation === "intent" && chain.includes(one.dir))) {
@@ -46,7 +53,7 @@ export const resolveCursor =
           listed: skills.map((skill) => ({
             name: skill.name,
             path: skill.path,
-            tokens: countTokens(listingLine(skill.name, skill.description)),
+            tokens: counter.count(listingLine(skill.name, skill.description)),
           })),
           loaded: [],
         },

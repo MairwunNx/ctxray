@@ -44,7 +44,7 @@ export const familyOf = (harness: HarnessId): ModelFamily => {
 // scaled to Claude once ctxray has measured factors.
 export const tokenCounterOf = (harness: HarnessId): TokenCounter => counterFor(familyOf(harness));
 
-export const createRules = (counter: TokenCounter = tokenCounterOf("claude-code")) => {
+export const createRules = (counter: TokenCounter) => {
   const rules: RuleEntry[] = [];
   const add = (path: string, activation: Activation, reason: string, text: string) => {
     if (!rules.some((rule) => rule.path === path))

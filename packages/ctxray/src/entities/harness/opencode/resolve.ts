@@ -1,7 +1,13 @@
-import { countTokens } from "#shared/tokens/index.ts";
 import type { Instruction, Inventory } from "../inventory.ts";
 import { chainTo, isInside, joinPath, parentDirs } from "../project.ts";
-import { createRules, listingLine, type Scope, type StaticLoadout, withTokens } from "../static-loadout.ts";
+import {
+  createRules,
+  listingLine,
+  type Scope,
+  type StaticLoadout,
+  tokenCounterOf,
+  withTokens,
+} from "../static-loadout.ts";
 import { CONTEXT_NAMES } from "./discover.ts";
 
 // Emulates OpenCode 1.19 (ADR 0008). At launch: the first of AGENTS.md, CLAUDE.md, CONTEXT.md that exists
@@ -11,7 +17,8 @@ import { CONTEXT_NAMES } from "./discover.ts";
 export const resolveOpencode = (inventory: Inventory, { cwd, files }: Scope): StaticLoadout => {
   const chain = chainTo(cwd);
   const upward = chain.toReversed();
-  const { rules, add } = createRules();
+  const counter = tokenCounterOf("opencode");
+  const { rules, add } = createRules(counter);
   const byPath = new Map(
     inventory.instructions.filter((file) => file.kind !== "rule").map((file) => [file.path, file]),
   );
@@ -59,7 +66,7 @@ export const resolveOpencode = (inventory: Inventory, { cwd, files }: Scope): St
         listed: [...skills.values()].map((skill) => ({
           name: skill.name,
           path: skill.path,
-          tokens: countTokens(listingLine(skill.name, skill.description)),
+          tokens: counter.count(listingLine(skill.name, skill.description)),
         })),
         loaded: [],
       },

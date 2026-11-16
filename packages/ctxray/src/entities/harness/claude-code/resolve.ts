@@ -1,8 +1,15 @@
 import type { Activation } from "#shared/contract/index.ts";
-import { countTokens, isCalibrated } from "#shared/tokens/index.ts";
+import { isCalibrated } from "#shared/tokens/index.ts";
 import type { Instruction, Inventory } from "../inventory.ts";
 import { chainTo, isInside, isWithin, matchingGlob, parentDirs } from "../project.ts";
-import { createRules, listingLine, type Scope, type StaticLoadout, withTokens } from "../static-loadout.ts";
+import {
+  createRules,
+  listingLine,
+  type Scope,
+  type StaticLoadout,
+  tokenCounterOf,
+  withTokens,
+} from "../static-loadout.ts";
 import { isClaudeFile } from "./discover.ts";
 
 // Emulates Claude Code 2.1 (ADR 0005, code.claude.com/docs/en/memory): CLAUDE.md files from the root down to
@@ -12,7 +19,8 @@ export const resolveClaudeCode = (inventory: Inventory, { cwd, files }: Scope): 
   const chain = chainTo(cwd);
   const below = [...new Set(files.flatMap(parentDirs))].filter((dir) => dir !== cwd && isInside(dir, cwd));
   const agentsMode = !instructions.some((file) => isClaudeFile(file) && chain.includes(file.dir));
-  const { rules, add: addRule } = createRules();
+  const counter = tokenCounterOf("claude-code");
+  const { rules, add: addRule } = createRules(counter);
 
   // Claude Code 2.1.311 expands `@imports` only for files in the cwd and below it: a CLAUDE.md above the cwd
   // loads without its imports (verified on the wire, stage 9).
@@ -66,7 +74,7 @@ export const resolveClaudeCode = (inventory: Inventory, { cwd, files }: Scope): 
       cwd,
       rules,
       skills: {
-        listed: skills.map(({ skill, line }) => ({ name: skill.name, path: skill.path, tokens: countTokens(line) })),
+        listed: skills.map(({ skill, line }) => ({ name: skill.name, path: skill.path, tokens: counter.count(line) })),
         loaded: [],
       },
       mcp: { servers: inventory.mcp.filter((server) => server.enabled).map(({ name }) => ({ name })), tools: [] },
