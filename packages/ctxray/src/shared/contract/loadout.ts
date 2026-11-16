@@ -28,21 +28,31 @@ export const SkillEntry = z.object({
   name: z.string(),
   path: z.string().describe("Its SKILL.md relative to the project root, empty for the harness's own skills"),
   builtin: z.boolean().optional().describe("Shipped with the harness, not found in the project"),
+  own: z.boolean().optional().describe("Part of ctxray's own plugin: listed, but left out of every total"),
   tokens,
 });
 export type SkillEntry = z.infer<typeof SkillEntry>;
 
-export const McpServer = z.object({ name: z.string(), version: z.string().optional() });
+export const McpServer = z.object({
+  name: z.string(),
+  version: z.string().optional(),
+  own: z.boolean().optional().describe("Part of ctxray's own plugin: listed, but left out of every total"),
+});
 export type McpServer = z.infer<typeof McpServer>;
 export const McpTool = z.object({
   server: z.string(),
   name: z.string(),
   deferred: z.boolean().optional().describe("Listed by name only: the schema loads when the model asks for it"),
+  own: z.boolean().optional().describe("Part of ctxray's own plugin: listed, but left out of every total"),
   tokens: tokens.describe("Tokens of its name, description, and schema, as they load"),
 });
 export type McpTool = z.infer<typeof McpTool>;
 
-export const CommandEntry = z.object({ name: z.string(), path: z.string().optional() });
+export const CommandEntry = z.object({
+  name: z.string(),
+  path: z.string().optional(),
+  own: z.boolean().optional().describe("Part of ctxray's own plugin: listed, but left out of every total"),
+});
 export type CommandEntry = z.infer<typeof CommandEntry>;
 
 export const TokenSummary = z.object({
@@ -56,6 +66,7 @@ export const TokenSummary = z.object({
   framing: tokens
     .optional()
     .describe("Exact counts only: what no component owns, like the conversation and the tool-use preamble"),
+  own: tokens.optional().describe("What ctxray's own plugin costs, left out of `total` and the other sums"),
 });
 
 export const Provenance = z.object({

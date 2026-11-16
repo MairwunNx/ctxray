@@ -45,7 +45,8 @@ export const slug = (title: string) =>
 // `- name: description` lines of a listing.
 export const listing = (text: string) =>
   text.split("\n").flatMap((line) => {
-    const match = /^- ([^:\s][^:]*?): /.exec(line);
+    const match = /^- ([^:\s].*?): /.exec(line);
     // Claude Code adds a skill's own `name` in brackets when it differs from the folder: `- folder (name):`.
+    // A plugin's skill keeps the plugin in its name: `- plugin:skill:`.
     return match ? [{ name: (match[1] as string).replace(/ \([^)]*\)$/, ""), line }] : [];
   });

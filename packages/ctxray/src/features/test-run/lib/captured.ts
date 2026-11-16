@@ -65,7 +65,18 @@ const snapshotOfCapture = (loadout: LoadoutSnapshot) => ({
   commands: loadout.commands.map(({ name }) => name),
 });
 
-export const toCaptured = (loadout: LoadoutSnapshot): CapturedLoadout => {
+// ctxray's own plugin stays out of what a test sees, the way it stays out of the totals.
+const notOwn = <T extends { own?: boolean | undefined }>(entries: readonly T[]) => entries.filter((one) => !one.own);
+
+const withoutOwn = (loadout: LoadoutSnapshot): LoadoutSnapshot => ({
+  ...loadout,
+  skills: { listed: notOwn(loadout.skills.listed), loaded: notOwn(loadout.skills.loaded) },
+  mcp: { servers: notOwn(loadout.mcp.servers), tools: notOwn(loadout.mcp.tools) },
+  commands: notOwn(loadout.commands),
+});
+
+export const toCaptured = (full: LoadoutSnapshot): CapturedLoadout => {
+  const loadout = withoutOwn(full);
   const byMcpServer = (server: string) =>
     loadout.tokens.byMcpServer[server] ??
     fail("expect.noEntry", {

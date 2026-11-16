@@ -17,6 +17,7 @@ import { type StaticLoadout, tokenCounterOf } from "../static-loadout.ts";
 import { normalise, withoutCanaries } from "./canary.ts";
 import { mcpOf } from "./loadout-mcp.ts";
 import type { Segment } from "./model.ts";
+import { isOwnSegment, isOwnSkill } from "./own.ts";
 import { projectPath } from "./sections.ts";
 
 export type LoadoutInput = {
@@ -28,6 +29,7 @@ export type LoadoutInput = {
   work: string;
   first: boolean; // the session's first request: rules there load at start, later ones on the way
   aliases?: Readonly<Record<string, readonly string[]>>; // a canary's other paths, through symlinks
+  own?: readonly string[]; // where ctxray's own plugin lives, for the skill bodies it loads
 };
 
 // A canary names one path of a symlinked file. The harness loaded it under the path L3 expects, if any.
@@ -110,6 +112,7 @@ const skillsOf = (input: LoadoutInput, count: Count) => {
       loaded.push({
         name: skill?.name ?? posix.basename(id),
         path: skill?.path ?? id,
+        ...(isOwnSegment(segment, input.own ?? []) && { own: true }),
         tokens: tokensOf(segment, count),
       });
     } else if (isCommand(id)) {
@@ -121,7 +124,14 @@ const skillsOf = (input: LoadoutInput, count: Count) => {
       const same = twin && inventory.skills.find((one) => one.path === twin.path)?.dir === skill?.dir;
       const path = (same ? twin?.path : skill?.path) ?? "";
       const builtin = skill === undefined;
-      listed.push({ name: id, path, ...(builtin && { builtin }), tokens: tokensOf(segment, count) });
+      const own = isOwnSkill(id);
+      listed.push({
+        name: id,
+        path,
+        ...(builtin && { builtin }),
+        ...(own && { own }),
+        tokens: tokensOf(segment, count),
+      });
     }
   }
   return { listed, loaded, commands };
@@ -148,8 +158,13 @@ export const buildLoadout = (input: LoadoutInput): LoadoutSnapshot => {
   const mcp = mcpOf(input, count);
   const byComponent: Partial<Record<Component, number>> = {};
   let total = 0;
+  let own = 0;
   for (const segment of input.segments) {
     const tokens = tokensOf(segment, count);
+    if (isOwnSegment(segment, input.own ?? [])) {
+      own += tokens;
+      continue;
+    }
     total += tokens;
     if (segment.component !== "messages")
       byComponent[segment.component] = (byComponent[segment.component] ?? 0) + tokens;
@@ -163,7 +178,14 @@ export const buildLoadout = (input: LoadoutInput): LoadoutSnapshot => {
     skills: { listed, loaded },
     mcp: { servers: mcp.servers, tools: mcp.tools },
     commands,
-    tokens: { total, byComponent, byMcpServer: mcp.byMcpServer, exact: false, method: counter.method },
+    tokens: {
+      total,
+      byComponent,
+      byMcpServer: mcp.byMcpServer,
+      exact: false,
+      method: counter.method,
+      ...(own > 0 && { own }),
+    },
     provenance,
     ...(duplicates.length > 0 && { duplicates }),
   };
