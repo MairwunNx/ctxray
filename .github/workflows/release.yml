@@ -95,8 +95,7 @@ jobs:
       packages: write
       id-token: write
 
-  # The tap, the bucket, the action, and the GitLab component live in repositories of their own. Each step runs
-  # once its token is in the repository's secrets.
+  # The tap, the bucket, and the action live in repositories of their own, FAMILY_ACTIONS_TOKEN pushes to them.
   repositories:
     needs: [build, packages]
     runs-on: ubuntu-latest
@@ -104,8 +103,6 @@ jobs:
       VERSION: ${{ needs.build.outputs.version }}
       DRY_RUN: ${{ inputs.dry-run }}
       PACKAGING_TOKEN: ${{ secrets.FAMILY_ACTIONS_TOKEN }}
-      GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
-      GITLAB_PROJECT: ${{ vars.GITLAB_PROJECT || 'mairwunnx/ctxray' }}
     steps:
       - uses: actions/download-artifact@v8
         with:
@@ -136,10 +133,4 @@ jobs:
             [ "$DRY_RUN" = true ] || push "$github/ctxray-action.git" packages/packaging/action "v${VERSION%%.*}"
           else
             echo "::warning::No FAMILY_ACTIONS_TOKEN: the tap, the bucket, and the action stay as they were"
-          fi
-          if [ -n "$GITLAB_TOKEN" ]; then
-            # The CI/CD Catalog takes tags without the v.
-            push "https://oauth2:$GITLAB_TOKEN@gitlab.com/$GITLAB_PROJECT.git" packages/packaging/gitlab-component "$VERSION"
-          else
-            echo "::warning::No GITLAB_TOKEN: the GitLab component stays as it was"
           fi

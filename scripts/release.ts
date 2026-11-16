@@ -3,7 +3,7 @@
 //   bin/        the binaries, one folder per platform
 //   docker/     the images' build context
 //   npm/        the npm packages, and their tarballs in npm/packs: the tarballs keep the binaries executable
-//   packaging/  what goes to the tap, the bucket, the action, and the GitLab component
+//   packaging/  what goes to the tap, the bucket, and the action
 // `--only linux-x64,darwin-arm64` builds some platforms, for a quick look. The release workflow builds them all
 // and hands over its CycloneDX SBOM with `--sbom <file>`, so SHA256SUMS covers it too.
 import { cp, mkdir, rm } from "node:fs/promises";
@@ -70,9 +70,6 @@ for (const dir of await npmPackages(targets, binary, join(OUT, "npm"))) {
 const packaging = join(OUT, "packaging");
 for (const file of ["action.yml", "README.md"]) {
   await stamp(join("packaging/action", file), join(packaging, "action", file), version);
-}
-for (const file of ["templates/ctxray.yml", "README.md", ".gitlab-ci.yml"]) {
-  await stamp(join("packaging/gitlab/component", file), join(packaging, "gitlab-component", file), version);
 }
 if (targets.length === TARGETS.length) {
   await Bun.write(join(packaging, "homebrew-tap", "Formula", "ctxray.rb"), formula(version, sums));
