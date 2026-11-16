@@ -66,6 +66,10 @@ const timed = async <T>(run: () => Promise<T>) => {
   return { value, duration: performance.now() - started };
 };
 
+// A test per rule that doesn't run expands to no rules: its placeholders show as “…”, not as `{rule.path}`.
+const unexpanded = (definition: TestDefinition) =>
+  definition.rules ? definition.name.replace(/\{rule(\.[^}]*)?\}/g, "…") : definition.name;
+
 export const runDefinition = async (
   definition: TestDefinition,
   harness: HarnessId,
@@ -76,7 +80,7 @@ export const runDefinition = async (
     file: definition.file,
     suites: definition.suites,
     fixture: definition.fixture,
-    name: definition.name,
+    name: unexpanded(definition),
     key: definition.key,
     layer: KIND_LAYERS[definition.kind],
     harness,
