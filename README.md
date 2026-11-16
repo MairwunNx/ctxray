@@ -32,6 +32,7 @@
 - 🧪 **One test, every agent.** The same test runs against each agent you use. You don't copy it per tool.
 - 🎯 **Does the model pick the right skill?** A prompt runs a few dozen times against a real model, and ctxray reports how often the skill loaded, with a confidence interval. Record the answers once, and every merge request replays them for free.
 - 📉 **What a merge request changes.** `ctxray diff` compares with the main branch: a new MCP server with 14 tools, a rule that grew by 6k tokens.
+- 🧩 **Right inside Claude Code.** The plugin's `/ctxray` shows what the current session loaded, `/ctxray-test` runs the tests, and Claude checks its own change for context bloat through ctxray's MCP server.
 - 📋 **Your organisation's rules.** Token limits, banned MCP servers, a required AGENTS.md: checked on every merge request, without calling a model.
 - 🏢 **Works in a closed network.** Corporate LLM gateways, proxies, your own CA certificates, and internal npm registries all work.
 - 🔒 **Secrets stay out.** API keys, tokens, emails, phone and card numbers are hidden before anything is written to disk.
@@ -78,6 +79,12 @@ These commands work from the first release on.
 
 2. Create a config and an example test with `ctxray init`.
 3. Run `ctxray test` locally, then add it to CI.
+4. Add the plugin to Claude Code:
+
+   ```sh
+   claude plugin marketplace add MairwunNx/ctxray
+   claude plugin install ctxray@ctxray
+   ```
 
 ## Documentation
 
