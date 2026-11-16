@@ -184,6 +184,16 @@ export const ru: Catalog = {
     "Frontmatter отбит табуляцией, а YAML её запрещает. Харнессы читают такой файл по-разному: Claude Code и Codex пропускают такой скилл, остальные берут. Сделайте отступы пробелами",
   "lint.alwaysApplyText":
     "Cursor понимает alwaysApply только как true или false без кавычек, поэтому „{value}“ ничего не делает, и правило само не применяется",
+  "lint.ignoredFile": "{harness} читает этот файл у вас, но его скрывает .gitignore: у команды и в CI его нет",
+  "lint.ignoredFolder": {
+    one: "{harness} читает у вас {count} файл из этой папки, но её скрывает .gitignore: у команды и в CI его нет",
+    few: "{harness} читает у вас {count} файла из этой папки, но её скрывает .gitignore: у команды и в CI их нет",
+    many: "{harness} читает у вас {count} файлов из этой папки, но её скрывает .gitignore: у команды и в CI их нет",
+    other: "{harness} читает у вас {count} файла из этой папки, но её скрывает .gitignore: у команды и в CI их нет",
+  },
+  "lint.uncommittedFile": "{harness} читает этот файл у вас, но он ещё не закоммичен: у команды и в CI его нет",
+  "lint.brokenSymlink": "Ссылка ведёт на {target}, которого нет, и {harness} здесь ничего не читает",
+  "lint.outsideLink": "Ссылка ведёт за пределы репозитория, на {target}: у команды и в CI его нет",
   "lint.misnamed": "{harness} не читает этот файл. Вы, видимо, имели в виду „{expected}“?",
   "lint.letterCase":
     "Вы, видимо, имели в виду „{expected}“? {harness} ищет это имя: на macOS и Windows файл может под него подойти, в Linux и CI — нет",

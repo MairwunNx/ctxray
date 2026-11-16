@@ -159,6 +159,15 @@ export const en = {
     "A tab indents the frontmatter, which YAML forbids. The harnesses read it differently: Claude Code and Codex skip such a skill, the others take it. Indent with spaces",
   "lint.alwaysApplyText":
     "Cursor reads alwaysApply only as true or false without quotes, so “{value}” does nothing and the rule never applies on its own",
+  "lint.ignoredFile": "{harness} reads this file here, but .gitignore hides it: the team and CI never get it",
+  "lint.ignoredFolder": {
+    one: "{harness} reads {count} file from this folder here, but .gitignore hides the folder: the team and CI never get it",
+    other:
+      "{harness} reads {count} files from this folder here, but .gitignore hides the folder: the team and CI never get them",
+  },
+  "lint.uncommittedFile": "{harness} reads this file here, but it isn't committed yet: the team and CI don't have it",
+  "lint.brokenSymlink": "The link points to {target}, which doesn't exist, so {harness} reads nothing here",
+  "lint.outsideLink": "The link leads outside the repository, to {target}: the team and CI don't have it",
   "lint.misnamed": "{harness} never reads this file. Did you mean “{expected}”?",
   "lint.letterCase":
     "Did you mean “{expected}”? {harness} looks for that name: macOS and Windows may take this file for it, Linux and CI won't",

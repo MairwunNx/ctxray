@@ -8,6 +8,7 @@ import { PROFILES } from "../profiles.ts";
 import { dirOf, isInside, type Project } from "../project.ts";
 import { type NearMiss, nearMiss } from "./near-miss.ts";
 import { comparable, indexReach, type ReachIndex } from "./reach-index.ts";
+import { checkSharing } from "./sharing.ts";
 
 const SKILL = /(^|\/)SKILL\.md$/;
 // Markdown in these folders is written for agents, whatever its name.
@@ -136,6 +137,7 @@ export const checkReach = async (
     }
   }
   const found = report.done();
-  for (const id of ids) found[id]?.push(...nearMissProblems(misses, id));
+  const unshared = await checkSharing(project, ids);
+  for (const id of ids) found[id]?.push(...nearMissProblems(misses, id), ...(unshared[id] ?? []));
   return found;
 };

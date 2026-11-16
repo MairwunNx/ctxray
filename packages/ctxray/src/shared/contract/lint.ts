@@ -30,6 +30,8 @@ export const LINT_RULES = [
   "letter-case",
   "absolute-path",
   "byte-order-mark",
+  "not-shared",
+  "broken-symlink",
   "dead-rule",
   "size",
   "unread",
