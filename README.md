@@ -42,20 +42,6 @@
 - 📊 **Reports for people and for CI.** A live view in the terminal, an HTML report, JUnit, Allure, JSON, and a short Markdown summary for the merge request.
 - 🌍 **English and Russian.** ctxray picks your system's language, or the one you pass with `--lang`.
 
-## Supported agents
-
-ctxray reads each agent's files without launching it. Where the agent allows it, ctxray can also launch the agent and record its requests to the model, or record a session you run yourself.
-
-| Agent | Reads files | Launches and records | Records your session |
-|---|:-:|:-:|:-:|
-| Claude Code | ✓ | ✓ | ✓ |
-| Codex | ✓ | ✓ | |
-| Gemini CLI | ✓ | ✓ | |
-| OpenCode | ✓ | ✓ | |
-| Cursor CLI | ✓ | experimental | ✓ |
-| Cursor (editor) | ✓ | | ✓ |
-| Claude Code Desktop | ✓ | | ✓ |
-
 ## The Loadout Stack
 
 ctxray checks your agent setup in seven layers, from cheap to expensive. The first three only read files and run on every commit in milliseconds. L4 and L5 launch the agent against a mock model, so they cost nothing either. Only L6 and L7 ask a real model, or replay its answers you recorded once.
@@ -66,6 +52,15 @@ ctxray checks your agent setup in seven layers, from cheap to expensive. The fir
 </picture>
 
 The [Loadout Stack](https://github.com/MairwunNx/ctxray/wiki/The-Loadout-Stack) page explains each layer with examples.
+
+## Supported agents
+
+ctxray reads each agent's files without launching it. Where the agent allows it, ctxray also launches the agent and records its requests to the model, or records a session you run yourself. Here's which layer works for which agent:
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/MairwunNx/ctxray/master/docs/images/harness-support-dark.svg">
+  <img alt="L1 to L3 work for every harness. L4 to L7 launch the harness, so they work for Claude Code, Codex, Gemini CLI, and OpenCode, and for Cursor CLI as an experiment. The editors read the same files as their CLIs. spectate watches your own sessions in Claude Code and Cursor." src="https://raw.githubusercontent.com/MairwunNx/ctxray/master/docs/images/harness-support-light.svg">
+</picture>
 
 ## Install
 
