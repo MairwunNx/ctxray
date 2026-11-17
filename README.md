@@ -64,16 +64,55 @@ ctxray reads each agent's files without launching it. Where the agent allows it,
 
 ## Install
 
-ctxray is one executable with no runtime to install. Pick the channel you already use:
+ctxray is one executable with nothing else to install. Copy the line for your system.
 
-| Where | Command |
-|---|---|
-| npm | `npm install -g @mairwunnx/ctxray`, or run it once with `npx @mairwunnx/ctxray` or `bunx @mairwunnx/ctxray` |
-| Homebrew | `brew install mairwunnx/tap/ctxray` |
-| Scoop | `scoop bucket add mairwunnx https://github.com/MairwunNx/scoop-bucket` and then `scoop install mairwunnx/ctxray` |
-| macOS and Linux | `curl -fsSL https://github.com/MairwunNx/ctxray/releases/latest/download/install.sh \| sh` |
-| Windows | `irm https://github.com/MairwunNx/ctxray/releases/latest/download/install.ps1 \| iex` |
-| Docker | `docker run --rm -v "$PWD:/work" ghcr.io/mairwunnx/ctxray inspect` |
+macOS and Linux:
+
+```sh
+curl -fsSL https://github.com/MairwunNx/ctxray/releases/latest/download/install.sh | sh
+```
+
+Windows, in PowerShell:
+
+```powershell
+irm https://github.com/MairwunNx/ctxray/releases/latest/download/install.ps1 | iex
+```
+
+Or try it in your project without installing anything:
+
+```sh
+npx @mairwunnx/ctxray inspect
+```
+
+<details>
+<summary>npm, Homebrew, Scoop, Docker</summary>
+
+Pin it in a project, so the team and CI run the same version:
+
+```sh
+npm install --save-dev @mairwunnx/ctxray
+```
+
+Homebrew:
+
+```sh
+brew install mairwunnx/tap/ctxray
+```
+
+Scoop:
+
+```powershell
+scoop bucket add mairwunnx https://github.com/MairwunNx/scoop-bucket
+scoop install mairwunnx/ctxray
+```
+
+Docker, in the project folder:
+
+```sh
+docker run --rm -v "$PWD:/work" ghcr.io/mairwunnx/ctxray inspect
+```
+
+</details>
 
 [Getting Started](https://github.com/MairwunNx/ctxray/wiki/Getting-Started) covers mirrors, Alpine, and offline machines.
 

@@ -64,16 +64,55 @@ ctxray читает файлы ИИ-харнесса, не запуская ег
 
 ## Установка
 
-ctxray — один исполняемый файл, никакой среды выполнения ставить не нужно. Выберите канал, которым уже пользуетесь:
+ctxray — один исполняемый файл, больше ничего ставить не нужно. Скопируйте строку для своей системы.
 
-| Где | Команда |
-|---|---|
-| npm | `npm install -g @mairwunnx/ctxray` или разовый запуск через `npx @mairwunnx/ctxray` и `bunx @mairwunnx/ctxray` |
-| Homebrew | `brew install mairwunnx/tap/ctxray` |
-| Scoop | `scoop bucket add mairwunnx https://github.com/MairwunNx/scoop-bucket`, затем `scoop install mairwunnx/ctxray` |
-| macOS и Linux | `curl -fsSL https://github.com/MairwunNx/ctxray/releases/latest/download/install.sh \| sh` |
-| Windows | `irm https://github.com/MairwunNx/ctxray/releases/latest/download/install.ps1 \| iex` |
-| Docker | `docker run --rm -v "$PWD:/work" ghcr.io/mairwunnx/ctxray inspect` |
+macOS и Linux:
+
+```sh
+curl -fsSL https://github.com/MairwunNx/ctxray/releases/latest/download/install.sh | sh
+```
+
+Windows, в PowerShell:
+
+```powershell
+irm https://github.com/MairwunNx/ctxray/releases/latest/download/install.ps1 | iex
+```
+
+Или попробуйте в своём проекте, ничего не устанавливая:
+
+```sh
+npx @mairwunnx/ctxray inspect
+```
+
+<details>
+<summary>npm, Homebrew, Scoop, Docker</summary>
+
+Закрепите версию в проекте, чтобы у команды и в CI она была одна:
+
+```sh
+npm install --save-dev @mairwunnx/ctxray
+```
+
+Homebrew:
+
+```sh
+brew install mairwunnx/tap/ctxray
+```
+
+Scoop:
+
+```powershell
+scoop bucket add mairwunnx https://github.com/MairwunNx/scoop-bucket
+scoop install mairwunnx/ctxray
+```
+
+Docker, из папки проекта:
+
+```sh
+docker run --rm -v "$PWD:/work" ghcr.io/mairwunnx/ctxray inspect
+```
+
+</details>
 
 Зеркала, Alpine и машины без интернета описаны на странице [Getting Started](https://github.com/MairwunNx/ctxray/wiki/Getting-Started-RU).
 
