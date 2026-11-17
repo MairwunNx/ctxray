@@ -22,9 +22,12 @@ jobs:
       version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v7
+      # The release after the newest one: releases take their version from the Release workflow's field, so the
+      # tags know it, not package.json.
       - id: version
         run: |
-          IFS=. read -r major minor patch < <(jq -r .version packages/ctxray/package.json | cut -d- -f1)
+          latest="$(git ls-remote --tags --refs origin 'v*' | sed 's|.*refs/tags/v||' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)"
+          IFS=. read -r major minor patch <<< "${latest:-$(jq -r .version packages/ctxray/package.json | cut -d- -f1)}"
           echo "version=$major.$minor.$((patch + 1))-next.$GITHUB_RUN_NUMBER" >> "$GITHUB_OUTPUT"
 
   build:

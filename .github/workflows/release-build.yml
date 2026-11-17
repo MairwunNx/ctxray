@@ -5,7 +5,7 @@ on:
   workflow_call:
     inputs:
       version:
-        description: A version to build instead of the one in package.json, for the next channel
+        description: The version to build, a release's or the next channel's; empty takes the one in package.json
         type: string
         default: ""
     outputs:

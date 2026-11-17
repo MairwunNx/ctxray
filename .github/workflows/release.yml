@@ -1,10 +1,13 @@
 name: Release
 
-# Run by hand: Actions → Release → Run workflow. It releases the version in packages/ctxray/package.json with
-# its notes from CHANGELOG.md. A dry run builds and checks everything and publishes nothing.
+# Run by hand: Actions → Release → Run workflow, with the new version. The notes come from that version's
+# section of CHANGELOG.md. A dry run builds and checks everything and publishes nothing.
 on:
   workflow_dispatch:
     inputs:
+      version:
+        description: "Version, like 0.1.1"
+        required: true
       changelog:
         description: "Notes in Markdown; leave empty to take the version's section from CHANGELOG.md"
         required: false
@@ -27,11 +30,15 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - name: Check the version and its notes
         env:
+          RELEASE_VERSION: ${{ inputs.version }}
           RELEASE_NOTES: ${{ inputs.changelog }}
         run: |
-          version="$(jq -r .version packages/ctxray/package.json)"
-          if git ls-remote --exit-code --tags origin "refs/tags/v$version" >/dev/null; then
-            echo "::error::v$version is released already: raise the version in packages/ctxray/package.json"
+          [[ "$RELEASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]] || {
+            echo "::error::$RELEASE_VERSION isn't a version like 0.1.1"
+            exit 1
+          }
+          if git ls-remote --exit-code --tags origin "refs/tags/v$RELEASE_VERSION" >/dev/null; then
+            echo "::error::v$RELEASE_VERSION is released already"
             exit 1
           fi
           bun scripts/release/notes.ts "$RUNNER_TEMP/notes.md"
@@ -39,6 +46,8 @@ jobs:
   build:
     needs: prepare
     uses: ./.github/workflows/release-build.yml
+    with:
+      version: ${{ inputs.version }}
 
   github:
     needs: build
