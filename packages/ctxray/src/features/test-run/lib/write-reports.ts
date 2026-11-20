@@ -1,5 +1,5 @@
 import { appendFile, mkdir, rm } from "node:fs/promises";
-import { join, relative } from "node:path";
+import { join, relative, resolve } from "node:path";
 import { toAllure, toHtml, toJunit, toMarkdown } from "#entities/report/index.ts";
 import type { Report, Reporter } from "#shared/contract/index.ts";
 import type { Translate } from "#shared/i18n/index.ts";
@@ -19,7 +19,8 @@ export const writeReports = async (
   env: Env,
   t: Translate,
 ): Promise<Written> => {
-  const folder = join(root, dir);
+  // `--report-dir /tmp/out` is a folder of its own, not one under the project.
+  const folder = resolve(root, dir);
   const files: string[] = [];
   const write = async (name: string, text: string) => {
     const path = join(folder, name);

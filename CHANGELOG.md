@@ -12,6 +12,7 @@ L1 now catches the files a harness silently skips, and the secrets nobody meant 
 - 🧭 **inspect sees what the harnesses see.** Skills in subfolders for Codex, OpenCode, and Cursor. Cursor and OpenCode skip a skill without a description, Codex one with a byte order mark or tabs in its frontmatter. Cursor reads `.MDC` rules, and `alwaysApply: "true"` gets a warning. A Mac now reads a project the way Linux CI does.
 - 📊 **The Loadout inside Claude Code.** The plugin draws a row above the prompt: a bar of what the context is made of, its total, and its share of the window. `/ctxray-loadout` opens a pane with every share, the instruction files and the `@` imports that brought them, MCP servers, and skills, each with the tokens Claude Code itself counted. Keys 1–4 switch the tabs. It needs Claude Code 2.1.286 or newer, and speaks English and Russian.
 - 🩻 **A tidier `/ctxray`.** The report writes the project as `~/…`, folds the skills that ship with Claude Code into one line, and before the session's first request asks you to ask something instead of failing.
+- 📁 **`--report-dir` takes an absolute path.** `ctxray test --report-dir /tmp/out` writes to `/tmp/out`, not to `tmp/out` inside the project.
 - 🧹 **No leftovers after a capture.** ctxray ends the harness's whole process group, so Cursor CLI's helpers no longer pile up over hundreds of sessions.
 
 ## 0.1.0

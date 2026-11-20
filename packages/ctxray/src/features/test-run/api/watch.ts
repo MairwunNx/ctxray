@@ -1,5 +1,5 @@
 import { type FSWatcher, watch } from "node:fs";
-import { relative, sep } from "node:path";
+import { relative, resolve, sep } from "node:path";
 import type { Translate } from "#shared/i18n/index.ts";
 import { type Renderer, span } from "#shared/render/index.ts";
 
@@ -28,7 +28,8 @@ export const nextRun = (root: string, reportDir: string, renderer: Renderer, t: 
     };
     const quit = () => finish("quit");
     watcher = watch(root, { recursive: true }, (_, name) => {
-      if (name === null || ignored(relative(root, `${root}${sep}${name}`), reportDir)) return;
+      if (name === null || ignored(relative(root, `${root}${sep}${name}`), relative(root, resolve(root, reportDir))))
+        return;
       clearTimeout(timer);
       timer = setTimeout(() => finish("change"), 300);
     });
