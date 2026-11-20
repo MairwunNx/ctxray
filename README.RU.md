@@ -114,7 +114,7 @@ docker run --rm -v "$PWD:/work" ghcr.io/mairwunnx/ctxray inspect
 
 </details>
 
-Зеркала, Alpine и машины без интернета описаны на странице [Getting Started](https://github.com/MairwunNx/ctxray/wiki/Getting-Started-RU).
+Зеркала, Alpine и машины без интернета описаны на странице [Getting Started](https://github.com/MairwunNx/ctxray/wiki/Getting-Started-RU). Самому ctxray нужен 1 ГБ памяти, на большом монорепозитории — 2 ГБ. Тестам, которые запускают харнессы, нужно больше, для L6–L7 до 4 ГБ: [системные требования](https://github.com/MairwunNx/ctxray/wiki/Getting-Started-RU#системные-требования) расписаны по харнессам.
 
 ## Быстрый старт
 
