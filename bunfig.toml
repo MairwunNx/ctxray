@@ -1,0 +1,3 @@
+# The Claude Code plugin tests itself with `claude plugin test packages/claude-plugin`: its tests need Claude Code's kit.
+[test]
+pathIgnorePatterns = ["packages/claude-plugin/**"]

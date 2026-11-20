@@ -17,6 +17,10 @@ test("the marketplace lists the plugin where it lives", async () => {
   expect(entry.source).toBe("./packages/claude-plugin");
 });
 
+test("the Loadout band and pane come from one hooks module", async () => {
+  expect((await json("hooks/hooks.json")).modules).toEqual(["./register.tsx"]);
+});
+
 test("every hook of the plugin runs ctxray's spectate hook", async () => {
   const { hooks } = await json("hooks/hooks.json");
   expect(Object.keys(hooks).sort()).toEqual(["InstructionsLoaded", "SessionStart", "UserPromptSubmit"]);

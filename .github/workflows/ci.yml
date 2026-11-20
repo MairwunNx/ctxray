@@ -86,6 +86,7 @@ jobs:
           claude="$(find "${{ steps.harness-cache.outputs.dir }}/harnesses/claude-code" -name claude -type f | head -1)"
           export HOME="$(mktemp -d)"
           "$claude" plugin validate --strict packages/claude-plugin
+          "$claude" plugin test packages/claude-plugin
           "$claude" plugin validate --strict .
           bun scripts/plugin-zip.ts
       # L4 and L5: the binary launches every harness from its cache on the mock model, with their MCP servers

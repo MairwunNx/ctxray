@@ -5,6 +5,10 @@ coverage/
 .DS_Store
 .claude/scheduled_tasks.lock
 
+# Types and a tsconfig Claude Code writes into the plugin for editors when it loads it
+packages/claude-plugin/.claude-plugin/types/
+packages/claude-plugin/tsconfig.json
+
 # Local traces and reports of ctxray runs
 .ctxray/
 .ctxray-cache/

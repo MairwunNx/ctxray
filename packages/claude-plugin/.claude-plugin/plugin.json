@@ -3,9 +3,13 @@
   "displayName": "ctxray",
   "version": "0.1.0",
   "description": "See what this session loaded into the context, run ctxray tests, and let Claude check its own changes for context bloat.",
-  "author": { "name": "Pavel Erokhin", "url": "https://github.com/MairwunNx" },
+  "author": {
+    "name": "Pavel Erokhin",
+    "url": "https://github.com/MairwunNx"
+  },
   "homepage": "https://github.com/MairwunNx/ctxray/wiki",
   "repository": "https://github.com/MairwunNx/ctxray",
   "license": "MIT",
-  "keywords": ["context", "loadout", "tokens", "testing", "rules", "skills", "mcp"]
+  "keywords": ["context", "loadout", "tokens", "testing", "rules", "skills", "mcp"],
+  "types": "./types/index.d.ts"
 }
