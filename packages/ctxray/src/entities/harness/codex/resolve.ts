@@ -1,4 +1,5 @@
 import type { Instruction, Inventory } from "../inventory.ts";
+import { codexStaticListing, listedEntry } from "../listing.ts";
 import { chainTo } from "../project.ts";
 import {
   createRules,
@@ -35,17 +36,14 @@ export const resolveCodex = (inventory: Inventory, { cwd }: Scope): StaticLoadou
   }
   // `.agents/skills` from the cwd up to the root, plus the project's `.codex/skills`.
   const skills = inventory.skills.filter((skill) => skill.listed && chain.includes(skill.dir));
+  const listing = codexStaticListing(skills);
   return withTokens(
     {
       harness: "codex",
       cwd,
       rules,
       skills: {
-        listed: skills.map((skill) => ({
-          name: skill.name,
-          path: skill.path,
-          tokens: counter.count(listingLine(skill.name, skill.description)),
-        })),
+        listed: skills.map((skill, index) => listedEntry(skill, listing, index, counter.count)),
         loaded: [],
       },
       mcp: { servers: inventory.mcp.filter((server) => server.enabled).map(({ name }) => ({ name })), tools: [] },

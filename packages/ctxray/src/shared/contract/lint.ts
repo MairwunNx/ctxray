@@ -13,6 +13,7 @@ export const LINT_RULES = [
   "shadowed-command",
   "no-description",
   "long-description",
+  "skill-listing",
   "bad-json",
   "bad-toml",
   "mcp-transport",

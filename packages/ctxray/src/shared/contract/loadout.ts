@@ -29,6 +29,10 @@ export const SkillEntry = z.object({
   path: z.string().describe("Its SKILL.md relative to the project root, empty for the harness's own skills"),
   builtin: z.boolean().optional().describe("Shipped with the harness, not found in the project"),
   own: z.boolean().optional().describe("Part of ctxray's own plugin: listed, but left out of every total"),
+  listing: z
+    .enum(["shortened", "name-only", "omitted"])
+    .optional()
+    .describe("What the harness's listing budget left of it: a cut description, the name alone, or nothing"),
   tokens,
 });
 export type SkillEntry = z.infer<typeof SkillEntry>;

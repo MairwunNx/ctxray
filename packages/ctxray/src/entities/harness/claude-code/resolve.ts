@@ -1,6 +1,7 @@
 import type { Activation } from "#shared/contract/index.ts";
 import { isCalibrated } from "#shared/tokens/index.ts";
 import type { Instruction, Inventory } from "../inventory.ts";
+import { CLAUDE_STATIC_CHARS, claudeListing, listedEntry } from "../listing.ts";
 import { chainTo, isInside, isWithin, matchingGlob, parentDirs } from "../project.ts";
 import {
   createRules,
@@ -63,7 +64,11 @@ export const resolveClaudeCode = (inventory: Inventory, { cwd, files }: Scope): 
   const skills = inventory.skills
     .filter((skill) => skill.listed && reachable.has(skill.dir))
     .filter((skill) => !skill.globs || files.some((file) => matchingGlob(skill.globs ?? [], cwd, file)))
-    .map((skill) => ({ skill, line: listingLine(skill.name, skill.description) }));
+    .map((skill) => ({ skill }));
+  const listing = claudeListing(
+    skills.map(({ skill }) => skill),
+    CLAUDE_STATIC_CHARS,
+  );
   const commands = inventory.commands
     .filter((command) => reachable.has(command.dir))
     .filter((command) => !inventory.skills.some((skill) => skill.name === command.name));
@@ -74,7 +79,7 @@ export const resolveClaudeCode = (inventory: Inventory, { cwd, files }: Scope): 
       cwd,
       rules,
       skills: {
-        listed: skills.map(({ skill, line }) => ({ name: skill.name, path: skill.path, tokens: counter.count(line) })),
+        listed: skills.map(({ skill }, index) => listedEntry(skill, listing, index, counter.count)),
         loaded: [],
       },
       mcp: { servers: inventory.mcp.filter((server) => server.enabled).map(({ name }) => ({ name })), tools: [] },

@@ -1,6 +1,7 @@
 import { join } from "node:path";
 import { textOf } from "#shared/markdown/index.ts";
 import { type Instruction, type Inventory, type Problem, problem, type Skill } from "../inventory.ts";
+import { listingProblems } from "../listing-lint.ts";
 import { chainTo, joinPath, type Project } from "../project.ts";
 import { readSkillFiles } from "../skill-file.ts";
 import { type CodexConfig, readCodexConfig } from "./config.ts";
@@ -80,7 +81,12 @@ export const discoverCodex = async (project: Project): Promise<Inventory> => {
     skills,
     commands: [],
     mcp: config.mcp,
-    problems: [...problems, ...skillProblems, ...overBudget(instructions, config.budget)],
+    problems: [
+      ...problems,
+      ...skillProblems,
+      ...listingProblems("codex", skills),
+      ...overBudget(instructions, config.budget),
+    ],
     budget: config.budget,
   };
 };

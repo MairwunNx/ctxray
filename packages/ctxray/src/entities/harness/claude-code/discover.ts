@@ -1,4 +1,5 @@
 import { type Instruction, type Inventory, type Problem, problem } from "../inventory.ts";
+import { listingProblems } from "../listing-lint.ts";
 import { isWithin, type Project } from "../project.ts";
 import { findCommands, findMcp, findSkills } from "./extras.ts";
 import { findInstructions } from "./instructions.ts";
@@ -25,7 +26,7 @@ export const discoverClaudeCode = async (project: Project): Promise<Inventory> =
     findCommands(project),
     findMcp(project, mcpProblems),
   ]);
-  const problems: Problem[] = [...skillProblems];
+  const problems: Problem[] = [...skillProblems, ...listingProblems("claude-code", skills)];
   // A skill and a command with one name: the skill wins.
   for (const command of commands) {
     const skill = skills.find((candidate) => candidate.name === command.name);

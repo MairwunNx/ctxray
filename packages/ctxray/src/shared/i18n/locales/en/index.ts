@@ -70,6 +70,9 @@ export const en = {
   "inspect.cwd": "the agent starts in {cwd}",
   "inspect.files": "and works with {files}",
   "inspect.tokens": "≈ {tokens}",
+  "inspect.listing.shortened": "description cut short",
+  "inspect.listing.name-only": "name only, no room for the description",
+  "inspect.listing.omitted": "left out, no room in the listing",
   "inspect.afterRun": "after a run",
   "inspect.rules": "Rules",
   "inspect.skills": "Skills",
@@ -136,6 +139,19 @@ export const en = {
   "lint.shadowedCommand": "The skill {by} has the same name “{name}”, so this command never runs",
   "lint.noDescription": "Skill “{name}” has no description, so the model has little to pick it by",
   "lint.longDescription": "The description is {length} characters long, and the listing cuts it at {limit}",
+  "lint.listingNames": {
+    one: "{harness}'s skill listing has no room for one of these {total} descriptions: the model sees that skill by name only and can't pick it by what it does",
+    other:
+      "{harness}'s skill listing has no room for {count} of these {total} descriptions: the model sees those skills by name only and can't pick them by what they do",
+  },
+  "lint.listingCut": {
+    one: "{harness}'s skill listing is over its budget: it cuts one of these {total} descriptions short",
+    other: "{harness}'s skill listing is over its budget: it cuts {count} of these {total} descriptions short",
+  },
+  "lint.listingOmitted": {
+    one: "{harness}'s skill listing can't even fit the names: one of these {total} skills never reaches the model",
+    other: "{harness}'s skill listing can't even fit the names: {count} of these {total} skills never reach the model",
+  },
   "lint.badJson": "Not valid JSON: {message}",
   "lint.badToml": "Not valid TOML, so {harness} ignores the file: {message}",
   "lint.mcpTransport": "MCP server “{name}” has neither command nor url",

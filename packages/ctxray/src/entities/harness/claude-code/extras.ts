@@ -5,7 +5,7 @@ import { readSkillFiles } from "../skill-file.ts";
 
 const SKILL = /^(?:(.*)\/)?\.claude\/skills\/([^/]+)\/SKILL\.md$/;
 const COMMAND = /^(?:(.*)\/)?\.claude\/commands\/(?:.+\/)?([^/]+)\.md$/;
-// Claude Code cuts description plus when_to_use at this length in the skill listing.
+// Claude Code cuts description plus when_to_use at this length in the skill listing (listing.ts does the cut).
 const LISTING_LIMIT = 1536;
 
 export const findSkills = async (project: Project, problems: Problem[]): Promise<Skill[]> =>
@@ -19,7 +19,7 @@ export const findSkills = async (project: Project, problems: Problem[]): Promise
     const when = textOf(data["when_to_use"]);
     const own = textOf(data["description"]) ?? firstLine(body);
     if (own === undefined) problems.push(problem("lint.noDescription", "warning", path, { name }));
-    const description = [own, when].filter((part) => part !== undefined).join(" ");
+    const description = [own, when].filter((part) => part !== undefined).join(" - ");
     if (description.length > LISTING_LIMIT) {
       problems.push(
         problem("lint.longDescription", "warning", path, { length: description.length, limit: LISTING_LIMIT }),
@@ -32,7 +32,7 @@ export const findSkills = async (project: Project, problems: Problem[]): Promise
       name,
       path,
       dir,
-      description: description.slice(0, LISTING_LIMIT),
+      description,
       listed,
       body,
       ...(globs ? { globs } : {}),

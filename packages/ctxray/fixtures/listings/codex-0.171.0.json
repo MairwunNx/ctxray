@@ -1,0 +1,400 @@
+{
+  "harness": "codex 0.171.0",
+  "model": "gpt-5.5",
+  "budget": 5388,
+  "skills": [
+    {
+      "name": "imagegen",
+      "description": "Generate or edit raster images when the task benefits from AI-created bitmap visuals such as photos, illustrations, textures, sprites, mockups, or transparent-background cutouts. Use when Codex should create a brand-new image, transform an existing image, or derive visual variants from references, and the output should be a bitmap asset rather than repo-native code or vector. Do not use when the task is better handled by editing existing SVG/vector/code-native assets, extending an established icon or logo system, or building the visual directly in HTML/CSS/canvas.",
+      "locator": "(file: r0/imagegen/SKILL.md)"
+    },
+    {
+      "name": "openai-docs",
+      "description": "API first-timers, Codex/Work Q&A. If the user already has an OpenAI API integration, skip this skill for API questions and use the developer docs. Read this skill before answering how Codex or ChatGPT Work behaves, where to find a feature, or how to configure or troubleshoot this app or coding agent. This includes conversation history, model and cache behavior, instruction precedence, permissions, and tool availability. Use for API onboarding only when the user is connecting to the OpenAI API for the first time. Skip action requests, such as scheduling an automation, and tasks fully answered by supplied text or data.",
+      "locator": "(file: r0/openai-docs/SKILL.md)"
+    },
+    {
+      "name": "skill-creator",
+      "description": "Create or update a Codex skill with appropriately scoped instructions and any needed supporting resources.",
+      "locator": "(file: r0/skill-creator/SKILL.md)"
+    },
+    {
+      "name": "skill-installer",
+      "description": "Install Codex skills into $CODEX_HOME/skills from a curated list or a GitHub repo path. Use when a user asks to list installable skills, install a curated skill, or install a skill from another repo (including private repos).",
+      "locator": "(file: r0/skill-installer/SKILL.md)"
+    },
+    {
+      "name": "area-00",
+      "description": "Use this skill when the task is about area number 0 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-00/SKILL.md)"
+    },
+    {
+      "name": "area-01",
+      "description": "Use this skill when the task is about area number 1 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-01/SKILL.md)"
+    },
+    {
+      "name": "area-02",
+      "description": "Use this skill when the task is about area number 2 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-02/SKILL.md)"
+    },
+    {
+      "name": "area-03",
+      "description": "Use this skill when the task is about area number 3 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-03/SKILL.md)"
+    },
+    {
+      "name": "area-04",
+      "description": "Use this skill when the task is about area number 4 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-04/SKILL.md)"
+    },
+    {
+      "name": "area-05",
+      "description": "Use this skill when the task is about area number 5 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-05/SKILL.md)"
+    },
+    {
+      "name": "area-06",
+      "description": "Use this skill when the task is about area number 6 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-06/SKILL.md)"
+    },
+    {
+      "name": "area-07",
+      "description": "Use this skill when the task is about area number 7 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-07/SKILL.md)"
+    },
+    {
+      "name": "area-08",
+      "description": "Use this skill when the task is about area number 8 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-08/SKILL.md)"
+    },
+    {
+      "name": "area-09",
+      "description": "Use this skill when the task is about area number 9 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-09/SKILL.md)"
+    },
+    {
+      "name": "area-10",
+      "description": "Use this skill when the task is about area number 10 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-10/SKILL.md)"
+    },
+    {
+      "name": "area-11",
+      "description": "Use this skill when the task is about area number 11 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-11/SKILL.md)"
+    },
+    {
+      "name": "area-12",
+      "description": "Use this skill when the task is about area number 12 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-12/SKILL.md)"
+    },
+    {
+      "name": "area-13",
+      "description": "Use this skill when the task is about area number 13 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-13/SKILL.md)"
+    },
+    {
+      "name": "area-14",
+      "description": "Use this skill when the task is about area number 14 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-14/SKILL.md)"
+    },
+    {
+      "name": "area-15",
+      "description": "Use this skill when the task is about area number 15 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-15/SKILL.md)"
+    },
+    {
+      "name": "area-16",
+      "description": "Use this skill when the task is about area number 16 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-16/SKILL.md)"
+    },
+    {
+      "name": "area-17",
+      "description": "Use this skill when the task is about area number 17 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-17/SKILL.md)"
+    },
+    {
+      "name": "area-18",
+      "description": "Use this skill when the task is about area number 18 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-18/SKILL.md)"
+    },
+    {
+      "name": "area-19",
+      "description": "Use this skill when the task is about area number 19 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-19/SKILL.md)"
+    },
+    {
+      "name": "area-20",
+      "description": "Use this skill when the task is about area number 20 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-20/SKILL.md)"
+    },
+    {
+      "name": "area-21",
+      "description": "Use this skill when the task is about area number 21 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-21/SKILL.md)"
+    },
+    {
+      "name": "area-22",
+      "description": "Use this skill when the task is about area number 22 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-22/SKILL.md)"
+    },
+    {
+      "name": "area-23",
+      "description": "Use this skill when the task is about area number 23 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-23/SKILL.md)"
+    },
+    {
+      "name": "area-24",
+      "description": "Use this skill when the task is about area number 24 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-24/SKILL.md)"
+    },
+    {
+      "name": "area-25",
+      "description": "Use this skill when the task is about area number 25 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-25/SKILL.md)"
+    },
+    {
+      "name": "area-26",
+      "description": "Use this skill when the task is about area number 26 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-26/SKILL.md)"
+    },
+    {
+      "name": "area-27",
+      "description": "Use this skill when the task is about area number 27 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-27/SKILL.md)"
+    },
+    {
+      "name": "area-28",
+      "description": "Use this skill when the task is about area number 28 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-28/SKILL.md)"
+    },
+    {
+      "name": "area-29",
+      "description": "Use this skill when the task is about area number 29 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-29/SKILL.md)"
+    },
+    {
+      "name": "area-30",
+      "description": "Use this skill when the task is about area number 30 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-30/SKILL.md)"
+    },
+    {
+      "name": "area-31",
+      "description": "Use this skill when the task is about area number 31 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-31/SKILL.md)"
+    },
+    {
+      "name": "area-32",
+      "description": "Use this skill when the task is about area number 32 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-32/SKILL.md)"
+    },
+    {
+      "name": "area-33",
+      "description": "Use this skill when the task is about area number 33 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-33/SKILL.md)"
+    },
+    {
+      "name": "area-34",
+      "description": "Use this skill when the task is about area number 34 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-34/SKILL.md)"
+    },
+    {
+      "name": "area-35",
+      "description": "Use this skill when the task is about area number 35 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-35/SKILL.md)"
+    },
+    {
+      "name": "area-36",
+      "description": "Use this skill when the task is about area number 36 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-36/SKILL.md)"
+    },
+    {
+      "name": "area-37",
+      "description": "Use this skill when the task is about area number 37 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-37/SKILL.md)"
+    },
+    {
+      "name": "area-38",
+      "description": "Use this skill when the task is about area number 38 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-38/SKILL.md)"
+    },
+    {
+      "name": "area-39",
+      "description": "Use this skill when the task is about area number 39 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-39/SKILL.md)"
+    },
+    {
+      "name": "area-40",
+      "description": "Use this skill when the task is about area number 40 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-40/SKILL.md)"
+    },
+    {
+      "name": "area-41",
+      "description": "Use this skill when the task is about area number 41 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-41/SKILL.md)"
+    },
+    {
+      "name": "area-42",
+      "description": "Use this skill when the task is about area number 42 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-42/SKILL.md)"
+    },
+    {
+      "name": "area-43",
+      "description": "Use this skill when the task is about area number 43 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-43/SKILL.md)"
+    },
+    {
+      "name": "area-44",
+      "description": "Use this skill when the task is about area number 44 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-44/SKILL.md)"
+    },
+    {
+      "name": "area-45",
+      "description": "Use this skill when the task is about area number 45 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-45/SKILL.md)"
+    },
+    {
+      "name": "area-46",
+      "description": "Use this skill when the task is about area number 46 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-46/SKILL.md)"
+    },
+    {
+      "name": "area-47",
+      "description": "Use this skill when the task is about area number 47 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-47/SKILL.md)"
+    },
+    {
+      "name": "area-48",
+      "description": "Use this skill when the task is about area number 48 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-48/SKILL.md)"
+    },
+    {
+      "name": "area-49",
+      "description": "Use this skill when the task is about area number 49 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-49/SKILL.md)"
+    },
+    {
+      "name": "area-50",
+      "description": "Use this skill when the task is about area number 50 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-50/SKILL.md)"
+    },
+    {
+      "name": "area-51",
+      "description": "Use this skill when the task is about area number 51 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-51/SKILL.md)"
+    },
+    {
+      "name": "area-52",
+      "description": "Use this skill when the task is about area number 52 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-52/SKILL.md)"
+    },
+    {
+      "name": "area-53",
+      "description": "Use this skill when the task is about area number 53 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-53/SKILL.md)"
+    },
+    {
+      "name": "area-54",
+      "description": "Use this skill when the task is about area number 54 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-54/SKILL.md)"
+    },
+    {
+      "name": "area-55",
+      "description": "Use this skill when the task is about area number 55 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-55/SKILL.md)"
+    },
+    {
+      "name": "area-56",
+      "description": "Use this skill when the task is about area number 56 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-56/SKILL.md)"
+    },
+    {
+      "name": "area-57",
+      "description": "Use this skill when the task is about area number 57 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-57/SKILL.md)"
+    },
+    {
+      "name": "area-58",
+      "description": "Use this skill when the task is about area number 58 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-58/SKILL.md)"
+    },
+    {
+      "name": "area-59",
+      "description": "Use this skill when the task is about area number 59 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask.",
+      "locator": "(file: r1/area-59/SKILL.md)"
+    },
+    {
+      "name": "huge",
+      "description": "A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. END-OF-HUGE",
+      "locator": "(file: r1/huge/SKILL.md)"
+    }
+  ],
+  "lines": [
+    "- imagegen: Generate or edit raster images when the task benefits from AI-created bitmap visuals such as photos, illustrations, textures, sprites, mockups, or transparent-background cutouts. Use when Codex should create a brand-new image, transform an existing image, or derive visual variants from referen (file: r0/imagegen/SKILL.md)",
+    "- openai-docs: API first-timers, Codex/Work Q&A. If the user already has an OpenAI API integration, skip this skill for API questions and use the developer docs. Read this skill before answering how Codex or ChatGPT Work behaves, where to find a feature, or how to configure or troubleshoot this app or coding a (file: r0/openai-docs/SKILL.md)",
+    "- skill-creator: Create or update a Codex skill with appropriately scoped instructions and any needed supporting resources. (file: r0/skill-creator/SKILL.md)",
+    "- skill-installer: Install Codex skills into $CODEX_HOME/skills from a curated list or a GitHub repo path. Use when a user asks to list installable skills, install a curated skill, or install a skill from another repo (including private repos). (file: r0/skill-installer/SKILL.md)",
+    "- area-00: Use this skill when the task is about area number 0 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files (file: r1/area-00/SKILL.md)",
+    "- area-01: Use this skill when the task is about area number 1 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files (file: r1/area-01/SKILL.md)",
+    "- area-02: Use this skill when the task is about area number 2 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files (file: r1/area-02/SKILL.md)",
+    "- area-03: Use this skill when the task is about area number 3 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files (file: r1/area-03/SKILL.md)",
+    "- area-04: Use this skill when the task is about area number 4 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files (file: r1/area-04/SKILL.md)",
+    "- area-05: Use this skill when the task is about area number 5 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files (file: r1/area-05/SKILL.md)",
+    "- area-06: Use this skill when the task is about area number 6 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files (file: r1/area-06/SKILL.md)",
+    "- area-07: Use this skill when the task is about area number 7 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files (file: r1/area-07/SKILL.md)",
+    "- area-08: Use this skill when the task is about area number 8 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files (file: r1/area-08/SKILL.md)",
+    "- area-09: Use this skill when the task is about area number 9 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files (file: r1/area-09/SKILL.md)",
+    "- area-10: Use this skill when the task is about area number 10 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-10/SKILL.md)",
+    "- area-11: Use this skill when the task is about area number 11 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-11/SKILL.md)",
+    "- area-12: Use this skill when the task is about area number 12 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-12/SKILL.md)",
+    "- area-13: Use this skill when the task is about area number 13 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-13/SKILL.md)",
+    "- area-14: Use this skill when the task is about area number 14 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-14/SKILL.md)",
+    "- area-15: Use this skill when the task is about area number 15 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-15/SKILL.md)",
+    "- area-16: Use this skill when the task is about area number 16 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-16/SKILL.md)",
+    "- area-17: Use this skill when the task is about area number 17 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-17/SKILL.md)",
+    "- area-18: Use this skill when the task is about area number 18 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-18/SKILL.md)",
+    "- area-19: Use this skill when the task is about area number 19 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-19/SKILL.md)",
+    "- area-20: Use this skill when the task is about area number 20 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-20/SKILL.md)",
+    "- area-21: Use this skill when the task is about area number 21 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-21/SKILL.md)",
+    "- area-22: Use this skill when the task is about area number 22 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-22/SKILL.md)",
+    "- area-23: Use this skill when the task is about area number 23 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-23/SKILL.md)",
+    "- area-24: Use this skill when the task is about area number 24 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-24/SKILL.md)",
+    "- area-25: Use this skill when the task is about area number 25 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-25/SKILL.md)",
+    "- area-26: Use this skill when the task is about area number 26 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-26/SKILL.md)",
+    "- area-27: Use this skill when the task is about area number 27 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-27/SKILL.md)",
+    "- area-28: Use this skill when the task is about area number 28 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-28/SKILL.md)",
+    "- area-29: Use this skill when the task is about area number 29 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-29/SKILL.md)",
+    "- area-30: Use this skill when the task is about area number 30 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-30/SKILL.md)",
+    "- area-31: Use this skill when the task is about area number 31 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-31/SKILL.md)",
+    "- area-32: Use this skill when the task is about area number 32 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-32/SKILL.md)",
+    "- area-33: Use this skill when the task is about area number 33 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-33/SKILL.md)",
+    "- area-34: Use this skill when the task is about area number 34 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-34/SKILL.md)",
+    "- area-35: Use this skill when the task is about area number 35 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-35/SKILL.md)",
+    "- area-36: Use this skill when the task is about area number 36 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-36/SKILL.md)",
+    "- area-37: Use this skill when the task is about area number 37 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-37/SKILL.md)",
+    "- area-38: Use this skill when the task is about area number 38 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-38/SKILL.md)",
+    "- area-39: Use this skill when the task is about area number 39 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-39/SKILL.md)",
+    "- area-40: Use this skill when the task is about area number 40 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-40/SKILL.md)",
+    "- area-41: Use this skill when the task is about area number 41 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-41/SKILL.md)",
+    "- area-42: Use this skill when the task is about area number 42 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-42/SKILL.md)",
+    "- area-43: Use this skill when the task is about area number 43 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-43/SKILL.md)",
+    "- area-44: Use this skill when the task is about area number 44 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the file (file: r1/area-44/SKILL.md)",
+    "- area-45: Use this skill when the task is about area number 45 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the  (file: r1/area-45/SKILL.md)",
+    "- area-46: Use this skill when the task is about area number 46 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the  (file: r1/area-46/SKILL.md)",
+    "- area-47: Use this skill when the task is about area number 47 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the  (file: r1/area-47/SKILL.md)",
+    "- area-48: Use this skill when the task is about area number 48 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the  (file: r1/area-48/SKILL.md)",
+    "- area-49: Use this skill when the task is about area number 49 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the  (file: r1/area-49/SKILL.md)",
+    "- area-50: Use this skill when the task is about area number 50 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the  (file: r1/area-50/SKILL.md)",
+    "- area-51: Use this skill when the task is about area number 51 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the  (file: r1/area-51/SKILL.md)",
+    "- area-52: Use this skill when the task is about area number 52 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the  (file: r1/area-52/SKILL.md)",
+    "- area-53: Use this skill when the task is about area number 53 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the  (file: r1/area-53/SKILL.md)",
+    "- area-54: Use this skill when the task is about area number 54 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the  (file: r1/area-54/SKILL.md)",
+    "- area-55: Use this skill when the task is about area number 55 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the  (file: r1/area-55/SKILL.md)",
+    "- area-56: Use this skill when the task is about area number 56 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the  (file: r1/area-56/SKILL.md)",
+    "- area-57: Use this skill when the task is about area number 57 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the  (file: r1/area-57/SKILL.md)",
+    "- area-58: Use this skill when the task is about area number 58 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the  (file: r1/area-58/SKILL.md)",
+    "- area-59: Use this skill when the task is about area number 59 of the shop: it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the files to touch and the reviewers to ask. it covers the edge cases, the tests to run, the  (file: r1/area-59/SKILL.md)",
+    "- huge: A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that keeps going. A very long description sentence that k (file: r1/huge/SKILL.md)"
+  ],
+  "note": "2% of gpt-5.5's 272,000 tokens is 5,440; the root table of that run's two paths took 52 of them"
+}

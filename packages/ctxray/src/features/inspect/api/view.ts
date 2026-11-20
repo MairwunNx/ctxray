@@ -36,7 +36,13 @@ const rowsOf = (harness: InspectedHarness, t: Translate): Row[] => {
     ...section(
       t("inspect.skills"),
       tokens(byComponent.skills),
-      harness.skills.listed.map((skill) => entry(skill.name, tokens(skill.tokens), skill.path)),
+      harness.skills.listed.map((skill) =>
+        entry(
+          skill.name,
+          tokens(skill.tokens),
+          skill.listing ? `${skill.path} · ${t(`inspect.listing.${skill.listing}`)}` : skill.path,
+        ),
+      ),
     ),
     ...section(
       t("inspect.commands"),

@@ -66,19 +66,19 @@
     "skills": {
       "android-build": {
         "path": "app/.agents/skills/android-build/SKILL.md",
-        "tokens": 11
+        "tokens": 23
       },
       "payouts": {
         "path": ".agents/skills/payouts/SKILL.md",
-        "tokens": 7
+        "tokens": 20
       },
       "refunds": {
         "path": ".agents/skills/refunds/SKILL.md",
-        "tokens": 12
+        "tokens": 24
       },
       "release": {
         "path": ".agents/skills/release/SKILL.md",
-        "tokens": 7
+        "tokens": 19
       }
     },
     "mcp": [
@@ -88,7 +88,7 @@
     "commands": [],
     "tokens": {
       "rules": 24,
-      "skills": 37,
+      "skills": 86,
       "commands": 0,
       "method": "local:o200k_base"
     }
