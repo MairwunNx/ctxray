@@ -72,9 +72,9 @@ export const createSpectateCommand =
     }
     const last = typeof values["last"] === "string" ? Number(values["last"]) : 5;
     if (!Number.isInteger(last) || last < 1) return fail("spectate.badLast", { value: String(values["last"]) });
-    const { dir, sessions } = await show({ last, ...(harnesses && { harnesses }) });
+    const { dir, sessions, plugin } = await show({ last, ...(harnesses && { harnesses }) });
     if (values["json"] === true) renderer.print([[span(JSON.stringify({ dir, sessions }, null, 2))]]);
-    else renderer.print(sessionsView(sessions, dir, t));
+    else renderer.print(sessionsView(sessions, dir, t, plugin));
     return ExitCode.ok;
   };
 createSpectateCommand.inject = [

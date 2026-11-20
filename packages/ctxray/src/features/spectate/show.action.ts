@@ -4,7 +4,8 @@ import { findRoot, openProject, STATIC_ADAPTERS } from "#entities/harness/index.
 import type { HarnessId, RuleEntry } from "#shared/contract/index.ts";
 import type { Env } from "#shared/infra/index.ts";
 import { countTokens } from "#shared/tokens/index.ts";
-import { spectateDir } from "./lib/places.ts";
+import { MARK } from "./lib/hooks.ts";
+import { hooksFile, spectateDir } from "./lib/places.ts";
 import { readSessions, type Session } from "./lib/sessions.ts";
 import { readStored, type Stored } from "./lib/stores.ts";
 
@@ -93,7 +94,10 @@ export const createSpectateShowAction =
         resolved: await resolvedFor(session),
       });
     }
-    return { dir, sessions: result };
+    // Whether ctxray's OpenCode plugin is in, so the view can say what an OpenCode session shows.
+    const pluginFile = Bun.file(hooksFile("opencode", env, home));
+    const plugin = (await pluginFile.exists()) && (await pluginFile.text()).includes(MARK);
+    return { dir, sessions: result, plugin };
   };
 createSpectateShowAction.inject = ["env"] as const;
 export type SpectateShowAction = ReturnType<typeof createSpectateShowAction>;

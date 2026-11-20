@@ -254,6 +254,7 @@ export const ru: Catalog = {
   "context.sameText": "В {path} тот же текст, что в {other}, и модель читает оба",
   "test.lint": "файлы проекта",
   "test.unsupported": "нужно {missing}",
+  "test.experimental": "здесь экспериментально: включается через `experimental: true` для {harness} в конфиге",
   "test.filtered": "отфильтрован",
   "test.unavailable": "{layer} здесь пока не запускается",
   "test.flaky": "нестабилен",
@@ -601,6 +602,15 @@ export const ru: Catalog = {
   "session.part.rules": "файлы инструкций при старте",
   "session.part.skills": "список скиллов",
   "spectate.stored": "`ctxray spectate --session {id}` покажет, что она загрузила",
+  "spectate.experimental":
+    "spectate экспериментальный: он читает то, что харнесс хранит о ваших сессиях, а хранят они разное",
+  "spectate.compat.claude": "весь запрос, по транскрипту",
+  "spectate.compat.codex": "всё, кроме инструментов",
+  "spectate.compat.gemini": "без системного промпта и инструментов, список скиллов — из ваших файлов",
+  "spectate.compat.opencode":
+    "без системного промпта и инструментов: промпт добавит `ctxray spectate install --harness opencode`",
+  "spectate.compat.opencodePlugin": "всё, кроме инструментов, через плагин ctxray",
+  "spectate.compat.cursor": "только прочитанные агентом файлы, правила к ним — прогноз",
   "session.noRequests":
     "У сессии {id} пока нет запросов, которые ctxray может прочитать: старые версии Claude Code не пишут их в транскрипт",
   "command.cache": "Показать или почистить кеш харнессов, общий для всех проектов на машине",

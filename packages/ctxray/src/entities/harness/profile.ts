@@ -17,8 +17,10 @@ export type Support = { supported: true } | { supported: false; missing: string[
 
 export const checkSupport = (profile: HarnessProfile, need: Requirement): Support => {
   const modes = need.experimental ? [...profile.modes, ...profile.experimentalModes] : profile.modes;
+  // A mode the harness has only as an experiment says so: the config turns it on.
+  const absent = profile.experimentalModes.includes(need.mode) ? `experimental:${need.mode}` : `mode:${need.mode}`;
   const missing = [
-    ...(modes.includes(need.mode) ? [] : [`mode:${need.mode}`]),
+    ...(modes.includes(need.mode) ? [] : [absent]),
     ...need.requires.filter((capability) => !profile.capabilities.includes(capability)),
   ];
   return missing.length === 0 ? { supported: true } : { supported: false, missing };

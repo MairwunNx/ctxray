@@ -33,7 +33,7 @@ describe("checkSupport", () => {
     ["codex", ["skills", "mcp"], "capture", false, []],
     ["gemini-cli", ["intentRules"], "capture", false, ["intentRules"]],
     ["cursor-cli", ["intentRules"], "static", false, []],
-    ["cursor-cli", [], "capture", false, ["mode:capture"]],
+    ["cursor-cli", [], "capture", false, ["experimental:capture"]],
     ["cursor-cli", [], "capture", true, []],
     ["claude-code", ["skills"], "observe", false, []],
     ["codex", ["pathRules"], "observe", false, ["pathRules"]],

@@ -5,6 +5,8 @@ import { headingOf, LAYER_WORDS, nameOf, shown, type Words } from "./words.ts";
 type Row = { heading: string; fixture: string | undefined; badge: string; name: string; cells: CellResult[] };
 
 const reasonOf = (cell: CellResult, { t }: Words) => {
+  if (cell.reason === "unsupported" && cell.missing?.some((item) => item.startsWith("experimental:")))
+    return t("test.experimental", { harness: cell.harness });
   if (cell.reason === "unsupported") return t("test.unsupported", { missing: (cell.missing ?? []).join(", ") });
   if (cell.reason === "filtered") return t("test.filtered");
   if (cell.reason === "backend") return t("test.needsBackend");

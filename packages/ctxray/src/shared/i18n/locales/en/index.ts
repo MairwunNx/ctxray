@@ -216,6 +216,7 @@ export const en = {
   "context.sameText": "{path} has the same text as {other}, and the model reads both",
   "test.lint": "project files",
   "test.unsupported": "needs {missing}",
+  "test.experimental": "experimental here: `experimental: true` for {harness} in the config turns it on",
   "test.filtered": "filtered",
   "test.unavailable": "{layer} doesn't run here yet",
   "test.flaky": "flaky",
@@ -507,6 +508,14 @@ export const en = {
   "session.part.rules": "the instruction files loaded at start",
   "session.part.skills": "the skill listing",
   "spectate.stored": "`ctxray spectate --session {id}` shows what it loaded",
+  "spectate.experimental":
+    "spectate is experimental: it reads what each harness keeps of your sessions, and that differs",
+  "spectate.compat.claude": "the whole request, from its transcript",
+  "spectate.compat.codex": "all but the tools",
+  "spectate.compat.gemini": "no system prompt or tools, the skill listing comes from your files",
+  "spectate.compat.opencode": "no system prompt or tools: `ctxray spectate install --harness opencode` adds the prompt",
+  "spectate.compat.opencodePlugin": "all but the tools, through ctxray's plugin",
+  "spectate.compat.cursor": "only the files the agent read, the rules they bring are a prediction",
   "session.noRequests":
     "Session {id} has no requests ctxray can read yet: older Claude Code versions don't write them to the transcript",
   "command.cache": "Show or clean the harness cache this machine shares between projects",

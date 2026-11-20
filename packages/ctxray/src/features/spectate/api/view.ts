@@ -4,6 +4,7 @@ import { columns, span, type View } from "#shared/render/index.ts";
 import type { HooksChange } from "../install.action.ts";
 import type { Loaded } from "../lib/sessions.ts";
 import type { ShownSession } from "../show.action.ts";
+import { compatView } from "./compat-view.ts";
 
 export const hooksView = (changes: readonly HooksChange[], dir: string, installed: boolean, t: Translate): View => [
   ...changes.map((change) => {
@@ -79,7 +80,9 @@ const sessionView = (session: ShownSession, t: Translate): View => {
   ];
 };
 
-export const sessionsView = (sessions: readonly ShownSession[], dir: string, t: Translate): View =>
-  sessions.length === 0
+export const sessionsView = (sessions: readonly ShownSession[], dir: string, t: Translate, plugin = false): View => [
+  ...compatView(t, plugin),
+  ...(sessions.length === 0
     ? [[span(` ${t("spectate.empty")}`, "muted")]]
-    : [...sessions.flatMap((session) => sessionView(session, t)), [span(` ${t("spectate.log", { dir })}`, "muted")]];
+    : [...sessions.flatMap((session) => sessionView(session, t)), [span(` ${t("spectate.log", { dir })}`, "muted")]]),
+];
