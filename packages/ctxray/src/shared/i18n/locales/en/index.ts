@@ -268,6 +268,8 @@ export const en = {
   "activate.noPrompts": "Give the test a prompt, or positive and negative prompts",
   "activate.noBackend": "L6 and L7 need a model: run with --backend replay or --backend real",
   "run.timeout": "The session ran longer than {ms} ms",
+  "cassette.refused":
+    "The cassette holds an error from the model's API ({status}: {message}): record it again with a working key",
   "cassette.none": "No cassette for this test on {harness}: record one with --backend real --record",
   "cassette.miss":
     "The cassette has no answer for {path} at turn {turn}: the harness went another way. Record it again with --backend real --record",
@@ -279,6 +281,10 @@ export const en = {
   "test.modelTokens": { one: "{count} token", other: "{count} tokens" },
   "test.unpriced": "no price for {models}",
   "test.cassettes": { one: "{count} cassette written", other: "{count} cassettes written" },
+  "test.unrecorded": {
+    one: "{count} session got no cassette: the model's API answered with an error",
+    other: "{count} sessions got no cassette: the model's API answered with an error",
+  },
   "tokens.exactFailed": "The provider couldn't count the {protocol} request: {message}",
   "report.total": "total",
   "report.startingContext": "Starting context, tokens",

@@ -19,6 +19,7 @@ const sorted = <T>(record: Record<string, T>) =>
 
 export const createCassettes = () => {
   const files = new Map<string, { tapes: Record<string, Tape>; dirty: boolean }>();
+  let skipped = 0;
   const fileOf = async (path: string) => {
     const known = files.get(path);
     if (known) return known;
@@ -39,6 +40,11 @@ export const createCassettes = () => {
       loaded.tapes[key] = tape;
       loaded.dirty = true;
     },
+    // A recorded session the model's API refused: it gets no tape.
+    skip: () => {
+      skipped++;
+    },
+    skipped: () => skipped,
     // Writes what changed, and says how many tapes went to disk.
     save: async (): Promise<number> => {
       let written = 0;

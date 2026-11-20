@@ -306,6 +306,7 @@ export const ru: Catalog = {
   "activate.noPrompts": "Дайте тесту prompt или списки positive и negative",
   "activate.noBackend": "L6 и L7 нужна модель: запустите с --backend replay или --backend real",
   "run.timeout": "Сессия шла дольше {ms} мс",
+  "cassette.refused": "В кассете записана ошибка API модели ({status}: {message}): перезапишите её с рабочим ключом",
   "cassette.none": "Для этого теста на {harness} нет кассеты: запишите её с --backend real --record",
   "cassette.miss":
     "В кассете нет ответа на {path} на ходу {turn}: харнесс пошёл другим путём. Перезапишите её с --backend real --record",
@@ -316,6 +317,12 @@ export const ru: Catalog = {
   "test.dollars": "${amount}",
   "test.modelTokens": { one: "{count} токен", few: "{count} токена", many: "{count} токенов", other: "{count} токена" },
   "test.unpriced": "нет цены для {models}",
+  "test.unrecorded": {
+    one: "{count} сессия осталась без кассеты: API модели ответил ошибкой",
+    few: "{count} сессии остались без кассеты: API модели ответил ошибкой",
+    many: "{count} сессий остались без кассеты: API модели ответил ошибкой",
+    other: "{count} сессии остались без кассеты: API модели ответил ошибкой",
+  },
   "test.cassettes": {
     one: "записана {count} кассета",
     few: "записаны {count} кассеты",

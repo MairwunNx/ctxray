@@ -43,6 +43,7 @@ export type TestRunResult = {
   snapshots: SnapshotStats;
   spend: SpendTotal | undefined; // a real run: what the model cost
   cassettes: number; // tapes written by --record
+  unrecorded: number; // sessions --record left out: the model's API refused them
   root: string; // the project root
   selection: Selection;
   coverage: readonly Coverage[];
@@ -142,6 +143,7 @@ export const createTestRunAction =
       snapshots: await snapshots.save(),
       spend: kind === "real" ? spend.total() : undefined,
       cassettes: await cassettes.save(),
+      unrecorded: cassettes.skipped(),
       root,
       selection,
       coverage: await coverageOf(repository, selection.harnesses, seenBy, results),

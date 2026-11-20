@@ -64,6 +64,7 @@ const notes = (result: TestRunResult, words: Words, version: string): string[] =
     ...(result.installed === undefined ? [] : [t("test.skew", { installed: result.installed, version })]),
     ...(missing ? [t("test.updateHint")] : []),
     ...(result.cassettes > 0 ? [t("test.cassettes", { count: result.cassettes })] : []),
+    ...(result.unrecorded > 0 ? [t("test.unrecorded", { count: result.unrecorded })] : []),
   ];
 };
 

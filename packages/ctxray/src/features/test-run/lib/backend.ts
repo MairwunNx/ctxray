@@ -84,9 +84,12 @@ const realOf = async (deps: BackendDeps, tape: TapeKey, maxTurns: number): Promi
         });
       },
     },
+    // A refused session holds no answer of the model: replaying it would pass the error off as one.
     done: async (ran) => {
-      if (recorder)
-        await deps.cassettes.put(tape.file, tape.harness, tape.key, { ...ran, entries: await recorder.tape() });
+      if (!recorder) return;
+      const entries = await recorder.tape();
+      if (refused()) deps.cassettes.skip();
+      else await deps.cassettes.put(tape.file, tape.harness, tape.key, { ...ran, entries });
     },
     misses: () => [],
     recorded: async () => undefined,
@@ -110,7 +113,13 @@ const replayOf = async (deps: BackendDeps, tape: TapeKey, maxTurns: number): Pro
     done: async () => {},
     misses: () => misses,
     recorded: async () => recorded && { version: recorded.version, model: recorded.model },
-    refused: () => undefined,
+    // A cassette an older ctxray recorded from a refused session.
+    refused: () => {
+      const refusal = refusalOf(recorded?.entries.map((entry) => ({ ...entry, text: entry.body })) ?? []);
+      return (
+        refusal && new CheckFailure("cassette.refused", { status: String(refusal.status), message: refusal.message })
+      );
+    },
   };
 };
 

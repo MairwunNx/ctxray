@@ -23,3 +23,10 @@ test("tapes go next to the test file and come back in the next run", async () =>
   expect(await second.get(file, "codex", "refunds › prompt0 #1")).toBeUndefined();
   expect(await second.save()).toBe(0);
 });
+
+test("a skipped session writes nothing and is counted", async () => {
+  const cassettes = createCassettes();
+  cassettes.skip();
+  expect(await cassettes.save()).toBe(0);
+  expect(cassettes.skipped()).toBe(1);
+});

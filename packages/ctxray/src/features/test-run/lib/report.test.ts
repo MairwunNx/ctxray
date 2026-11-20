@@ -59,6 +59,7 @@ const RESULT: TestRunResult = {
   duration: 1234.5,
   spend: undefined,
   cassettes: 0,
+  unrecorded: 0,
   selection: {
     harnesses: ["claude-code", "codex"],
     experimental: new Set(),
