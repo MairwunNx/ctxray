@@ -36,6 +36,12 @@ export const HarnessSettings = z.strictObject({
     .boolean()
     .optional()
     .describe("Turn on modes that rest on undocumented builds, like Cursor CLI's capture through its local build"),
+  concurrency: z
+    .number()
+    .int()
+    .positive()
+    .optional()
+    .describe("At most this many sessions of this harness at once, under the run's `concurrency`"),
 });
 export type HarnessSettings = z.output<typeof HarnessSettings>;
 
@@ -143,6 +149,12 @@ export const UserConfig = z
         "Forbid every network request: no installs, no real runs, no exact counts, no calibration. CTXRAY_OFFLINE=1 sets it too",
       ),
     network: Network.optional(),
+    concurrency: z
+      .number()
+      .int()
+      .positive()
+      .optional()
+      .describe("Harness sessions an L6 or L7 test runs at once, 1 by default. CTXRAY_CONCURRENCY sets it too"),
     budget: Budget.optional(),
     activate: ActivateDefaults.optional(),
     exactTokens: z

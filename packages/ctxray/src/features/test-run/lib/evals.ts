@@ -1,5 +1,6 @@
 import pMap from "p-map";
 import type { Config } from "#entities/user-config/index.ts";
+import type { HarnessId } from "#shared/contract/index.ts";
 import { judge } from "#shared/stats/index.ts";
 import { type Failure, toFailure } from "./attempt.ts";
 import { runSample } from "./autonomous.ts";
@@ -13,7 +14,7 @@ import type { CellScope } from "./scope.ts";
 export type EvalContext = {
   capture: Capture;
   backend: Backend;
-  concurrency: number;
+  concurrency: (harness: HarnessId) => number; // sessions of the harness at once
   activate: Config["activate"]; // the config's L6 defaults
 };
 
@@ -66,7 +67,7 @@ export const collectRuns = async (definition: TestDefinition, key: string, scope
       });
       return { group: prompt.group, run };
     },
-    { concurrency: context.concurrency },
+    { concurrency: context.concurrency(scope.harness) },
   );
   const of = (group: Prompt["group"]) => runs.filter((one) => one.group === group).map((one) => one.run);
   return runsOf(

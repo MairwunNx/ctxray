@@ -30,6 +30,7 @@ export const testSpec: CommandSpec = {
     "report-lang": { type: "string", summary: "option.reportLang", value: "langs" },
     "report-dir": { type: "string", summary: "option.reportDir", value: "dir" },
     budget: { type: "string", summary: "option.budget", value: "usd" },
+    concurrency: { type: "string", summary: "option.concurrency", value: "count" },
     watch: { type: "boolean", short: "w", summary: "option.watch" },
     config: CONFIG_OPTION,
   },
@@ -52,6 +53,7 @@ export const createTestCommand =
     const selection = chooseSelection(values, env, config);
     const reporting = chooseReporting(values, env, config, settings.ci, settings.lang);
     const budget = typeof values["budget"] === "string" ? Number(values["budget"]) : undefined;
+    const concurrency = typeof values["concurrency"] === "string" ? Number(values["concurrency"]) : undefined;
     for (const chosen of [selection, reporting]) {
       if ("key" in chosen) renderer.print([[span(t(chosen.key, chosen.params), "failure")]]);
     }
@@ -64,6 +66,10 @@ export const createTestCommand =
       renderer.print([[span(t("test.badBudget", { value: String(values["budget"]) }), "failure")]]);
       return ExitCode.usage;
     }
+    if (concurrency !== undefined && !(Number.isInteger(concurrency) && concurrency > 0)) {
+      renderer.print([[span(t("test.badConcurrency", { value: String(values["concurrency"]) }), "failure")]]);
+      return ExitCode.usage;
+    }
     const request: TestRunRequest = {
       selection,
       updateSnapshots: values["update-snapshots"] === true,
@@ -74,6 +80,7 @@ export const createTestCommand =
       record: values["record"] === true,
       ...(typeof values["base"] === "string" && values["base"] !== "" && { base: values["base"] }),
       ...(budget !== undefined && { budget }),
+      ...(concurrency !== undefined && { concurrency }),
     };
     const deps = { testRun, t, renderer, config, env, version, lang: settings.lang };
     let result: Awaited<ReturnType<typeof runOnce>>;

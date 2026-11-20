@@ -594,6 +594,8 @@ export const ru: Catalog = {
   },
   "option.record": "С --backend real сохранить ответы модели кассетами для --backend replay",
   "option.budget": "Сколько долларов может потратить прогон с --backend real",
+  "option.concurrency": "Сколько сессий харнесса тест L6 или L7 запускает одновременно, по умолчанию одну",
+  "test.badConcurrency": "--concurrency принимает целое число от 1, например 4, а не «{value}»",
   "test.badBudget": "--budget принимает доллары, например 2.50, а не «{value}»",
   "command.calibrate": "Измерить, как токенайзер провайдера считает относительно o200k, вашим ключом",
   "option.provider": "Провайдер модели",

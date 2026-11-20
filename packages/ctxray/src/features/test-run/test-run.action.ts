@@ -32,6 +32,7 @@ export type TestRunRequest = {
   install?: boolean; // false with --no-install: a harness missing from the cache fails instead
   record?: boolean; // --record: a real run keeps the model's answers as cassettes for replay
   budget?: number; // --budget: US dollars a real run may spend, over the config
+  concurrency?: number; // --concurrency: harness sessions at once, over the config
   base?: string | undefined; // --base: the report holds the loadout diff against this revision
 };
 
@@ -94,7 +95,9 @@ export const createTestRunAction =
         ? undefined
         : {
             capture,
-            concurrency: 4,
+            // The run's limit, and under it each harness's own.
+            concurrency: (harness: HarnessId) =>
+              Math.min(request.concurrency ?? config.concurrency, config.harnesses[harness]?.concurrency ?? Infinity),
             activate: config.activate,
             backend: createBackend({
               kind,

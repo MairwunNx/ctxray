@@ -10,3 +10,12 @@ test.each<[string, UserConfig, { min: number; max: number; runs: number }]>([
 ])("L6 defaults with %s", (_, config, activate) => {
   expect(finalizeConfig(config, {}, []).activate).toEqual(activate);
 });
+
+test.each<[string, UserConfig, Record<string, string>, number]>([
+  ["one session at a time by default", {}, {}, 1],
+  ["the config raises it", { concurrency: 4 }, {}, 4],
+  ["CTXRAY_CONCURRENCY beats the config", { concurrency: 4 }, { CTXRAY_CONCURRENCY: "2" }, 2],
+  ["a CTXRAY_CONCURRENCY that isn't a count is ignored", { concurrency: 4 }, { CTXRAY_CONCURRENCY: "0" }, 4],
+])("concurrency: %s", (_, config, env, concurrency) => {
+  expect(finalizeConfig(config, env, []).concurrency).toBe(concurrency);
+});

@@ -496,6 +496,8 @@ export const en = {
   "cache.pruned": { one: "Removed {count} build, freed {size}", other: "Removed {count} builds, freed {size}" },
   "option.record": "With --backend real, keep the model's answers as cassettes for --backend replay",
   "option.budget": "US dollars a run with --backend real may spend",
+  "option.concurrency": "Harness sessions an L6 or L7 test runs at once, 1 by default",
+  "test.badConcurrency": "--concurrency takes a whole number from 1, like 4, not “{value}”",
   "test.badBudget": "--budget takes US dollars, like 2.50, not “{value}”",
   "command.calibrate": "Measure how a provider's tokenizer counts against o200k, with your key",
   "option.provider": "Model provider",

@@ -25,6 +25,7 @@ export type Config = {
   readonly offline: boolean;
   readonly network: Network;
   readonly budget: Budget; // CTXRAY_BUDGET_USD sets the dollars
+  readonly concurrency: number; // harness sessions at once, CTXRAY_CONCURRENCY. One: a small runner holds it
   // L6: the thresholds toActivate() holds runs to, and how many runs a test makes without `samples`.
   readonly activate: { readonly min: number; readonly max: number; readonly runs: number };
   readonly prices: Readonly<Record<string, Price>>;
@@ -47,6 +48,11 @@ const present = (value: string | undefined) => (value === undefined || value ===
 const dollars = (value: string | undefined) => {
   const parsed = Number(present(value));
   return Number.isFinite(parsed) && parsed >= 0 && present(value) !== undefined ? parsed : undefined;
+};
+
+const count = (value: string | undefined) => {
+  const parsed = Number(present(value));
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : undefined;
 };
 
 // ctxray's own variables beat the config file: CI sets them per job, the file is shared by all jobs.
@@ -74,6 +80,7 @@ export const finalizeConfig = (merged: UserConfig, env: Env, files: readonly str
       ...merged.budget,
       ...(dollars(env["CTXRAY_BUDGET_USD"]) !== undefined && { usd: dollars(env["CTXRAY_BUDGET_USD"]) }),
     },
+    concurrency: count(env["CTXRAY_CONCURRENCY"]) ?? merged.concurrency ?? 1,
     activate: activateOf(merged.activate),
     prices: merged.prices ?? {},
     exactTokens: isOn(env["CTXRAY_EXACT_TOKENS"]) || merged.exactTokens === true,
