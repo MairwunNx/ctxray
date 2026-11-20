@@ -560,6 +560,7 @@ export const ru: Catalog = {
   },
   "session.own": "Сам ctxray: ≈ {tokens}, в итоги не входит",
   "session.missing": "Сессии {id} нет ни в журнале ctxray, ни в транскриптах Claude Code",
+  "session.fresh": "Эта сессия ещё ничего не отправляла модели. Задайте вопрос и вызовите /ctxray снова",
   "session.noRequests":
     "У сессии {id} пока нет запросов, которые ctxray может прочитать: старые версии Claude Code не пишут их в транскрипт",
   "command.cache": "Показать или почистить кеш харнессов, общий для всех проектов на машине",

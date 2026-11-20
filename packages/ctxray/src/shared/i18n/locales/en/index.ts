@@ -477,6 +477,7 @@ export const en = {
   "session.request": { one: "{count} request so far", other: "{count} requests so far" },
   "session.own": "ctxray itself: ≈ {tokens}, not counted",
   "session.missing": "No session {id}: neither ctxray's log nor Claude Code's transcripts know it",
+  "session.fresh": "This session hasn't sent the model anything yet. Ask something, then run /ctxray again",
   "session.noRequests":
     "Session {id} has no requests ctxray can read yet: older Claude Code versions don't write them to the transcript",
   "command.cache": "Show or clean the harness cache this machine shares between projects",

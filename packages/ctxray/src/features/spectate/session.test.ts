@@ -47,3 +47,8 @@ test("a session nobody knows", async () => {
   expect(result).toEqual({ found: false, id: "nope" });
   expect(toPlain(sessionLoadoutView(result, createTranslator("en")))).toContain("No session nope");
 });
+
+test("the plugin's own session before its first request", async () => {
+  const result = await session("fresh", ["<plugin>"]);
+  expect(toPlain(sessionLoadoutView(result, createTranslator("en"), true))).toContain("hasn't sent the model anything");
+});

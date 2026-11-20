@@ -57,8 +57,10 @@ const rowsOf = (loadout: LoadoutSnapshot, t: Translate): Row[] => {
   ];
 };
 
-// `/ctxray` in a Claude Code session: what the session's latest request carried, piece by piece.
-export const sessionLoadoutView = (result: SessionLoadout, t: Translate): View => {
+// `/ctxray` in a Claude Code session: what the session's latest request carried, piece by piece. A `live` session
+// is the one `/ctxray` runs in, which has no transcript until its first request.
+export const sessionLoadoutView = (result: SessionLoadout, t: Translate, live = false): View => {
+  if (!result.found && live) return [[span(` ${t("session.fresh")}`, "muted")]];
   if (!result.found) return [[span(` ${t("session.missing", { id: result.id })}`, "failure")]];
   const { loadout } = result;
   if (!loadout) return [[span(` ${t("session.noRequests", { id: result.id })}`, "muted")]];

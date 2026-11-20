@@ -58,10 +58,12 @@ export const createSpectateCommand =
     }
     if (typeof values["session"] === "string" && values["session"] !== "") {
       const root = values["plugin-root"];
-      const result = await session(values["session"], typeof root === "string" && root !== "" ? [root] : []);
+      // The plugin asks about the session it runs in: no transcript there means no request yet, not a wrong id.
+      const live = typeof root === "string" && root !== "";
+      const result = await session(values["session"], live ? [root] : []);
       if (values["json"] === true) renderer.print([[span(JSON.stringify(result, null, 2))]]);
-      else renderer.print(sessionLoadoutView(result, t));
-      return result.found ? ExitCode.ok : ExitCode.failed;
+      else renderer.print(sessionLoadoutView(result, t, live));
+      return result.found || live ? ExitCode.ok : ExitCode.failed;
     }
     const last = typeof values["last"] === "string" ? Number(values["last"]) : 5;
     if (!Number.isInteger(last) || last < 1) return fail("spectate.badLast", { value: String(values["last"]) });
