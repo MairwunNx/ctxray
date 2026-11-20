@@ -23,8 +23,8 @@ test("install, an empty show, and uninstall, in the user's files only", async ()
   expect(JSON.parse(readFileSync(join(home, ".claude/settings.json"), "utf8"))).toEqual({});
 });
 
-test("harnesses without hooks to observe through", async () => {
-  const { code, stdout } = await spectate("install", "--harness", "codex");
-  expect(code).toBe(2);
-  expect(stdout).toContain("ctxray test");
+test("harnesses that keep their sessions themselves need no hooks", async () => {
+  const { code, stdout } = await spectate("install", "--harness", "codex,gemini-cli");
+  expect(code).toBe(0);
+  expect(stdout).toContain("No hooks needed for Codex, Gemini CLI");
 });

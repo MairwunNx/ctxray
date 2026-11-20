@@ -6,6 +6,7 @@ import type { Env } from "#shared/infra/index.ts";
 import { countTokens } from "#shared/tokens/index.ts";
 import { spectateDir } from "./lib/places.ts";
 import { readSessions, type Session } from "./lib/sessions.ts";
+import { readStored, type Stored } from "./lib/stores.ts";
 
 export type ShownSession = Session & {
   tokens: Record<string, number>; // what each loaded file costs now, by its path
@@ -40,13 +41,38 @@ const resolvedFor = async (session: Session): Promise<RuleEntry[] | undefined> =
   return adapter.resolve(await adapter.discover(project), { cwd, files }).rules;
 };
 
-// `ctxray spectate`: the latest sessions the hooks saw, with what each loaded.
+// A session from a harness's own record, told in the words of one the hooks saw.
+const fromRecord = async (stored: Stored): Promise<Session> => {
+  const recorded = await stored.read();
+  return {
+    family: undefined,
+    harness: stored.harness,
+    id: stored.id,
+    started: stored.started,
+    last: stored.last,
+    cwd: recorded.cwd ?? stored.cwd,
+    transcript: undefined,
+    model: recorded.model,
+    version: recorded.version,
+    entrypoint: undefined,
+    prompts: 0,
+    loaded: [],
+    read: [],
+    requests: recorded.requests.length,
+  };
+};
+
+// `ctxray spectate`: the latest sessions, with what each loaded. Claude Code and Cursor through the hooks' log,
+// the other harnesses from their own records.
 export const createSpectateShowAction =
   (env: Env) => async (options: { last: number; harnesses?: readonly HarnessId[] }) => {
-    const dir = spectateDir(env, process.platform, env["HOME"] || homedir());
-    const sessions = (await readSessions(dir))
-      .filter((session) => !options.harnesses || options.harnesses.includes(session.harness))
-      .slice(0, options.last);
+    const home = env["HOME"] || homedir();
+    const dir = spectateDir(env, process.platform, home);
+    const asked = (harness: HarnessId) => !options.harnesses || options.harnesses.includes(harness);
+    const hooked = (await readSessions(dir)).filter((session) => asked(session.harness));
+    const stored = (await readStored(env, home)).filter((one) => asked(one.harness));
+    const latest = [...hooked, ...stored].sort((a, b) => b.last - a.last).slice(0, options.last);
+    const sessions = await Promise.all(latest.map((one) => ("family" in one ? one : fromRecord(one))));
     const result: ShownSession[] = [];
     for (const session of sessions) {
       const tokens = await tokensOf(session.loaded.map((one) => one.path));

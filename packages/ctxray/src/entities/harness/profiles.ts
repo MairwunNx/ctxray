@@ -13,7 +13,7 @@ export const PROFILES: Record<HarnessId, HarnessProfile> = {
   codex: {
     id: "codex",
     title: "Codex",
-    modes: ["static", "capture"],
+    modes: ["static", "capture", "observe"],
     experimentalModes: [],
     // The AGENTS.md chain is fixed at session start: nothing loads when the agent reads a file.
     capabilities: ["skills", "mcp", "hooks", "headless", "proxyable"],
@@ -21,14 +21,14 @@ export const PROFILES: Record<HarnessId, HarnessProfile> = {
   "gemini-cli": {
     id: "gemini-cli",
     title: "Gemini CLI",
-    modes: ["static", "capture"],
+    modes: ["static", "capture", "observe"],
     experimentalModes: [],
     capabilities: ["skills", "pathRules", "mcp", "hooks", "headless", "proxyable"],
   },
   opencode: {
     id: "opencode",
     title: "OpenCode",
-    modes: ["static", "capture"],
+    modes: ["static", "capture", "observe"],
     experimentalModes: [],
     capabilities: ["skills", "pathRules", "mcp", "hooks", "headless", "proxyable"],
   },

@@ -8,7 +8,7 @@ export type Loaded = { path: string; reason: string; trigger?: string; parent?: 
 
 // One session as the hooks saw it, newest event last.
 export type Session = {
-  family: Family;
+  family: Family | undefined; // none: the harness keeps the session itself, no hook saw it
   harness: HarnessId;
   id: string;
   started: number;
@@ -21,6 +21,7 @@ export type Session = {
   prompts: number;
   loaded: Loaded[];
   read: string[]; // files the agent read, from Cursor's beforeReadFile
+  requests?: number; // requests in the harness's own record
 };
 
 const text = (value: unknown) => (typeof value === "string" && value !== "" ? value : undefined);

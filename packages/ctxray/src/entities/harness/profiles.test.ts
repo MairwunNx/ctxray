@@ -37,7 +37,7 @@ describe("checkSupport", () => {
     ["cursor-cli", [], "capture", true, []],
     ["cursor-ide", [], "capture", true, ["mode:capture"]],
     ["claude-code-desktop", ["skills"], "observe", false, []],
-    ["opencode", ["hooks"], "observe", false, ["mode:observe"]],
+    ["codex", ["pathRules"], "observe", false, ["pathRules"]],
   ])("%s requiring %j in %s (experimental: %p) misses %j", (id, requires, mode, experimental, missing) => {
     const support = checkSupport(PROFILES[id], { requires, mode, experimental });
     expect(support).toEqual(missing.length === 0 ? { supported: true } : { supported: false, missing });

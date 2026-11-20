@@ -45,9 +45,11 @@ const when = (at: number) => {
 const sessionView = (session: ShownSession, t: Translate): View => {
   const tokens = (count: number | undefined) => (count === undefined ? "" : t("inspect.tokens", { tokens: count }));
   const head = [PROFILES[session.harness].title, when(session.started), session.cwd ?? "?"].join(" · ");
-  const facts = [session.model, session.version, session.entrypoint, t("spectate.prompts", { count: session.prompts })]
-    .filter(Boolean)
-    .join(" · ");
+  const count =
+    session.requests === undefined
+      ? t("spectate.prompts", { count: session.prompts })
+      : t("session.request", { count: session.requests });
+  const facts = [session.model, session.version, session.entrypoint, count].filter(Boolean).join(" · ");
   const loaded = columns(
     session.loaded.map((one) => [
       span(`    ${one.path}`),
@@ -65,12 +67,14 @@ const sessionView = (session: ShownSession, t: Translate): View => {
   return [
     [span(` ${head}`, "strong")],
     [span(`   ${facts}`, "muted")],
-    ...(session.family === "claude"
-      ? [[span(`   ${t("spectate.loaded")}`)], ...loaded]
-      : [
-          [span(`   ${t("spectate.read", { count: session.read.length })}`)],
-          ...(session.resolved ? [[span(`   ${t("spectate.resolved")}`)], ...resolved] : []),
-        ]),
+    ...(session.family === undefined
+      ? [[span(`   ${t("spectate.stored", { id: session.id })}`)]]
+      : session.family === "claude"
+        ? [[span(`   ${t("spectate.loaded")}`)], ...loaded]
+        : [
+            [span(`   ${t("spectate.read", { count: session.read.length })}`)],
+            ...(session.resolved ? [[span(`   ${t("spectate.resolved")}`)], ...resolved] : []),
+          ]),
     [],
   ];
 };

@@ -1,9 +1,10 @@
+import { PROFILES } from "#entities/harness/index.ts";
 import type { CommandSpec, Handler, Values } from "#shared/cli/index.ts";
 import { ExitCode, HarnessId } from "#shared/contract/index.ts";
 import type { Translate } from "#shared/i18n/index.ts";
 import { type Renderer, span } from "#shared/render/index.ts";
 import type { SpectateHooksAction } from "../install.action.ts";
-import { type Family, familyOf } from "../lib/places.ts";
+import { familyOf } from "../lib/places.ts";
 import type { SpectateSessionAction } from "../session.action.ts";
 import type { SpectateShowAction } from "../show.action.ts";
 import { sessionLoadoutView } from "./session-view.ts";
@@ -49,18 +50,22 @@ export const createSpectateCommand =
     if (unknown) return fail("error.unknownHarness", { name: unknown, known: HarnessId.options.join(", ") });
     const harnesses = asked as HarnessId[] | undefined;
     if (sub === "install" || sub === "uninstall") {
-      const families = [...new Set((harnesses ?? ["claude-code", "cursor-ide"]).map(familyOf))];
-      if (families.includes(undefined)) return fail("spectate.noHooks", { harnesses: "Codex, Gemini CLI, OpenCode" });
+      const chosen: readonly HarnessId[] = harnesses ?? ["claude-code", "cursor-ide"];
+      const families = [...new Set(chosen.flatMap((id) => familyOf(id) ?? []))];
+      // Codex, Gemini CLI and OpenCode keep their sessions themselves: `spectate` reads them as they are.
+      const stored = chosen.filter((id) => familyOf(id) === undefined).map((id) => PROFILES[id].title);
+      if (stored.length > 0)
+        renderer.print([[span(` · ${t("spectate.noHooks", { harnesses: stored.join(", ") })}`, "muted")]]);
       const run = sub === "install" ? hooks.install : hooks.uninstall;
-      const changes = await run(families as Family[]);
-      renderer.print(hooksView(changes, hooks.dir, sub === "install", t));
+      const changes = await run(families);
+      if (families.length > 0) renderer.print(hooksView(changes, hooks.dir, sub === "install", t));
       return changes.some((change) => "error" in change) ? ExitCode.failed : ExitCode.ok;
     }
     if (typeof values["session"] === "string" && values["session"] !== "") {
       const root = values["plugin-root"];
       // The plugin asks about the session it runs in: no transcript there means no request yet, not a wrong id.
       const live = typeof root === "string" && root !== "";
-      const result = await session(values["session"], live ? [root] : []);
+      const result = await session(values["session"], live ? [root] : [], harnesses);
       if (values["json"] === true) renderer.print([[span(JSON.stringify(result, null, 2))]]);
       else renderer.print(sessionLoadoutView(result, t, live));
       return result.found || live ? ExitCode.ok : ExitCode.failed;

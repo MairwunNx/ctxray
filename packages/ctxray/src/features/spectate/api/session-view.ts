@@ -1,7 +1,8 @@
 import { homedir } from "node:os";
 import { sep } from "node:path";
-import type { LoadoutSnapshot } from "#shared/contract/index.ts";
-import type { Translate } from "#shared/i18n/index.ts";
+import { PROFILES } from "#entities/harness/index.ts";
+import type { Component, LoadoutSnapshot } from "#shared/contract/index.ts";
+import type { MessageKey, Translate } from "#shared/i18n/index.ts";
 import { columns, type Span, span, type View, widthOf } from "#shared/render/index.ts";
 import type { SessionLoadout } from "../session.action.ts";
 
@@ -75,6 +76,28 @@ const rowsOf = (loadout: LoadoutSnapshot, t: Translate): Row[] => {
 const homely = (path: string | undefined, home = homedir()) =>
   path && home && (path === home || path.startsWith(home + sep)) ? `~${path.slice(home.length)}` : path;
 
+// “the system prompt and the tools”, in the words of the view.
+const partsOf = (parts: readonly Component[], t: Translate) => {
+  const words = parts.map((part) => t(`session.part.${part}` as MessageKey));
+  return words.length < 2 ? (words[0] ?? "") : `${words.slice(0, -1).join(", ")}${t("session.and")}${words.at(-1)}`;
+};
+
+// What the harness's own record leaves out: counted from the project's files, or not at all.
+const recordNotes = (result: Extract<SessionLoadout, { found: true }>, t: Translate): View => {
+  const harness = PROFILES[result.harness].title;
+  return [
+    ...(result.filled.length > 0
+      ? [[span(` ${t("session.filled", { parts: partsOf(result.filled, t) })}`, "muted")]]
+      : []),
+    ...(result.unseen.length > 0
+      ? [[span(` ${t("session.unseen", { harness, parts: partsOf(result.unseen, t) })}`, "muted")]]
+      : []),
+    ...(result.reported !== undefined
+      ? [[span(` ${t("session.reported", { tokens: result.reported })}`, "muted")]]
+      : []),
+  ];
+};
+
 // `/ctxray` in a Claude Code session: what the session's latest request carried, piece by piece. A `live` session
 // is the one `/ctxray` runs in, which has no transcript until its first request.
 export const sessionLoadoutView = (result: SessionLoadout, t: Translate, live = false): View => {
@@ -84,7 +107,7 @@ export const sessionLoadoutView = (result: SessionLoadout, t: Translate, live = 
   if (!loadout) return [[span(` ${t("session.noRequests", { id: result.id })}`, "muted")]];
   const { version, model } = loadout.harness;
   const head = [
-    `Claude Code ${version}`.trim(),
+    `${PROFILES[result.harness].title} ${version}`.trim(),
     model,
     homely(result.cwd),
     t("session.request", { count: result.requests }),
@@ -95,8 +118,11 @@ export const sessionLoadoutView = (result: SessionLoadout, t: Translate, live = 
     [],
     ...aligned(rowsOf(loadout, t)),
     [],
+    ...recordNotes(result, t),
     ...(own ? [[span(` ${t("session.own", { tokens: own })}`, "muted")]] : []),
     [span(` ${t("inspect.estimate", { tokenizer: loadout.tokens.method.replace(/^local:/, "") })}`, "muted")],
-    ...(!loadout.tokens.method.includes("calibrated") ? [[span(` ${t("inspect.uncalibrated")}`, "muted")]] : []),
+    ...(result.harness.startsWith("claude-code") && !loadout.tokens.method.includes("calibrated")
+      ? [[span(` ${t("inspect.uncalibrated")}`, "muted")]]
+      : []),
   ];
 };

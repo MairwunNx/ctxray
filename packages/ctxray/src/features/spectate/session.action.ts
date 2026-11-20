@@ -1,72 +1,76 @@
 import { homedir } from "node:os";
-import { join, relative, resolve } from "node:path";
-import {
-  buildLoadout,
-  CAPTURE_ADAPTERS,
-  filesOfRequest,
-  findRoot,
-  openProject,
-  readTranscript,
-  STATIC_ADAPTERS,
-} from "#entities/harness/index.ts";
-import type { LoadoutSnapshot } from "#shared/contract/index.ts";
+import { relative, resolve } from "node:path";
+import { buildLoadout, CAPTURE_ADAPTERS, findRoot, openProject, STATIC_ADAPTERS } from "#entities/harness/index.ts";
+import type { Component, HarnessId, LoadoutSnapshot } from "#shared/contract/index.ts";
 import type { Env } from "#shared/infra/index.ts";
-import { spectateDir } from "./lib/places.ts";
-import { readSessions } from "./lib/sessions.ts";
+import { filledFromFiles } from "./lib/fill.ts";
+import { type Found, findSession } from "./lib/find.ts";
 
 export type SessionLoadout =
   | { found: false; id: string }
-  | { found: true; id: string; cwd: string | undefined; requests: number; loadout: LoadoutSnapshot | undefined };
+  | {
+      found: true;
+      id: string;
+      harness: HarnessId;
+      cwd: string | undefined;
+      requests: number;
+      loadout: LoadoutSnapshot | undefined;
+      reported: number | undefined; // input tokens the provider counted for the latest request
+      unseen: Component[]; // what the harness's record leaves out and ctxray doesn't count
+      filled: Component[]; // what it leaves out and the project's files tell
+    };
 
-// A session the hooks never saw still has its transcript under Claude Code's projects folder.
-const transcriptOf = async (id: string, env: Env, home: string) => {
-  const config = env["CLAUDE_CONFIG_DIR"] || join(home, ".claude");
-  for await (const path of new Bun.Glob(`projects/*/${id}.jsonl`).scan({ cwd: config, absolute: true })) return path;
-  return undefined;
+const FILLED: Component[] = ["rules", "skills"];
+
+const loadoutOf = async ({ harness, cwd, recorded }: Found, own: readonly string[]) => {
+  const latest = recorded.requests.at(-1);
+  // The Code tab of the Claude app is Claude Code: the same transcript, the same request.
+  const kind = harness === "claude-code-desktop" ? "claude-code" : harness;
+  const statics = STATIC_ADAPTERS[kind];
+  const capture = CAPTURE_ADAPTERS[kind];
+  if (!latest || !cwd || !statics || !capture) return undefined;
+  const found = await findRoot(cwd).catch(() => undefined);
+  if (!found) return undefined;
+  // The project's root as the harness spells it, so the paths in the request come out relative to it.
+  const work = resolve(cwd, relative(found.dir, found.root));
+  const inventory = await statics.discover(await openProject(found.root));
+  const files = recorded.files
+    .map((path) => relative(work, resolve(cwd, path)))
+    .filter((path) => !path.startsWith(".."));
+  const predicted = statics.resolve(inventory, { cwd: relative(found.root, found.dir), files });
+  const sent = capture.segment(latest, work);
+  const loadout = buildLoadout({
+    harness: { name: kind, version: recorded.version ?? "", model: recorded.model ?? "" },
+    segments: [...filledFromFiles(sent, recorded.unseen, inventory, predicted, work), ...sent], // the start files first
+    inventory,
+    predicted,
+    servers: {},
+    work,
+    first: recorded.requests.length === 1,
+    own,
+  });
+  return { ...loadout, mode: "observe" as const };
 };
 
-const sessionOf = async (id: string, env: Env, home: string) => {
-  const sessions = await readSessions(spectateDir(env, process.platform, home));
-  const known = sessions.find((one) => one.family === "claude" && one.id === id);
-  const transcript = known?.transcript ?? (await transcriptOf(id, env, home));
-  return { known, transcript };
-};
-
-// The loadout of a live Claude Code session: its latest request, rebuilt from the transcript and cut into pieces
-// the way a captured one is. `own` is where ctxray's plugin lives: the skills it loads don't count.
+// The loadout of a session the user ran: its latest request, rebuilt from the harness's own record and cut into
+// pieces the way a captured one is. `own` is where ctxray's plugin lives: the skills it loads don't count.
 export const createSpectateSessionAction =
   (env: Env) =>
-  async (id: string, own: readonly string[]): Promise<SessionLoadout> => {
-    const home = env["HOME"] || homedir();
-    const { known, transcript } = await sessionOf(id, env, home);
-    const file = transcript ? Bun.file(transcript) : undefined;
-    if (!file || !(await file.exists())) return { found: false, id };
-    const { requests, version, cwd: start } = readTranscript(await file.text(), id);
-    const latest = requests.at(-1);
-    const cwd = known?.cwd ?? start;
-    const statics = STATIC_ADAPTERS["claude-code"];
-    const capture = CAPTURE_ADAPTERS["claude-code"];
-    if (!latest || !cwd || !statics || !capture) return { found: true, id, cwd, requests: 0, loadout: undefined };
-    const found = await findRoot(cwd).catch(() => undefined);
-    if (!found) return { found: true, id, cwd, requests: requests.length, loadout: undefined };
-    // The project's root as Claude Code spells it, so the paths in the request come out relative to it.
-    const work = resolve(cwd, relative(found.dir, found.root));
-    const inventory = await statics.discover(await openProject(found.root));
-    const files = filesOfRequest(latest)
-      .map((path) => relative(work, resolve(cwd, path)))
-      .filter((path) => !path.startsWith(".."));
-    const body = latest.body;
-    const loadout = buildLoadout({
-      harness: { name: "claude-code", version: version ?? "", model: String(body["model"]) },
-      segments: capture.segment(latest, work),
-      inventory,
-      predicted: statics.resolve(inventory, { cwd: relative(found.root, found.dir), files }),
-      servers: {},
-      work,
-      first: requests.length === 1,
-      own,
-    });
-    return { found: true, id, cwd, requests: requests.length, loadout: { ...loadout, mode: "observe" } };
+  async (id: string, own: readonly string[], harnesses?: readonly HarnessId[]): Promise<SessionLoadout> => {
+    const found = await findSession(id, env, env["HOME"] || homedir(), harnesses);
+    if (!found) return { found: false, id };
+    const { recorded } = found;
+    return {
+      found: true,
+      id: found.id,
+      harness: found.harness,
+      cwd: found.cwd,
+      requests: recorded.requests.length,
+      loadout: await loadoutOf(found, own),
+      reported: recorded.reported,
+      unseen: recorded.unseen.filter((component) => !FILLED.includes(component)),
+      filled: recorded.unseen.filter((component) => FILLED.includes(component)),
+    };
   };
 createSpectateSessionAction.inject = ["env"] as const;
 export type SpectateSessionAction = ReturnType<typeof createSpectateSessionAction>;
