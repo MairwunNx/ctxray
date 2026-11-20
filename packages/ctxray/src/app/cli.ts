@@ -83,7 +83,7 @@ export const runCli = async (args: readonly string[], io: Io, container: Contain
     t = translator(settings.lang);
   }
 
-  const specs = COMMANDS.map((candidate) => candidate.spec);
+  const specs = COMMANDS.map((candidate) => candidate.spec).filter((spec) => !spec.hidden);
   // Disposed in reverse on every way out: the run's injector first, then the renderer it prints through.
   await using stack = new AsyncDisposableStack();
   const renderer = stack.adopt(await createRenderer(settings.renderer, io.stdout), (opened) => opened.close());

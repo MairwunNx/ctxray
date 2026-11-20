@@ -5,10 +5,9 @@ import { join } from "node:path";
 import { createTranslator } from "#shared/i18n/index.ts";
 import { toPlain } from "#shared/render/index.ts";
 import { sessionLoadoutView } from "./api/session-view.ts";
-import { createSpectateSessionAction } from "./session.action.ts";
+import { createSessionAction } from "./session.action.ts";
 
-// The transcript fixture's session, in a project laid out the way it was: the hooks never logged it, so ctxray
-// finds the transcript under Claude Code's projects folder.
+// The transcript fixture's session, in a project laid out the way it was, under Claude Code's projects folder.
 const ID = "522c5825-66ed-4532-932d-049475ddcd42";
 const dir = mkdtempSync(join(tmpdir(), "ctxray-session-"));
 afterAll(() => rmSync(dir, { recursive: true, force: true }));
@@ -23,7 +22,7 @@ const transcript = (await Bun.file(fixture).text()).replaceAll("<work>", work);
 writeFileSync(join(dir, "claude", "projects", "-work", `${ID}.jsonl`), transcript);
 
 const env = { HOME: dir, CLAUDE_CONFIG_DIR: join(dir, "claude"), CTXRAY_STATE_DIR: join(dir, "state") };
-const session = createSpectateSessionAction(env);
+const session = createSessionAction(env);
 
 test("a live session's loadout, with ctxray's own plugin listed apart", async () => {
   const result = await session(ID, ["<plugin>"]);

@@ -7,9 +7,9 @@ import { createHarnessCommand, harnessSpec } from "#features/harness-install/ind
 import { createInitCommand, initSpec } from "#features/init/index.ts";
 import { createInspectCommand, inspectSpec } from "#features/inspect/index.ts";
 import { createMcpCommand, mcpSpec } from "#features/mcp-serve/index.ts";
+import { createSessionCommand, sessionSpec } from "#features/session/index.ts";
 import { createShowConfigCommand, showConfigSpec } from "#features/show-config/index.ts";
 import { createShowReportCommand, showReportSpec } from "#features/show-report/index.ts";
-import { createSpectateCommand, spectateSpec } from "#features/spectate/index.ts";
 import { baselineSpec, createBaselineCommand, createTestCommand, testSpec } from "#features/test-run/index.ts";
 import type { CommandSpec, Handler } from "#shared/cli/index.ts";
 import type { RunInjector } from "./container.ts";
@@ -26,7 +26,6 @@ export const COMMANDS: readonly Command[] = [
   { spec: diffSpec, handler: (injector) => injector.injectFunction(createDiffCommand) },
   { spec: showReportSpec, handler: (injector) => injector.injectFunction(createShowReportCommand) },
   { spec: harnessSpec, handler: (injector) => injector.injectFunction(createHarnessCommand) },
-  { spec: spectateSpec, handler: (injector) => injector.injectFunction(createSpectateCommand) },
   { spec: mcpSpec, handler: (injector) => injector.injectFunction(createMcpCommand) },
   { spec: cacheSpec, handler: (injector) => injector.injectFunction(createCacheCommand) },
   { spec: doctorSpec, handler: (injector) => injector.injectFunction(createDoctorCommand) },
@@ -34,4 +33,5 @@ export const COMMANDS: readonly Command[] = [
   { spec: calibrateSpec, handler: (injector) => injector.injectFunction(createCalibrateCommand) },
   { spec: initSpec, handler: (injector) => injector.injectFunction(createInitCommand) },
   { spec: showConfigSpec, handler: (injector) => injector.injectFunction(createShowConfigCommand) },
+  { spec: sessionSpec, handler: (injector) => injector.injectFunction(createSessionCommand) },
 ];

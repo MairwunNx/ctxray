@@ -15,13 +15,9 @@ import {
 import { createInitAction } from "#features/init/index.ts";
 import { createInspectAction } from "#features/inspect/index.ts";
 import { createMcpCallAction } from "#features/mcp-serve/index.ts";
+import { createSessionAction } from "#features/session/index.ts";
 import { createShowConfigAction } from "#features/show-config/index.ts";
 import { createShowReportAction } from "#features/show-report/index.ts";
-import {
-  createSpectateHooksAction,
-  createSpectateSessionAction,
-  createSpectateShowAction,
-} from "#features/spectate/index.ts";
 import { createBaselineAction, createStartingLoadout, createTestRunAction } from "#features/test-run/index.ts";
 import type { Translate } from "#shared/i18n/index.ts";
 import type { Env } from "#shared/infra/index.ts";
@@ -65,9 +61,7 @@ export const createRunInjector = (
     .provideFactory("startingLoadout", createStartingLoadout)
     .provideFactory("harnessUpgradeAction", createHarnessUpgradeAction)
     .provideFactory("cacheAction", createCacheAction)
-    .provideFactory("spectateHooksAction", createSpectateHooksAction)
-    .provideFactory("spectateShowAction", createSpectateShowAction)
-    .provideFactory("spectateSessionAction", createSpectateSessionAction)
+    .provideFactory("sessionAction", createSessionAction)
     .provideFactory("mcpCallAction", createMcpCallAction)
     .provideFactory("doctorAction", createDoctorAction)
     .provideFactory("calibrateAction", createCalibrateAction)

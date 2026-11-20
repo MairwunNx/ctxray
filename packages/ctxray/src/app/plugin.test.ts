@@ -2,8 +2,7 @@ import { expect, test } from "bun:test";
 import { join } from "node:path";
 import { VERSION } from "./package-info.ts";
 
-// ctxray's plugin for Claude Code ships with the same version as the CLI, and its hooks feed `ctxray spectate`.
-// No SessionEnd: a plugin loaded from a zip is gone by then, and Claude Code reports the hook as failed.
+// ctxray's plugin for Claude Code ships with the same version as the CLI.
 const PLUGIN = join(import.meta.dir, "../../../claude-plugin");
 const json = (path: string) => Bun.file(join(PLUGIN, path)).json();
 
@@ -21,12 +20,11 @@ test("the Loadout band and pane come from one hooks module", async () => {
   expect((await json("hooks/hooks.json")).modules).toEqual(["./register.tsx"]);
 });
 
-test("every hook of the plugin runs ctxray's spectate hook", async () => {
-  const { hooks } = await json("hooks/hooks.json");
-  expect(Object.keys(hooks).sort()).toEqual(["InstructionsLoaded", "SessionStart", "UserPromptSubmit"]);
-  for (const groups of Object.values(hooks) as { hooks: { command: string; args: string[] }[] }[][]) {
-    expect(groups.flatMap((group) => group.hooks)).toEqual([
-      { type: "command", command: "ctxray", args: ["__spectate-hook", "claude"] },
-    ] as never);
-  }
+test("the plugin runs no command hooks: /ctxray reads the session's transcript itself", async () => {
+  expect((await json("hooks/hooks.json")).hooks).toBeUndefined();
+});
+
+test("/ctxray asks the CLI's hidden session command", async () => {
+  const skill = await Bun.file(join(PLUGIN, "skills/ctxray/SKILL.md")).text();
+  expect(skill).toContain("ctxray __session --id ${CLAUDE_SESSION_ID}");
 });

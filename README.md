@@ -59,7 +59,7 @@ ctxray reads each agent's files without launching it. Where the agent allows it,
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/MairwunNx/ctxray/master/docs/images/harness-support-dark.svg">
-  <img alt="L1 to L3 work for every harness. L4 to L7 launch the harness, so they work for Claude Code, Codex, Gemini CLI, and OpenCode, and for Cursor CLI as an experiment. spectate watches your own sessions: Claude Code and Cursor through their hooks, Codex, Gemini CLI, and OpenCode from the records they keep." src="https://raw.githubusercontent.com/MairwunNx/ctxray/master/docs/images/harness-support-light.svg">
+  <img alt="L1 to L3 work for every harness. L4 to L7 launch the harness, so they work for Claude Code, Codex, Gemini CLI, and OpenCode, and for Cursor CLI as an experiment." src="https://raw.githubusercontent.com/MairwunNx/ctxray/master/docs/images/harness-support-light.svg">
 </picture>
 
 ## Install

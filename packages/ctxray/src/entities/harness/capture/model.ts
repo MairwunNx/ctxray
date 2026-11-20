@@ -29,7 +29,7 @@ export type Segment = {
   component: "system" | "rules" | "skills" | "mcp" | "commands" | "tools" | "messages";
   id: string; // `system:<title>`, a rule's path, a skill's name, `<server>/<tool>`, a tool's name
   text: string;
-  evidence?: "static" | "marker" | "fingerprint" | "canary"; // static: from the project's files, not the request
+  evidence?: "marker" | "fingerprint" | "canary";
   deferred?: boolean; // an MCP tool listed by name only, its schema held back until the model asks
   source?: string; // the file the harness itself names for it, like a skill's SKILL.md
 };

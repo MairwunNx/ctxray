@@ -6,7 +6,6 @@ The plugin brings [ctxray](https://github.com/MairwunNx/ctxray) into your Claude
 - `/ctxray` shows what this session loaded into the context: system prompt, tools, rules and why each loaded, skills, MCP servers, with tokens. ctxray's own pieces are listed apart and don't count.
 - `/ctxray-test` runs the project's ctxray tests and explains what failed.
 - Claude learns to write `*.ctxray.ts` tests, and gets an MCP server with `inspect`, `run`, and `diff`, so it can check that a change didn't bloat the context.
-- Its hooks log your sessions for `ctxray spectate`, on this machine only. They record which instruction files loaded and the length of each prompt, never its text.
 
 The plugin runs the `ctxray` binary, so install ctxray first and make sure `ctxray --version` works in your shell.
 
