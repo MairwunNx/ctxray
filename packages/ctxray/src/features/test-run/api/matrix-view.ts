@@ -11,7 +11,8 @@ const reasonOf = (cell: CellResult, { t }: Words) => {
   if (cell.reason === "filtered") return t("test.filtered");
   if (cell.reason === "backend") return t("test.needsBackend");
   if (cell.reason === "budget") return t("test.budget");
-  if (cell.check === "context") return t("test.notInstalled", { binary: (cell.missing ?? []).join(", ") });
+  if (cell.reason === "unavailable" && cell.missing?.length)
+    return t("test.notInstalled", { binary: cell.missing.join(", "), harness: cell.harness });
   return t("test.unavailable", { layer: cell.layer });
 };
 

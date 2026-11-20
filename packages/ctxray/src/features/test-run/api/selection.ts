@@ -45,6 +45,7 @@ export const chooseSelection = (values: Values, env: Env, config: Config): Selec
     experimental: new Set(experimental),
     backend: { kind, name: kind === name ? undefined : name },
     layers,
+    chosen: layerText !== undefined,
     filter: text(values["filter"]),
   };
 };

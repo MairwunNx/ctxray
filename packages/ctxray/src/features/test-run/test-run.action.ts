@@ -17,6 +17,7 @@ import { runChecks } from "./lib/checks.ts";
 import { collectFile, findTestFiles, installedVersion } from "./lib/collect.ts";
 import { runContextChecks } from "./lib/context.ts";
 import { type Coverage, coverageOf } from "./lib/coverage.ts";
+import { settleMissing } from "./lib/installed.ts";
 import { type CellResult, runDefinition } from "./lib/run.ts";
 import { fullName, type Selection } from "./lib/selection.ts";
 import { createSnapshots, type SnapshotStats } from "./lib/snapshot.ts";
@@ -133,6 +134,8 @@ export const createTestRunAction =
       }
     }
     progress(total, total, undefined);
+    const settled = settleMissing(results, selection);
+    results.splice(0, results.length, ...settled);
     // Traces stay on disk when a harness test failed: its failure points at them.
     await capture.stop(results.some((result) => result.status === "failed" && result.layer !== "L3" && result.file));
     const installed = await installedVersion(here);

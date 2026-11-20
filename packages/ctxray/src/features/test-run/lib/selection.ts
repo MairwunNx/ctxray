@@ -8,6 +8,7 @@ export type Selection = {
   experimental: ReadonlySet<HarnessId>; // harnesses whose config turns on their experimental modes
   backend: { kind: Backend; name: string | undefined }; // `name` when the config's `backends` named it
   layers: ReadonlySet<Layer>;
+  chosen?: boolean; // the layers came from --layer or CTXRAY_LAYER: a harness they need must be there
   filter: string | undefined;
 };
 
