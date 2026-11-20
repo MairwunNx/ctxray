@@ -85,8 +85,9 @@ export const launchCodex = async (binary: string, context: LaunchContext) => {
       binary,
       "exec",
       "--json",
+      // The run works on a copy of the project: the agent may change it, the way a scenario needs.
       "-s",
-      "read-only",
+      "workspace-write",
       "-m",
       context.model,
       "--skip-git-repo-check",

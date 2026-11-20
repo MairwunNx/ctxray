@@ -1,7 +1,7 @@
 import type { Exchange, Json } from "#shared/contract/index.ts";
 import { canariesIn } from "../capture/canary.ts";
 import type { Segment } from "../capture/model.ts";
-import { listing, slug } from "../capture/sections.ts";
+import { listing, projectPath, slug } from "../capture/sections.ts";
 
 const TAG = /^<([a-z_ ]+?)>/;
 
@@ -73,15 +73,37 @@ const toolsOf = (tools: Json[]): Segment[] =>
     return [{ component: "tools" as const, id: String(tool["name"] ?? tool["type"]), text: JSON.stringify(tool) }];
   });
 
+// The folder of the skill a shell command reads, like `cat .agents/skills/refunds/SKILL.md`.
+const SKILL_READ = /(?:^|[\s'"=])([^\s'"]*?[^\s'"/]+)\/SKILL\.md\b/;
+
+// Codex has no tool to load a skill: the model reads its SKILL.md through the shell, and that output is the
+// skill's body in the context. A command that only names the file, like `find` or a patch, or a read that
+// failed, shows no frontmatter. A skill named with `$name` comes as a `<skill>` message instead.
+const skillRead = (call: Json | undefined, output: unknown, work: string) => {
+  const args = typeof call?.["arguments"] === "string" ? call["arguments"] : "";
+  const match = SKILL_READ.exec(args);
+  if (!match || typeof output !== "string" || !/^name:\s*\S/m.test(output)) return undefined;
+  return projectPath(work, match[1] as string);
+};
+
 // One Responses request of Codex, cut into the pieces of its loadout (ADR 0006).
-export const segmentCodex = (request: Exchange, _work: string): Segment[] => {
+export const segmentCodex = (request: Exchange, work: string): Segment[] => {
   const { body } = request;
   const input = Array.isArray(body["input"]) ? (body["input"] as Json[]) : [];
   const segments: Segment[] = toolsOf(Array.isArray(body["tools"]) ? (body["tools"] as Json[]) : []);
+  const calls = new Map(
+    input.filter((item) => item["call_id"] && item["arguments"]).map((item) => [item["call_id"], item]),
+  );
   let first = true;
   for (const item of input) {
     if (item["type"] === "additional_tools") {
       segments.push(...toolsOf(Array.isArray(item["tools"]) ? (item["tools"] as Json[]) : []));
+      continue;
+    }
+    const skill =
+      item["type"] === "function_call_output" ? skillRead(calls.get(item["call_id"]), item["output"], work) : undefined;
+    if (skill) {
+      segments.push({ component: "skills", id: `loaded:${skill}`, text: JSON.stringify(item) });
       continue;
     }
     if (item["type"] !== "message") {

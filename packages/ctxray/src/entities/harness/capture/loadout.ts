@@ -108,7 +108,11 @@ const skillsOf = (input: LoadoutInput, count: Count) => {
     const skill = inventory.skills.find(
       (one) => one.path === sourceOf(segment) || posix.dirname(one.path) === id || (!segment.source && one.name === id),
     );
-    if (segment.id.startsWith("loaded:")) {
+    const again = loaded.find((one) => one.path === (skill?.path ?? id));
+    if (segment.id.startsWith("loaded:") && again) {
+      // The same skill read twice is one skill, with the tokens of both reads.
+      again.tokens = (again.tokens ?? 0) + tokensOf(segment, count);
+    } else if (segment.id.startsWith("loaded:")) {
       loaded.push({
         name: skill?.name ?? posix.basename(id),
         path: skill?.path ?? id,
