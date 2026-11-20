@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="920" height="410" viewBox="0 0 920 410" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" role="img">
 <title>Три режима захвата</title>
-<desc>static читает файлы и предсказывает Loadout. capture запускает харнесс и записывает его запросы. observe записывает ваши собственные сессии через хуки харнесса.</desc>
+<desc>static читает файлы и предсказывает Loadout. capture запускает харнесс и записывает его запросы. observe записывает ваши собственные сессии через хуки харнесса или запись, которую он ведёт сам.</desc>
 <defs><marker id="m-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#ab7df8"/></marker></defs>
 <defs><marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#4493f8"/></marker></defs>
 <defs><marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#3fb950"/></marker></defs>
@@ -43,16 +43,16 @@
 <text x="665.5" y="48.68" font-size="13" fill="#ffffff" font-weight="600" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">observe</text>
 <text x="630" y="82" font-size="14" fill="#f0f6fc" font-weight="600">Записывает ваши сессии</text>
 <rect x="630" y="100" width="250" height="40" rx="6" fill="#211a33" stroke="#3d444d" stroke-width="1"/>
-<text x="755.0" y="124" font-size="12" fill="#f0f6fc" text-anchor="middle">Ваша сессия в Claude Code или Cursor</text>
+<text x="755.0" y="124" font-size="12" fill="#f0f6fc" text-anchor="middle">Сессия, которую вы запустили сами</text>
 <path d="M755.0 142 L755.0 158" fill="none" stroke="#ab7df8" stroke-width="1.6" marker-end="url(#m-purple)"/>
 <rect x="630" y="160" width="250" height="40" rx="6" fill="#211a33" stroke="#3d444d" stroke-width="1"/>
-<text x="755.0" y="184" font-size="12" fill="#f0f6fc" text-anchor="middle">Хуки харнесса сообщают ctxray</text>
+<text x="755.0" y="184" font-size="12" fill="#f0f6fc" text-anchor="middle">Хуки или запись самого харнесса</text>
 <path d="M755.0 202 L755.0 218" fill="none" stroke="#ab7df8" stroke-width="1.6" marker-end="url(#m-purple)"/>
 <rect x="630" y="220" width="250" height="40" rx="6" fill="#211a33" stroke="#ab7df8" stroke-width="1"/>
 <text x="755.0" y="244" font-size="12" fill="#f0f6fc" text-anchor="middle">Что загрузила сессия</text>
 <text x="630" y="290" font-size="11" fill="#9198a1" font-weight="600">Где</text>
 <text x="630" y="308" font-size="12" fill="#f0f6fc" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">spectate, плагин /ctxray</text>
 <text x="630" y="338" font-size="11" fill="#9198a1" font-weight="600">Что видит</text>
-<text x="630" y="356" font-size="12" fill="#f0f6fc">То, что сообщает харнесс, а с --session в</text>
-<text x="630" y="373" font-size="12" fill="#f0f6fc">Claude Code — весь запрос</text>
+<text x="630" y="356" font-size="12" fill="#f0f6fc">То, что харнесс сообщает или записывает,</text>
+<text x="630" y="373" font-size="12" fill="#f0f6fc">а с --session в Claude Code — весь запрос</text>
 </svg>

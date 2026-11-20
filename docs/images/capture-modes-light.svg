@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="920" height="410" viewBox="0 0 920 410" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" role="img">
 <title>Three capture modes</title>
-<desc>static reads your files and predicts the Loadout. capture launches the harness and records its requests. observe records your own sessions through the harness’s hooks.</desc>
+<desc>static reads your files and predicts the Loadout. capture launches the harness and records its requests. observe records your own sessions, through the harness’s hooks or the record it keeps.</desc>
 <defs><marker id="m-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#8250df"/></marker></defs>
 <defs><marker id="m-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#0969da"/></marker></defs>
 <defs><marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#1a7f37"/></marker></defs>
@@ -43,16 +43,16 @@
 <text x="665.5" y="48.68" font-size="13" fill="#ffffff" font-weight="600" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">observe</text>
 <text x="630" y="82" font-size="14" fill="#1f2328" font-weight="600">Records the sessions you run</text>
 <rect x="630" y="100" width="250" height="40" rx="6" fill="#fbefff" stroke="#d1d9e0" stroke-width="1"/>
-<text x="755.0" y="124" font-size="12" fill="#1f2328" text-anchor="middle">Your session in Claude Code or Cursor</text>
+<text x="755.0" y="124" font-size="12" fill="#1f2328" text-anchor="middle">A session you ran yourself</text>
 <path d="M755.0 142 L755.0 158" fill="none" stroke="#8250df" stroke-width="1.6" marker-end="url(#m-purple)"/>
 <rect x="630" y="160" width="250" height="40" rx="6" fill="#fbefff" stroke="#d1d9e0" stroke-width="1"/>
-<text x="755.0" y="184" font-size="12" fill="#1f2328" text-anchor="middle">The harness’s hooks report to ctxray</text>
+<text x="755.0" y="184" font-size="12" fill="#1f2328" text-anchor="middle">Hooks, or the harness’s own record</text>
 <path d="M755.0 202 L755.0 218" fill="none" stroke="#8250df" stroke-width="1.6" marker-end="url(#m-purple)"/>
 <rect x="630" y="220" width="250" height="40" rx="6" fill="#fbefff" stroke="#8250df" stroke-width="1"/>
 <text x="755.0" y="244" font-size="12" fill="#1f2328" text-anchor="middle">What the session loaded</text>
 <text x="630" y="290" font-size="11" fill="#59636e" font-weight="600">Where</text>
 <text x="630" y="308" font-size="12" fill="#1f2328" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace">spectate, the /ctxray plugin</text>
 <text x="630" y="338" font-size="11" fill="#59636e" font-weight="600">Sees</text>
-<text x="630" y="356" font-size="12" fill="#1f2328">What the harness reports, and the whole</text>
-<text x="630" y="373" font-size="12" fill="#1f2328">request with --session in Claude Code</text>
+<text x="630" y="356" font-size="12" fill="#1f2328">What the harness reports or records, the</text>
+<text x="630" y="373" font-size="12" fill="#1f2328">whole request with --session in Claude Code</text>
 </svg>
