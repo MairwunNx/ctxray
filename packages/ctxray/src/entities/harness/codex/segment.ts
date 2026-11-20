@@ -96,7 +96,8 @@ export const segmentCodex = (request: Exchange, work: string): Segment[] => {
   );
   let first = true;
   for (const item of input) {
-    if (item["type"] === "additional_tools") {
+    // A tool search answers with the schemas it found, MCP tools mostly: from then on they're in the context.
+    if (item["type"] === "additional_tools" || item["type"] === "tool_search_output") {
       segments.push(...toolsOf(Array.isArray(item["tools"]) ? (item["tools"] as Json[]) : []));
       continue;
     }

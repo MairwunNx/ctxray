@@ -34,3 +34,18 @@ test.each<[string, string, string[], string?]>([
   const skills = segmentCodex(request(cmd, output), WORK).filter((segment) => segment.component === "skills");
   expect(skills.map((segment) => segment.id)).toEqual(loaded);
 });
+
+// The schemas a tool search brought in stay in the input, in the shape of the request's own tools (0.171
+// `ResponseItem::ToolSearchOutput`): an MCP server's tools arrive as its namespace.
+test("a tool search's answer counts as the MCP tools it found", () => {
+  const found = {
+    type: "tool_search_output",
+    call_id: "s1",
+    status: "completed",
+    execution: "client",
+    tools: [{ type: "namespace", name: "mcp__jira", tools: [{ name: "search", description: "Find issues" }] }],
+  };
+  const exchange = { ...request("cat x"), body: { input: [found] } };
+  const mcp = segmentCodex(exchange, WORK).filter((segment) => segment.component === "mcp");
+  expect(mcp.map((segment) => segment.id)).toEqual(["jira/search"]);
+});
