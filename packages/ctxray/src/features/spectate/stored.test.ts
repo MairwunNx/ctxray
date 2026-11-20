@@ -4,6 +4,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import type { HistoryRows } from "#entities/harness/index.ts";
+import type { Component, HarnessId } from "#shared/contract/index.ts";
 import { createTranslator } from "#shared/i18n/index.ts";
 import { toPlain } from "#shared/render/index.ts";
 import { sessionLoadoutView } from "./api/session-view.ts";
@@ -78,7 +79,7 @@ test("every stored session shows up without hooks, the newest first", async () =
   expect(new Date(codex?.started ?? 0).toISOString()).toBe("2026-11-20T14:29:50.000Z");
 });
 
-test.each([
+test.each<[string, HarnessId, string[], Component[], Component[]]>([
   ["01a1f95d", "codex", ["AGENTS.md"], [], ["tools"]],
   ["594c3bfd", "gemini-cli", ["GEMINI.md"], ["skills"], ["system", "tools"]],
   ["ses_", "opencode", ["AGENTS.md", "src/payments/AGENTS.md"], ["rules", "skills"], ["system", "tools"]],
