@@ -59,7 +59,7 @@ ctxray читает файлы ИИ-харнесса, не запуская ег
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/MairwunNx/ctxray/master/docs/images/harness-support-ru-dark.svg">
-  <img alt="L1–L3 работают для всех харнессов. L4–L7 запускают харнесс, поэтому работают для Claude Code, Codex, Gemini CLI и OpenCode, а для Cursor CLI — экспериментально. Редакторы читают те же файлы, что их CLI. spectate следит за вашими сессиями в Claude Code и Cursor." src="https://raw.githubusercontent.com/MairwunNx/ctxray/master/docs/images/harness-support-ru-light.svg">
+  <img alt="L1–L3 работают для всех харнессов. L4–L7 запускают харнесс, поэтому работают для Claude Code, Codex, Gemini CLI и OpenCode, а для Cursor CLI — экспериментально. Редакторы читают те же файлы, что их CLI. spectate следит за вашими сессиями: Claude Code и Cursor через их hooks, Codex, Gemini CLI и OpenCode по записям, которые они ведут сами." src="https://raw.githubusercontent.com/MairwunNx/ctxray/master/docs/images/harness-support-ru-light.svg">
 </picture>
 
 ## Установка
