@@ -550,7 +550,12 @@ export const ru: Catalog = {
     many: "{count} инструментов, отложено {deferred}",
     other: "{count} инструмента, отложено {deferred}",
   },
-  "session.builtin": "встроен в Claude Code",
+  "session.builtinSkills": {
+    one: "{count} встроенный скилл",
+    few: "{count} встроенных скилла",
+    many: "{count} встроенных скиллов",
+    other: "{count} встроенного скилла",
+  },
   "session.conversation": "Переписка",
   "session.request": {
     one: "{count} запрос в сессии",

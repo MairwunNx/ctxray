@@ -472,7 +472,7 @@ export const en = {
     one: "{count} tool, {deferred} of them deferred",
     other: "{count} tools, {deferred} of them deferred",
   },
-  "session.builtin": "ships with Claude Code",
+  "session.builtinSkills": { one: "{count} built-in skill", other: "{count} built-in skills" },
   "session.conversation": "Conversation",
   "session.request": { one: "{count} request so far", other: "{count} requests so far" },
   "session.own": "ctxray itself: ≈ {tokens}, not counted",
