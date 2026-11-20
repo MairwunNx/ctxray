@@ -114,7 +114,7 @@ docker run --rm -v "$PWD:/work" ghcr.io/mairwunnx/ctxray inspect
 
 </details>
 
-[Getting Started](https://github.com/MairwunNx/ctxray/wiki/Getting-Started) covers mirrors, Alpine, and offline machines. ctxray itself needs 1 GB of memory, a large monorepo 2 GB. Tests that launch harnesses need more, up to 4 GB for L6–L7: the [system requirements](https://github.com/MairwunNx/ctxray/wiki/Getting-Started#system-requirements) list each harness.
+[Getting Started](https://github.com/MairwunNx/ctxray/wiki/Getting-Started) covers mirrors, Alpine, and offline machines. 1 GB of memory runs every layer on every harness, one session at a time. The [system requirements](https://github.com/MairwunNx/ctxray/wiki/Getting-Started#system-requirements) list each harness, and what running sessions side by side adds.
 
 ## Get started
 
