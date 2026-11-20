@@ -14,9 +14,9 @@ export const spectateDir = (env: Env, os: string = process.platform, home: strin
   return join(present(env["XDG_STATE_HOME"]) ?? join(home, ".local", "state"), "ctxray", "spectate");
 };
 
-// The two hook systems ctxray observes through: Claude Code's settings and Cursor's hooks.json. Both fire in
-// their desktop apps too, which ctxray doesn't tell apart (ADR 0010, 0011).
-export type Family = "claude" | "cursor";
+// What ctxray observes through: Claude Code's settings and Cursor's hooks.json, which fire in their desktop
+// apps too (ADR 0010, 0011), and a plugin of OpenCode's, for the system prompt its database leaves out.
+export type Family = "claude" | "cursor" | "opencode";
 
 export const FAMILIES: Record<Family, { harnesses: readonly HarnessId[]; events: readonly string[] }> = {
   claude: {
@@ -27,13 +27,16 @@ export const FAMILIES: Record<Family, { harnesses: readonly HarnessId[]; events:
     harnesses: ["cursor-cli"],
     events: ["sessionStart", "beforeSubmitPrompt", "beforeReadFile", "stop"],
   },
+  opencode: { harnesses: ["opencode"], events: ["experimental.chat.system.transform"] },
 };
 
 export const familyOf = (harness: HarnessId): Family | undefined =>
   (Object.keys(FAMILIES) as Family[]).find((family) => FAMILIES[family].harnesses.includes(harness));
 
-// The user-level file each family reads its hooks from.
-export const hooksFile = (family: Family, env: Env, home: string = homedir()) =>
-  family === "claude"
-    ? join(present(env["CLAUDE_CONFIG_DIR"]) ?? join(home, ".claude"), "settings.json")
-    : join(home, ".cursor", "hooks.json");
+// The user-level file each family reads its hooks from: for OpenCode, ctxray's plugin among its global ones.
+export const hooksFile = (family: Family, env: Env, home: string = homedir()) => {
+  if (family === "claude") return join(present(env["CLAUDE_CONFIG_DIR"]) ?? join(home, ".claude"), "settings.json");
+  if (family === "cursor") return join(home, ".cursor", "hooks.json");
+  const config = present(env["XDG_CONFIG_HOME"]) ?? join(home, ".config");
+  return join(config, "opencode", "plugin", "ctxray-spectate.ts");
+};

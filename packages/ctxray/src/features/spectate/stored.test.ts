@@ -98,3 +98,21 @@ test.each<[string, HarnessId, string[], Component[], Component[]]>([
 test("--harness keeps the lookup to those harnesses", async () => {
   expect((await session("01a1f95d", [], ["opencode"])).found).toBe(false);
 });
+
+test("with ctxray's plugin, an OpenCode session has its system prompt, the tools alone unseen", async () => {
+  const state = join(dir, "state", "spectate", "opencode");
+  mkdirSync(state, { recursive: true });
+  const system = [
+    `You are OpenCode.\n\nInstructions from: ${work}/AGENTS.md\n# Shop\n\nRefunds never touch the ledger directly.\n`,
+  ];
+  writeFileSync(join(state, `${rows.session.id}.json`), JSON.stringify({ at: 1, system }));
+  const result = await session("ses_", []);
+  if (!result.found || !result.loadout) throw new Error("no loadout");
+  expect([result.filled, result.unseen]).toEqual([[], ["tools"]]);
+  expect(
+    result.loadout.rules.map((rule) => [rule.path, result.loadout?.provenance[`rule:${rule.path}`]?.evidence]),
+  ).toEqual([
+    ["AGENTS.md", "marker"],
+    ["src/payments/AGENTS.md", "marker"],
+  ]);
+});

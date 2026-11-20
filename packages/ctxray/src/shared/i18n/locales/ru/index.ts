@@ -529,7 +529,8 @@ export const ru: Catalog = {
   "command.spectate":
     "Наблюдать за вашими сессиями: Claude Code и Cursor через их hooks, Codex, Gemini CLI и OpenCode через записи, которые они ведут сами",
   "spectate.show": "Показать, что загрузили последние сессии (по умолчанию)",
-  "spectate.install": "Добавить hooks ctxray в ваши настройки Claude Code и hooks.json Cursor",
+  "spectate.install":
+    "Добавить hooks ctxray в ваши настройки Claude Code и hooks.json Cursor, а с --harness opencode — его плагин в OpenCode",
   "spectate.uninstall": "Убрать hooks ctxray",
   "option.spectateHarness": "Hooks или сессии только этих харнессов, например claude-code,cursor-cli",
   "option.last": "Сколько последних сессий показать, по умолчанию 5",

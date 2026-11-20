@@ -457,7 +457,8 @@ export const en = {
   "command.spectate":
     "Watch your own sessions: Claude Code and Cursor through their hooks, Codex, Gemini CLI and OpenCode through the records they keep",
   "spectate.show": "Show what the latest sessions loaded (the default)",
-  "spectate.install": "Add ctxray's hooks to your Claude Code settings and Cursor hooks.json",
+  "spectate.install":
+    "Add ctxray's hooks to your Claude Code settings and Cursor hooks.json, its plugin to OpenCode with --harness opencode",
   "spectate.uninstall": "Remove ctxray's hooks again",
   "option.spectateHarness": "Hooks or sessions of these harnesses only, like claude-code,cursor-cli",
   "option.last": "How many of the latest sessions to show, 5 by default",

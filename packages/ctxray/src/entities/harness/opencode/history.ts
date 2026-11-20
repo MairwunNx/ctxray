@@ -27,11 +27,12 @@ const tokensOf = (finish: Json | undefined) => {
 // and per model step its text and tool calls with their results. Tool results hold the AGENTS.md files a read
 // brought in and the skills the model loaded. The system message, with the instruction files at start and the
 // skill listing, and the tools never reach the database.
-export const readHistory = (rows: HistoryRows, session: string): Recorded => {
+// `system`: the system prompt of the latest request, when ctxray's plugin was there to see it.
+export const readHistory = (rows: HistoryRows, session: string, system?: readonly string[]): Recorded => {
   const partsOf = new Map<string, Json[]>();
   for (const part of rows.parts)
     partsOf.set(part.message_id, [...(partsOf.get(part.message_id) ?? []), parse(part.data)]);
-  const messages: Json[] = [];
+  const messages: Json[] = system ? [{ role: "system", content: system.join("\n") }] : [];
   const requests: Exchange[] = [];
   const files: string[] = [];
   let seen: string[] = [];
@@ -89,6 +90,6 @@ export const readHistory = (rows: HistoryRows, session: string): Recorded => {
     model,
     files: seen,
     reported: tokensOf(finish),
-    unseen: ["system", "rules", "skills", "tools"],
+    unseen: system ? ["tools"] : ["system", "rules", "skills", "tools"],
   };
 };

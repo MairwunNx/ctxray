@@ -35,6 +35,17 @@ export const lineOf = (family: Family, payload: Record<string, unknown>, env: Re
   return line;
 };
 
+// OpenCode's plugin sends the system prompt of a request: the latest one of each session is kept, redacted.
+const keepSystem = async (dir: string, payload: Record<string, unknown>) => {
+  const session = payload["session_id"];
+  const system = payload["system"];
+  if (typeof session !== "string" || !/^[\w-]+$/.test(session) || !Array.isArray(system)) return 0;
+  const kept = createRedactor([]).value({ at: Date.now(), system: system.map(String) });
+  await mkdir(join(dir, "opencode"), { recursive: true });
+  await Bun.write(join(dir, "opencode", `${session}.json`), JSON.stringify(kept));
+  return 0;
+};
+
 // `ctxray __spectate-hook <family> [dir]`: a harness runs it on every event it observes. It writes one line to
 // ctxray's log, prints nothing, since Claude Code would put the output into the context, and never fails the
 // harness: a broken payload is only skipped. The plugin's hooks name no folder: the log goes to ctxray's own.
@@ -44,10 +55,11 @@ export const runSpectateHook = async (
   env: Record<string, string | undefined>,
 ) => {
   const [family, given] = args;
-  if (family !== "claude" && family !== "cursor") return 0;
+  if (family !== "claude" && family !== "cursor" && family !== "opencode") return 0;
   const dir = given || spectateDir(env, process.platform, env["HOME"] || homedir());
   try {
     const payload = JSON.parse(input) as Record<string, unknown>;
+    if (family === "opencode") return await keepSystem(dir, payload);
     const line = createRedactor([]).value(lineOf(family, payload, env));
     await mkdir(dir, { recursive: true });
     await appendFile(join(dir, `${family}.jsonl`), `${JSON.stringify(line)}\n`);

@@ -4,6 +4,7 @@ import { basename, dirname, join } from "node:path";
 import { type HistoryRows, type Recorded, readChat, readHistory, readRollout } from "#entities/harness/index.ts";
 import type { HarnessId } from "#shared/contract/index.ts";
 import type { Env } from "#shared/infra/index.ts";
+import { spectateDir } from "./places.ts";
 
 // A session a harness keeps in its own folder, found without hooks: Codex's rollouts, Gemini CLI's chat files,
 // OpenCode's database. ctxray only reads them, and opens the database read-only.
@@ -84,6 +85,14 @@ type SessionRow = {
   updated: number;
 };
 
+// The system prompt ctxray's OpenCode plugin kept for the session's latest request, if it was installed.
+const systemOf = async (env: Env, home: string, session: string) => {
+  const file = Bun.file(join(spectateDir(env, process.platform, home), "opencode", `${session}.json`));
+  if (!(await file.exists())) return undefined;
+  const kept = (await file.json().catch(() => ({}))) as { system?: unknown };
+  return Array.isArray(kept.system) ? kept.system.map(String) : undefined;
+};
+
 // Subagents' sessions have a parent: they show under the session that started them, not on their own.
 const opencode = async ({ env, home }: Places): Promise<Stored[]> => {
   const path = join(env["XDG_DATA_HOME"] || join(home, ".local", "share"), "opencode", "opencode.db");
@@ -112,7 +121,7 @@ const opencode = async ({ env, home }: Places): Promise<Stored[]> => {
           messages: query("select id, data from message where session_id = ? order by time_created, id", row.id),
           parts: query("select message_id, data from part where session_id = ? order by time_created, id", row.id),
         };
-        return readHistory(history, row.id);
+        return readHistory(history, row.id, await systemOf(env, home, row.id));
       },
     }));
   } catch {

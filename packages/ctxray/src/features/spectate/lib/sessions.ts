@@ -26,7 +26,7 @@ export type Session = {
 
 const text = (value: unknown) => (typeof value === "string" && value !== "" ? value : undefined);
 
-const HARNESS: Record<Family, HarnessId> = { claude: "claude-code", cursor: "cursor-cli" };
+const HARNESS: Record<Family, HarnessId> = { claude: "claude-code", cursor: "cursor-cli", opencode: "opencode" };
 
 const linesOf = async (dir: string, family: Family): Promise<SpectateLine[]> => {
   const file = Bun.file(join(dir, `${family}.jsonl`));
