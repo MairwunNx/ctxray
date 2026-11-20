@@ -45,13 +45,16 @@ const linksOf = (inventory: Inventory) => {
   ];
 };
 
+// `asked` are the project files `reads` will be asked about. Only they and the read files get a realpath: a
+// large repository has tens of thousands of files, and resolving each costs seconds.
 export const indexReach = async (
   project: Project,
   inventories: Partial<Record<HarnessId, Inventory>>,
+  asked: readonly string[],
 ): Promise<ReachIndex> => {
   const ids = Object.keys(inventories) as HarnessId[];
   const all = ids.map((id) => inventories[id] as Inventory);
-  const candidates = [...new Set([...project.files, ...all.flatMap(pathsOf)])];
+  const candidates = [...new Set([...asked, ...all.flatMap(pathsOf)])];
   const reals = await inParallel(candidates, (path) => realpath(join(project.root, path)).catch(() => path));
   const realOf = new Map(candidates.map((path, index) => [path, reals[index] ?? path]));
   const real = (path: string) => realOf.get(path) ?? path;

@@ -99,7 +99,9 @@ export const checkReach = async (
   inventories: Partial<Record<HarnessId, Inventory>>,
   { differences }: ReachOptions = { differences: true },
 ): Promise<Partial<Record<HarnessId, Problem[]>>> => {
-  const index = await indexReach(project, inventories);
+  const agentLike = (path: string) =>
+    isAgentFile(path) || SKILL.test(path) || (path.endsWith(".md") && AGENT_FOLDER.test(path));
+  const index = await indexReach(project, inventories, project.files.filter(agentLike));
   const { ids } = index;
   const report = createReport(ids);
   const skillFolders = project.files.filter((path) => SKILL.test(path)).map(dirOf);
