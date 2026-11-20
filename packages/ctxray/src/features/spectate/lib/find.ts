@@ -34,7 +34,7 @@ const claude = async (id: string, env: Env, home: string): Promise<Found | undef
     reported: undefined,
     unseen: [],
   };
-  return { harness: known?.harness ?? "claude-code", id, cwd: known?.cwd ?? cwd, recorded };
+  return { harness: "claude-code", id, cwd: known?.cwd ?? cwd, recorded };
 };
 
 // The session by its id, or by the start of it, from Claude Code's transcripts or another harness's own record.
@@ -45,7 +45,7 @@ export const findSession = async (
   harnesses?: readonly HarnessId[],
 ): Promise<Found | undefined> => {
   const asked = (harness: HarnessId) => !harnesses || harnesses.includes(harness);
-  if (asked("claude-code") || asked("claude-code-desktop")) {
+  if (asked("claude-code")) {
     const found = await claude(id, env, home);
     if (found) return found;
   }

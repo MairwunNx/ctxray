@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const HarnessId = z
-  .enum(["claude-code", "claude-code-desktop", "codex", "cursor-cli", "cursor-ide", "gemini-cli", "opencode"])
+  .enum(["claude-code", "codex", "cursor-cli", "gemini-cli", "opencode"])
   .describe("The harness a loadout belongs to");
 export type HarnessId = z.infer<typeof HarnessId>;
 

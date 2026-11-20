@@ -80,12 +80,6 @@ describe("resolveHarness", () => {
   test("a range nothing matches", async () => {
     await expect(resolveHarness(client, "codex", "9.x")).rejects.toThrow("codex has no version that matches “9.x”");
   });
-
-  test("a harness ctxray can't install", async () => {
-    await expect(resolveHarness(client, "cursor-ide", undefined)).rejects.toThrow(
-      "ctxray can't install cursor-ide yet",
-    );
-  });
 });
 
 describe("a harness off npm", () => {

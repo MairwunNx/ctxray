@@ -24,10 +24,8 @@ const FILLED: Component[] = ["rules", "skills"];
 
 const loadoutOf = async ({ harness, cwd, recorded }: Found, own: readonly string[]) => {
   const latest = recorded.requests.at(-1);
-  // The Code tab of the Claude app is Claude Code: the same transcript, the same request.
-  const kind = harness === "claude-code-desktop" ? "claude-code" : harness;
-  const statics = STATIC_ADAPTERS[kind];
-  const capture = CAPTURE_ADAPTERS[kind];
+  const statics = STATIC_ADAPTERS[harness];
+  const capture = CAPTURE_ADAPTERS[harness];
   if (!latest || !cwd || !statics || !capture) return undefined;
   const found = await findRoot(cwd).catch(() => undefined);
   if (!found) return undefined;
@@ -40,7 +38,7 @@ const loadoutOf = async ({ harness, cwd, recorded }: Found, own: readonly string
   const predicted = statics.resolve(inventory, { cwd: relative(found.root, found.dir), files });
   const sent = capture.segment(latest, work);
   const loadout = buildLoadout({
-    harness: { name: kind, version: recorded.version ?? "", model: recorded.model ?? "" },
+    harness: { name: harness, version: recorded.version ?? "", model: recorded.model ?? "" },
     segments: [...filledFromFiles(sent, recorded.unseen, inventory, predicted, work), ...sent], // the start files first
     inventory,
     predicted,

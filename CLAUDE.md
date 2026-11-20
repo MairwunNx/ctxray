@@ -1,6 +1,6 @@
 # ctxray: notes for AI agents
 
-ctxray is an X-ray for agent harnesses. It shows what Claude Code, Codex, Cursor, Gemini CLI, OpenCode, and Claude Code Desktop loaded into a model's context (rules, skills, MCP servers and tools, commands, the system prompt, their tokens and why each piece got there), and it lets teams test that in CI. README.md is the shop window, README.RU.md its Russian copy. The manual is the GitHub wiki (https://github.com/MairwunNx/ctxray/wiki).
+ctxray is an X-ray for agent harnesses. It shows what Claude Code, Codex, Cursor CLI, Gemini CLI, and OpenCode loaded into a model's context (rules, skills, MCP servers and tools, commands, the system prompt, their tokens and why each piece got there), and it lets teams test that in CI. README.md is the shop window, README.RU.md its Russian copy. The manual is the GitHub wiki (https://github.com/MairwunNx/ctxray/wiki).
 
 ## Talking to the owner
 

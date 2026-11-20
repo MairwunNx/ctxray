@@ -86,7 +86,7 @@ const sameFiles = async (project: Project, paths: readonly string[]) => {
 };
 
 // Cursor CLI and the Cursor editor share one rules system: one discovery serves both (ADR 0010).
-export const discoverCursor = async (project: Project, harness: "cursor-cli" | "cursor-ide"): Promise<Inventory> => {
+export const discoverCursor = async (project: Project): Promise<Inventory> => {
   const problems: Problem[] = [];
   const skillProblems: Problem[] = [];
   const mcpProblems: Problem[] = [];
@@ -117,7 +117,7 @@ export const discoverCursor = async (project: Project, harness: "cursor-cli" | "
       : [{ path: ".cursorrules", dir: "", kind: "rule", imports: [], text: legacy } as const]),
   ];
   return {
-    harness,
+    harness: "cursor-cli",
     instructions,
     skills,
     commands,

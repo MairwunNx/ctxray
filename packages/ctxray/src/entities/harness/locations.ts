@@ -3,8 +3,8 @@ import type { HarnessId } from "#shared/contract/index.ts";
 // Where each harness looks in a project, from the stage 0 spikes (ADR 0005–0011). It names the harnesses that
 // would read a file even when ctxray has no adapter for them yet, so a file for Cursor in a run without Cursor
 // reads as “only Cursor reads this”, not as a file nobody reads.
-const CLAUDE: HarnessId[] = ["claude-code", "claude-code-desktop"];
-const CURSOR: HarnessId[] = ["cursor-cli", "cursor-ide"];
+const CLAUDE: HarnessId[] = ["claude-code"];
+const CURSOR: HarnessId[] = ["cursor-cli"];
 
 const LOCATIONS: { pattern: RegExp; readers: HarnessId[] }[] = [
   // Cursor and OpenCode take CLAUDE.md too, OpenCode where a folder has no AGENTS.md.

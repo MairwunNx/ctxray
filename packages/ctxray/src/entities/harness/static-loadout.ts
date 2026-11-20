@@ -37,7 +37,7 @@ export const listingLine = (name: string, description: string): string => `- ${n
 // The model family a harness runs by default.
 export const familyOf = (harness: HarnessId): ModelFamily => {
   if (harness === "gemini-cli") return "google";
-  return harness === "claude-code" || harness === "claude-code-desktop" ? "anthropic" : "other";
+  return harness === "claude-code" ? "anthropic" : "other";
 };
 
 // The tokenizer for a harness's model family (ADR 0012): Gemma's vocabulary for Gemini CLI, o200k for the rest,

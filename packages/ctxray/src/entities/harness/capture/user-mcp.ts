@@ -15,16 +15,9 @@ export const userMcpFile = (harness: HarnessId, { home, env }: UserScope): strin
   switch (harness) {
     case "claude-code":
       return join(env["CLAUDE_CONFIG_DIR"] || home, ".claude.json");
-    case "claude-code-desktop":
-      return process.platform === "win32"
-        ? join(env["APPDATA"] || join(home, "AppData", "Roaming"), "Claude", "claude_desktop_config.json")
-        : process.platform === "darwin"
-          ? join(home, "Library", "Application Support", "Claude", "claude_desktop_config.json")
-          : join(xdg, "Claude", "claude_desktop_config.json");
     case "codex":
       return join(env["CODEX_HOME"] || join(home, ".codex"), "config.toml");
     case "cursor-cli":
-    case "cursor-ide":
       return join(home, ".cursor", "mcp.json");
     case "gemini-cli":
       return join(env["GEMINI_CLI_HOME"] || home, ".gemini", "settings.json");
@@ -35,10 +28,8 @@ export const userMcpFile = (harness: HarnessId, { home, env }: UserScope): strin
 
 const KEYS: Record<HarnessId, string> = {
   "claude-code": "mcpServers",
-  "claude-code-desktop": "mcpServers",
   codex: "mcp_servers",
   "cursor-cli": "mcpServers",
-  "cursor-ide": "mcpServers",
   "gemini-cli": "mcpServers",
   opencode: "mcp",
 };

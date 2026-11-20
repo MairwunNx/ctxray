@@ -26,15 +26,7 @@ export type Session = {
 
 const text = (value: unknown) => (typeof value === "string" && value !== "" ? value : undefined);
 
-// The Claude app drives its Code tab through the TypeScript Agent SDK (ADR 0011), the CLI says `cli`, and
-// `sdk-cli` with -p. Cursor CLI versions are dates, the editor's are semver (ADR 0009, 0010).
-const DESKTOP = ["claude-desktop", "sdk-ts", "local-agent"];
-
-const harnessOf = (family: Family, line: SpectateLine): HarnessId => {
-  if (family === "claude")
-    return DESKTOP.includes(text(line["entrypoint"]) ?? "") ? "claude-code-desktop" : "claude-code";
-  return /^\d{4}\.\d{2}\.\d{2}/.test(text(line["cursor_version"]) ?? "") ? "cursor-cli" : "cursor-ide";
-};
+const HARNESS: Record<Family, HarnessId> = { claude: "claude-code", cursor: "cursor-cli" };
 
 const linesOf = async (dir: string, family: Family): Promise<SpectateLine[]> => {
   const file = Bun.file(join(dir, `${family}.jsonl`));
@@ -83,7 +75,7 @@ export const readSessions = async (dir: string): Promise<Session[]> => {
         sessions.get(`${family}:${id}`) ??
         ({
           family,
-          harness: harnessOf(family, line),
+          harness: HARNESS[family],
           id,
           started: line.at,
           last: line.at,

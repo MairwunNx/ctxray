@@ -9,8 +9,6 @@ export type HarnessProfile = {
   // Modes that work through undocumented means and run only when the user opts in.
   experimentalModes: readonly CaptureMode[];
   capabilities: readonly Capability[];
-  // The CLI it shares its files with: a run without a config shows that one only, not the same files twice.
-  twin?: HarnessId;
 };
 
 export type Requirement = { requires: readonly Capability[]; mode: CaptureMode; experimental: boolean };

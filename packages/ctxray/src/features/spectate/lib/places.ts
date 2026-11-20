@@ -14,17 +14,17 @@ export const spectateDir = (env: Env, os: string = process.platform, home: strin
   return join(present(env["XDG_STATE_HOME"]) ?? join(home, ".local", "state"), "ctxray", "spectate");
 };
 
-// The two hook systems ctxray observes through. Claude Code's settings serve the CLI and the Code tab of the
-// Claude app, Cursor's hooks.json the CLI and the editor (ADR 0010, 0011).
+// The two hook systems ctxray observes through: Claude Code's settings and Cursor's hooks.json. Both fire in
+// their desktop apps too, which ctxray doesn't tell apart (ADR 0010, 0011).
 export type Family = "claude" | "cursor";
 
 export const FAMILIES: Record<Family, { harnesses: readonly HarnessId[]; events: readonly string[] }> = {
   claude: {
-    harnesses: ["claude-code", "claude-code-desktop"],
+    harnesses: ["claude-code"],
     events: ["SessionStart", "InstructionsLoaded", "UserPromptSubmit", "SessionEnd"],
   },
   cursor: {
-    harnesses: ["cursor-cli", "cursor-ide"],
+    harnesses: ["cursor-cli"],
     events: ["sessionStart", "beforeSubmitPrompt", "beforeReadFile", "stop"],
   },
 };

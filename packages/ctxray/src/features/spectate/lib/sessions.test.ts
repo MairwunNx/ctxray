@@ -17,7 +17,7 @@ test("a prompt's text never reaches the log, its length does", () => {
   expect(JSON.stringify(line)).not.toContain("deploy");
 });
 
-test("sessions from both logs, newest first, each harness told apart", async () => {
+test("sessions from both logs, newest first, each harness named", async () => {
   const claude = { session_id: "a", cwd: "/repo" };
   await hook("claude", { ...claude, hook_event_name: "SessionStart" }, { CLAUDE_CODE_ENTRYPOINT: "sdk-ts" });
   await hook("claude", {
@@ -41,8 +41,8 @@ test("sessions from both logs, newest first, each harness told apart", async () 
   await hook("cursor", "not json");
   const sessions = await readSessions(dir);
   expect(sessions.map((one) => [one.harness, one.id, one.cwd])).toEqual([
-    ["cursor-ide", "b", "/repo"],
-    ["claude-code-desktop", "a", "/repo"],
+    ["cursor-cli", "b", "/repo"],
+    ["claude-code", "a", "/repo"],
   ]);
   expect(sessions[0]?.read).toEqual(["/repo/src/a.ts"]);
   expect(sessions[1]?.prompts).toBe(1);

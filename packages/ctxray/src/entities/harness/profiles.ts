@@ -40,20 +40,4 @@ export const PROFILES: Record<HarnessId, HarnessProfile> = {
     experimentalModes: ["capture"],
     capabilities: ["skills", "pathRules", "intentRules", "mcp", "hooks", "headless"],
   },
-  "cursor-ide": {
-    id: "cursor-ide",
-    title: "Cursor",
-    twin: "cursor-cli",
-    modes: ["static", "observe"],
-    experimentalModes: [],
-    capabilities: ["skills", "pathRules", "intentRules", "mcp", "hooks"],
-  },
-  "claude-code-desktop": {
-    id: "claude-code-desktop",
-    title: "Claude Code Desktop",
-    twin: "claude-code",
-    modes: ["static", "observe"],
-    experimentalModes: [],
-    capabilities: ["skills", "pathRules", "mcp", "hooks"],
-  },
 };

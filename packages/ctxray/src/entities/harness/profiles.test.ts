@@ -35,8 +35,7 @@ describe("checkSupport", () => {
     ["cursor-cli", ["intentRules"], "static", false, []],
     ["cursor-cli", [], "capture", false, ["mode:capture"]],
     ["cursor-cli", [], "capture", true, []],
-    ["cursor-ide", [], "capture", true, ["mode:capture"]],
-    ["claude-code-desktop", ["skills"], "observe", false, []],
+    ["claude-code", ["skills"], "observe", false, []],
     ["codex", ["pathRules"], "observe", false, ["pathRules"]],
   ])("%s requiring %j in %s (experimental: %p) misses %j", (id, requires, mode, experimental, missing) => {
     const support = checkSupport(PROFILES[id], { requires, mode, experimental });

@@ -71,12 +71,10 @@ describe("the user's MCP servers of every harness", () => {
 
   test.each<[HarnessId, string[]]>([
     ["cursor-cli", ["linear"]],
-    ["cursor-ide", ["linear"]],
     ["gemini-cli", ["fs"]],
     ["opencode", ["db"]],
     ["codex", ["a.b"]],
     ["claude-code", ["global"]],
-    ["claude-code-desktop", []],
   ])("%s", async (harness, names) => {
     const { servers } = await readUserMcp(harness, scope, { from: scope.project, to: "/run/work" });
     expect(Object.keys(servers)).toEqual(names);

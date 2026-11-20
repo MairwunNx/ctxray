@@ -443,7 +443,7 @@ export const en = {
   "spectate.show": "Show what the latest sessions loaded (the default)",
   "spectate.install": "Add ctxray's hooks to your Claude Code settings and Cursor hooks.json",
   "spectate.uninstall": "Remove ctxray's hooks again",
-  "option.spectateHarness": "Hooks or sessions of these harnesses only, like claude-code-desktop,cursor-ide",
+  "option.spectateHarness": "Hooks or sessions of these harnesses only, like claude-code,cursor-cli",
   "option.last": "How many of the latest sessions to show, 5 by default",
   "spectate.added": "{file}: ctxray's hook on {events}",
   "spectate.removed": "{file}: ctxray's hook removed from {events}",

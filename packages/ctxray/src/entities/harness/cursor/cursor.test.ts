@@ -78,10 +78,4 @@ describe("Cursor on its fixture", () => {
     expect(await skills("", ["src/index.ts"])).toEqual(["build", "deploy", "review"]);
     expect(await skills("src")).toEqual(["build"]);
   });
-
-  test("the editor reads the same files", async () => {
-    const cli = (await resolveIn("cursor", "cursor-cli", { files: ["src/index.ts"] })).loadout;
-    const ide = (await resolveIn("cursor", "cursor-ide", { files: ["src/index.ts"] })).loadout;
-    expect({ ...ide, harness: "cursor-cli" }).toEqual(cli);
-  });
 });

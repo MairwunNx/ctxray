@@ -50,7 +50,7 @@ export const createSpectateCommand =
     if (unknown) return fail("error.unknownHarness", { name: unknown, known: HarnessId.options.join(", ") });
     const harnesses = asked as HarnessId[] | undefined;
     if (sub === "install" || sub === "uninstall") {
-      const chosen: readonly HarnessId[] = harnesses ?? ["claude-code", "cursor-ide"];
+      const chosen: readonly HarnessId[] = harnesses ?? ["claude-code", "cursor-cli"];
       const families = [...new Set(chosen.flatMap((id) => familyOf(id) ?? []))];
       // Codex, Gemini CLI and OpenCode keep their sessions themselves: `spectate` reads them as they are.
       const stored = chosen.filter((id) => familyOf(id) === undefined).map((id) => PROFILES[id].title);

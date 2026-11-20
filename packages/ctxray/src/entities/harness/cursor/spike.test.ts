@@ -30,8 +30,8 @@ for (const [path, text] of Object.entries(FILES)) {
 symlinkSync("AGENTS.md", join(root, "CLAUDE.md"));
 
 const rules = async (files: string[]) => {
-  const inventory = await discoverCursor(await openProject(root), "cursor-cli");
-  return resolveCursor("cursor-cli")(inventory, { cwd: "", files }).rules.map((rule) => rule.path);
+  const inventory = await discoverCursor(await openProject(root));
+  return resolveCursor(inventory, { cwd: "", files }).rules.map((rule) => rule.path);
 };
 
 test.each<[string, string[], string[]]>([
@@ -50,6 +50,6 @@ test.each<[string, string[], string[]]>([
 
 test("a Cursor glob only a deeper file matches is a dead rule", async () => {
   const project = await openProject(root);
-  const dead = findDeadRules(project, await discoverCursor(project, "cursor-cli")).map((found) => found.path);
+  const dead = findDeadRules(project, await discoverCursor(project)).map((found) => found.path);
   expect(dead).toEqual([".cursor/rules/deeper.mdc"]);
 });

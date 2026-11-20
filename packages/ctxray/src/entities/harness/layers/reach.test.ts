@@ -52,11 +52,11 @@ test("what no harness reads is an error, what others read or harnesses get diffe
     "claude-code error reach.nowhere .agents/rules/style.md",
     "claude-code error reach.nowhereSkills .agents/streams/team/skills",
     "claude-code warning reach.differsSkills .agents/skills",
-    "claude-code warning reach.otherHarnesses .cursor/rules/web.mdc",
+    "claude-code warning reach.otherHarness .cursor/rules/web.mdc",
     "codex error reach.nowhere .agents/rules/style.md",
     "codex error reach.nowhereSkills .agents/streams/team/skills",
     "codex warning reach.differs CLAUDE.md",
-    "codex warning reach.otherHarnesses .cursor/rules/web.mdc",
+    "codex warning reach.otherHarness .cursor/rules/web.mdc",
   ]);
   expect((await reach(root, ["claude-code", "codex"], false)).filter((line) => line.includes("differs"))).toEqual([]);
 });

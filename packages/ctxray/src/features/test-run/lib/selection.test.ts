@@ -84,14 +84,14 @@ describe("decide", () => {
     [
       "L6 on a harness ctxray can't launch",
       definition("activate"),
-      "cursor-ide",
+      "cursor-cli",
       { backend: { kind: "replay", name: undefined } },
       { run: false, reason: "unsupported", missing: ["mode:capture"] },
     ],
     [
       "capture Cursor can't do",
       definition("assemble"),
-      "cursor-ide",
+      "cursor-cli",
       {},
       { run: false, reason: "unsupported", missing: ["mode:capture"] },
     ],

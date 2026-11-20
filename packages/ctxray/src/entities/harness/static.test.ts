@@ -149,14 +149,6 @@ describe("L3 resolve on the payments fixture", () => {
   });
 });
 
-test("Claude Code Desktop reads what Claude Code reads, under its own name", async () => {
-  const files = ["app/src/main/kotlin/payments/Charge.kt"];
-  const cli = (await resolveIn("payments", "claude-code", { cwd: "app", files })).loadout;
-  const desktop = (await resolveIn("payments", "claude-code-desktop", { cwd: "app", files })).loadout;
-  expect(desktop.harness).toBe("claude-code-desktop");
-  expect({ ...desktop, harness: "claude-code" }).toEqual(cli);
-});
-
 // Each harness counts in its model's tokenizer: Claude's calibration must not leak into Codex and the rest.
 test.each<HarnessId>(["claude-code", "codex", "opencode", "cursor-cli"])(
   "%s counts AGENTS.md its own way",

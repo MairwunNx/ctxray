@@ -509,7 +509,7 @@ export const ru: Catalog = {
   "spectate.show": "Показать, что загрузили последние сессии (по умолчанию)",
   "spectate.install": "Добавить hooks ctxray в ваши настройки Claude Code и hooks.json Cursor",
   "spectate.uninstall": "Убрать hooks ctxray",
-  "option.spectateHarness": "Hooks или сессии только этих харнессов, например claude-code-desktop,cursor-ide",
+  "option.spectateHarness": "Hooks или сессии только этих харнессов, например claude-code,cursor-cli",
   "option.last": "Сколько последних сессий показать, по умолчанию 5",
   "spectate.added": "{file}: hook ctxray на {events}",
   "spectate.removed": "{file}: hook ctxray убран из {events}",

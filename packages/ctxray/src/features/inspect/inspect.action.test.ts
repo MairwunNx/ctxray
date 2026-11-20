@@ -35,7 +35,6 @@ describe("which harnesses", () => {
     ],
     ["the configured ones", {}, { codex: {} }, ["codex"], []],
     ["the flag over the config", { harnesses: ["claude-code"] }, { codex: {} }, ["claude-code"], []],
-    ["an editor by name", { harnesses: ["claude-code-desktop"] }, {}, ["claude-code-desktop"], []],
   ])("%s", async (_, request, configured, shown, unsupported) => {
     const result = await inspect(request, configured);
     expect(result.harnesses.map((inspected) => inspected.harness)).toEqual(shown);

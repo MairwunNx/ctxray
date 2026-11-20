@@ -11,7 +11,7 @@ const env = { HOME: home, CTXRAY_STATE_DIR: join(home, "state") };
 const spectate = (...args: string[]) => runIn(home, ["spectate", ...args], env);
 
 test("install, an empty show, and uninstall, in the user's files only", async () => {
-  const installed = await spectate("install", "--harness", "claude-code-desktop");
+  const installed = await spectate("install", "--harness", "claude-code");
   expect(installed.code).toBe(0);
   expect(installed.stdout).toContain("ctxray's hook on SessionStart, InstructionsLoaded");
   const settings = readFileSync(join(home, ".claude/settings.json"), "utf8");

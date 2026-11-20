@@ -16,7 +16,6 @@ import type { Inventory } from "./inventory.ts";
 import { OPENCODE_CAPTURE } from "./opencode/capture.ts";
 import { discoverOpencode } from "./opencode/discover.ts";
 import { resolveOpencode } from "./opencode/resolve.ts";
-import { PROFILES } from "./profiles.ts";
 import type { Project } from "./project.ts";
 import type { Scope, StaticLoadout } from "./static-loadout.ts";
 
@@ -31,17 +30,11 @@ export const STATIC_ADAPTERS: Partial<Record<HarnessId, StaticAdapter>> = {
   codex: { discover: discoverCodex, resolve: resolveCodex },
   "gemini-cli": { discover: discoverGeminiCli, resolve: resolveGeminiCli },
   opencode: { discover: discoverOpencode, resolve: resolveOpencode },
-  "cursor-cli": { discover: (project) => discoverCursor(project, "cursor-cli"), resolve: resolveCursor("cursor-cli") },
-  "cursor-ide": { discover: (project) => discoverCursor(project, "cursor-ide"), resolve: resolveCursor("cursor-ide") },
-  // The Code tab of the Claude app runs Claude Code and reads the same project files (ADR 0011).
-  "claude-code-desktop": {
-    discover: async (project) => ({ ...(await discoverClaudeCode(project)), harness: "claude-code-desktop" }),
-    resolve: (inventory, scope) => ({ ...resolveClaudeCode(inventory, scope), harness: "claude-code-desktop" }),
-  },
+  "cursor-cli": { discover: discoverCursor, resolve: resolveCursor },
 };
 
 // Harnesses a run without a config takes: every one ctxray reads, less an editor that reads its CLI's files.
-export const DEFAULT_HARNESSES = (Object.keys(STATIC_ADAPTERS) as HarnessId[]).filter((id) => !PROFILES[id].twin);
+export const DEFAULT_HARNESSES = Object.keys(STATIC_ADAPTERS) as HarnessId[];
 
 // L4–L7: launch the harness against ctxray's proxy and read what it sent.
 export const CAPTURE_ADAPTERS: Partial<Record<HarnessId, CaptureAdapter>> = {
