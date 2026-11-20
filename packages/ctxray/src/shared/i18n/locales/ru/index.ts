@@ -528,7 +528,7 @@ export const ru: Catalog = {
   "command.mcp": "Отдать inspect, test и diff агенту по MCP через stdin и stdout",
   "option.mcpHarness": "Харнессы, на которые смотрит вызов инструмента, если сам их не назвал, например claude-code",
   "command.spectate":
-    "Наблюдать за вашими сессиями: Claude Code и Cursor через их hooks, Codex, Gemini CLI и OpenCode через записи, которые они ведут сами",
+    "Экспериментально. Наблюдать за вашими сессиями: Claude Code и Cursor через их hooks, Codex, Gemini CLI и OpenCode через записи, которые они ведут сами",
   "spectate.show": "Показать, что загрузили последние сессии (по умолчанию)",
   "spectate.install":
     "Добавить hooks ctxray в ваши настройки Claude Code и hooks.json Cursor, а с --harness opencode — его плагин в OpenCode",

@@ -456,7 +456,7 @@ export const en = {
   "command.mcp": "Serve inspect, test, and diff to an agent over MCP, on stdin and stdout",
   "option.mcpHarness": "Harnesses a tool call looks at when it names none, like claude-code",
   "command.spectate":
-    "Watch your own sessions: Claude Code and Cursor through their hooks, Codex, Gemini CLI and OpenCode through the records they keep",
+    "Experimental. Watch your own sessions: Claude Code and Cursor through their hooks, Codex, Gemini CLI and OpenCode through the records they keep",
   "spectate.show": "Show what the latest sessions loaded (the default)",
   "spectate.install":
     "Add ctxray's hooks to your Claude Code settings and Cursor hooks.json, its plugin to OpenCode with --harness opencode",
