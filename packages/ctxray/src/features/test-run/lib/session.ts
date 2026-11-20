@@ -2,7 +2,7 @@ import { HarnessExit } from "#entities/harness/index.ts";
 import type { Exchange } from "#shared/contract/index.ts";
 import type { Capture, OpenSession } from "./capture.ts";
 import type { CapturedRequest } from "./captured.ts";
-import { fail } from "./failure.ts";
+import { fail, tailOf } from "./failure.ts";
 import { recordSession, requestOf } from "./request.ts";
 import type { CellScope } from "./scope.ts";
 
@@ -25,8 +25,6 @@ export type SessionRequest = { cwd?: string; prompt?: string };
 
 const DEFAULT_PROMPT = "Wait for instructions.";
 
-const lastLines = (text: string) => text.split("\n").slice(-12).join("\n");
-
 // Opens the harness on first use, so a test that never touches its session launches nothing.
 export const createSession = (capture: Capture, scope: CellScope, request: SessionRequest = {}) => {
   const cwd = request.cwd ?? "";
@@ -42,7 +40,7 @@ export const createSession = (capture: Capture, scope: CellScope, request: Sessi
 
   const exited = (session: OpenSession, error: unknown): never => {
     if (!(error instanceof HarnessExit)) throw error;
-    const output = { label: "capture.output" as const, value: lastLines(error.output) || "—" };
+    const output = { label: "capture.output" as const, value: tailOf(error.output) };
     return fail("capture.exited", { harness: scope.harness, code: String(error.code ?? "timeout") }, [
       output,
       { label: "capture.trace", value: session.trace },
@@ -94,7 +92,7 @@ export const createSession = (capture: Capture, scope: CellScope, request: Sessi
       }
       if (result.code !== 0 && result.code !== null) {
         fail("capture.exited", { harness: scope.harness, code: String(result.code) }, [
-          { label: "capture.output", value: lastLines(result.output) || "—" },
+          { label: "capture.output", value: tailOf(result.output) },
           { label: "capture.trace", value: session.trace },
         ]);
       }

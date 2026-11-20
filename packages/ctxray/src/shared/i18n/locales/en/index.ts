@@ -254,6 +254,8 @@ export const en = {
   "capture.exited": "{harness} stopped before the test was done (exit code {code})",
   "capture.output": "Output",
   "capture.trace": "Trace",
+  "upstream.refused": "The model's API answered {status}: {message}",
+  "upstream.keys": "Key from",
   "capture.ended": "The session has ended: start another with startSession()",
   "capture.egress": "{harness} tried to reach {hosts} past ctxray",
   "activate.failed": "{subject} loaded at a rate of {rate} [{low}–{high}, 95% CI]",
@@ -579,6 +581,9 @@ export const en = {
   "doctor.registryDown": "npm registry {registry} doesn't answer: {message}",
   "doctor.registryTimeout":
     "npm registry {registry} didn't answer in {seconds} s. If curl reaches it, check that a firewall doesn't block ctxray itself",
+  "doctor.keys": "Keys for the model's API: {names}",
+  "doctor.noKeys": "No key for the model's API: L6 and L7 with --backend real need one of {names}",
+  "doctor.gatewayNoKey": "No key for the model's API: requests go to {upstream} without one",
   "doctor.cache": { one: "Cache {dir}: {count} build, {size} MB", other: "Cache {dir}: {count} builds, {size} MB" },
   "doctor.cacheReadOnly": "No cache folder is writable: {dirs}",
   "doctor.cacheLayer": "Read-only cache layer {dir}",

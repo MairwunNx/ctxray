@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { NetworkSettings } from "#entities/user-config/index.ts";
 import { DIRECT } from "#shared/infra/index.ts";
-import { caChecks, proxyChecks, registryChecks, withoutCredentials } from "./network.ts";
+import { caChecks, keyChecks, proxyChecks, registryChecks, withoutCredentials } from "./network.ts";
 
 const root = mkdtempSync(join(tmpdir(), "ctxray-doctor-"));
 afterAll(() => rmSync(root, { recursive: true, force: true }));
@@ -56,6 +56,16 @@ test("CA files: present, missing, and not PEM", async () => {
     "error doctor.caMissing",
     "error doctor.caNotPem",
   ]);
+});
+
+test.each<[string, Record<string, string>, string | undefined, string]>([
+  ["a key", { ANTHROPIC_API_KEY: "a", PATH: "/bin" }, undefined, "ok doctor.keys ANTHROPIC_API_KEY"],
+  ["no key", {}, undefined, "warning doctor.noKeys"],
+  ["a gateway without a key", {}, "http://gw:4000", "info doctor.gatewayNoKey"],
+])("keys: %s", (_, env, upstream, expected) => {
+  const [one] = keyChecks(env, upstream);
+  const names = one?.status === "ok" ? [one.params?.["names"]] : [];
+  expect([one?.status, one?.key, ...names].join(" ")).toBe(expected);
 });
 
 // One line per registry: its address and what it answered, never a tick for the address alone.

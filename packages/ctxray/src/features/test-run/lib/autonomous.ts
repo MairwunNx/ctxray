@@ -2,7 +2,7 @@ import { callsOf } from "#entities/proxy/index.ts";
 import { toFailure } from "./attempt.ts";
 import type { SampleBackend } from "./backend.ts";
 import type { Capture } from "./capture.ts";
-import { CheckFailure } from "./failure.ts";
+import { CheckFailure, tailOf } from "./failure.ts";
 import { recordSession, requestOf } from "./request.ts";
 import type { Run } from "./runs.ts";
 import type { CellScope } from "./scope.ts";
@@ -99,10 +99,13 @@ export const runSample = async (
   const result = await harness.end();
   await opened.close();
   await backend.done({ version: harness.version, model: opened.model });
-  if (run.error === undefined && result.code !== 0 && result.code !== null) {
+  // The model's API refusing the session explains a harness that gave up better than its own output does.
+  const refused = backend.refused();
+  if (refused) run.error = toFailure(refused);
+  else if (run.error === undefined && result.code !== 0 && result.code !== null) {
     run.error = toFailure(
       new CheckFailure("capture.exited", { harness: scope.harness, code: String(result.code) }, [
-        { label: "capture.output", value: result.output.split("\n").slice(-12).join("\n") || "—" },
+        { label: "capture.output", value: tailOf(result.output) },
         { label: "capture.trace", value: opened.trace },
       ]),
     );

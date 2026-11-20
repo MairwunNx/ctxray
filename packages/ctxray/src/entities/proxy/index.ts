@@ -1,7 +1,7 @@
 export { type AskDeps, askModel, protocolOfModel } from "./ask.ts";
 export { createPlayer, createRecorder, type Miss, type TapeEntry, WORK } from "./cassette.ts";
 export { type Conversation, createConversation } from "./conversation.ts";
-export { CREDENTIAL_HEADERS, credentialsFor } from "./credentials.ts";
+export { CREDENTIAL_HEADERS, credentialsFor, KEY_VARIABLES, keyVariables } from "./credentials.ts";
 export { type EgressGuard, startEgressGuard } from "./egress.ts";
 export {
   CountFailure,
@@ -17,6 +17,7 @@ export type { McpMessage } from "./mcp-forward.ts";
 export type { Exchange, Handler, Incoming, Json, Protocol, Step, ToolCall } from "./model.ts";
 export { costOf, PRICES, type Price, priceOf } from "./prices.ts";
 export { callsOf, KITS, type MadeCall } from "./protocols/index.ts";
+export { refusalOf, type UpstreamAnswer } from "./refusal.ts";
 export { createRelay, type Relay } from "./relay.ts";
 export { type ProxyServer, startProxy } from "./server.ts";
 export { createTraceWriter, type TraceWriter } from "./trace.ts";

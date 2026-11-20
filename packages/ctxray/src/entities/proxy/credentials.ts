@@ -14,6 +14,18 @@ const KEYS: Record<Protocol, { variable: string; header: string; bearer: boolean
 
 const OAUTH_BETA = "oauth-2025-04-20";
 
+// Where ctxray looks for a protocol's key, in the order credentialsFor() reads them. Names only, never values.
+export const keyVariables = (protocol: Protocol): string[] => [
+  "CTXRAY_UPSTREAM_KEY",
+  KEYS[protocol].variable,
+  ...(protocol === "anthropic" ? ["CLAUDE_CODE_OAUTH_TOKEN"] : []),
+];
+
+// Every variable a key for some protocol can come from.
+export const KEY_VARIABLES = [
+  ...new Set((Object.keys(KEYS) as Protocol[]).flatMap((protocol) => keyVariables(protocol))),
+];
+
 // The real key for a protocol, from ctxray's environment: CTXRAY_UPSTREAM_KEY for a gateway in front of every
 // provider, or the provider's own variable. Without an Anthropic key, a Claude Code login token from
 // `claude setup-token` goes as a bearer with the OAuth beta next to the harness's own betas. No key, no

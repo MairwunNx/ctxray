@@ -291,6 +291,8 @@ export const ru: Catalog = {
   "capture.exited": "{harness} завершился раньше теста (код выхода {code})",
   "capture.output": "Вывод",
   "capture.trace": "Трейс",
+  "upstream.refused": "API модели ответил {status}: {message}",
+  "upstream.keys": "Ключ из",
   "capture.ended": "Сессия уже закончилась: начните новую через startSession()",
   "capture.egress": "{harness} пытался выйти в сеть мимо ctxray: {hosts}",
   "activate.failed": "{subject} загружался с долей {rate} [{low}–{high}, ДИ 95 %]",
@@ -699,6 +701,9 @@ export const ru: Catalog = {
   "doctor.registryDown": "npm registry {registry} не отвечает: {message}",
   "doctor.registryTimeout":
     "npm registry {registry} не ответил за {seconds} с. Если curl до него достаёт, проверьте, не блокирует ли брандмауэр сам ctxray",
+  "doctor.keys": "Ключи для API модели: {names}",
+  "doctor.noKeys": "Ключа для API модели нет: L6 и L7 с --backend real нужна одна из переменных {names}",
+  "doctor.gatewayNoKey": "Ключа для API модели нет: запросы уходят на {upstream} без него",
   "doctor.cache": {
     one: "Кеш {dir}: {count} сборка, {size} МБ",
     few: "Кеш {dir}: {count} сборки, {size} МБ",

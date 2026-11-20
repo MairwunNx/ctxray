@@ -5,7 +5,7 @@ import { type Config, egressOf, resolveNetwork } from "#entities/user-config/ind
 import { type Env, platformKey } from "#shared/infra/index.ts";
 import { cacheChecks, lockChecks } from "./lib/harnesses.ts";
 import { check, type DoctorSection } from "./lib/model.ts";
-import { caChecks, proxyChecks, registryChecks } from "./lib/network.ts";
+import { caChecks, keyChecks, proxyChecks, registryChecks } from "./lib/network.ts";
 import { systemChecks } from "./lib/system.ts";
 
 // `ctxray doctor`: what the machine needs for L4 and up, checked before a run trips over it (TASK §6.6).
@@ -39,6 +39,7 @@ export const createDoctorAction = (config: Config, env: Env, cwd: string, versio
         ...proxyChecks(network, env),
         ...(await caChecks(network)),
         ...(await registryChecks(dirname(lockPath), env, config.network.registry, egress, config.offline)),
+        ...keyChecks(env, config.upstream),
       ],
     },
     {

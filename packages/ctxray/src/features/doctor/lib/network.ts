@@ -1,4 +1,5 @@
 import { readRegistrySetup } from "#entities/harness-cache/index.ts";
+import { KEY_VARIABLES } from "#entities/proxy/index.ts";
 import type { NetworkSettings } from "#entities/user-config/index.ts";
 import { type Egress, type Env, fetchThrough } from "#shared/infra/index.ts";
 import { check, type DoctorCheck } from "./model.ts";
@@ -46,6 +47,15 @@ export const caChecks = async (network: NetworkSettings): Promise<DoctorCheck[]>
   }
   if (network.systemCa) checks.push(check("info", "doctor.systemCa"));
   return checks;
+};
+
+// The keys L6 and L7 send the model's API with --backend real: their names, never their values. A gateway the
+// user configured may take no key at all.
+export const keyChecks = (env: Env, upstream: string | undefined): DoctorCheck[] => {
+  const set = KEY_VARIABLES.filter((name) => env[name]);
+  if (set.length > 0) return [check("ok", "doctor.keys", { names: set.join(", ") })];
+  if (upstream) return [check("info", "doctor.gatewayNoKey", { upstream: withoutCredentials(upstream) })];
+  return [check("warning", "doctor.noKeys", { names: KEY_VARIABLES.join(", ") })];
 };
 
 // The registry harnesses install from, and whether it answers at all: any HTTP status means the network,
