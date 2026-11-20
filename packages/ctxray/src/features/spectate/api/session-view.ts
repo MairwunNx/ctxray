@@ -97,6 +97,6 @@ export const sessionLoadoutView = (result: SessionLoadout, t: Translate, live = 
     [],
     ...(own ? [[span(` ${t("session.own", { tokens: own })}`, "muted")]] : []),
     [span(` ${t("inspect.estimate", { tokenizer: loadout.tokens.method.replace(/^local:/, "") })}`, "muted")],
-    [span(` ${t("inspect.uncalibrated")}`, "muted")],
+    ...(!loadout.tokens.method.includes("calibrated") ? [[span(` ${t("inspect.uncalibrated")}`, "muted")]] : []),
   ];
 };
