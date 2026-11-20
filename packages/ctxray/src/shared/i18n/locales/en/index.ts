@@ -575,8 +575,10 @@ export const en = {
   "doctor.registry": "npm registry {registry}",
   "doctor.npmrcCa": { one: "{count} CA certificate from .npmrc", other: "{count} CA certificates from .npmrc" },
   "doctor.offline": "Offline mode: ctxray doesn't reach the registry",
-  "doctor.registryUp": "The registry answers ({status})",
-  "doctor.registryDown": "The registry doesn't answer: {message}",
+  "doctor.registryUp": "npm registry {registry} answers ({status})",
+  "doctor.registryDown": "npm registry {registry} doesn't answer: {message}",
+  "doctor.registryTimeout":
+    "npm registry {registry} didn't answer in {seconds} s. If curl reaches it, check that a firewall doesn't block ctxray itself",
   "doctor.cache": { one: "Cache {dir}: {count} build, {size} MB", other: "Cache {dir}: {count} builds, {size} MB" },
   "doctor.cacheReadOnly": "No cache folder is writable: {dirs}",
   "doctor.cacheLayer": "Read-only cache layer {dir}",

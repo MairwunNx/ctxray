@@ -3,7 +3,8 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { NetworkSettings } from "#entities/user-config/index.ts";
-import { caChecks, proxyChecks, withoutCredentials } from "./network.ts";
+import { DIRECT } from "#shared/infra/index.ts";
+import { caChecks, proxyChecks, registryChecks, withoutCredentials } from "./network.ts";
 
 const root = mkdtempSync(join(tmpdir(), "ctxray-doctor-"));
 afterAll(() => rmSync(root, { recursive: true, force: true }));
@@ -55,4 +56,28 @@ test("CA files: present, missing, and not PEM", async () => {
     "error doctor.caMissing",
     "error doctor.caNotPem",
   ]);
+});
+
+// One line per registry: its address and what it answered, never a tick for the address alone.
+test("registry: answers, refuses, times out, and offline", async () => {
+  const server = Bun.serve({
+    port: 0,
+    fetch: async (request) => {
+      if (new URL(request.url).pathname === "/slow/") await Bun.sleep(1000);
+      return new Response("{}");
+    },
+  });
+  try {
+    const at = (path: string, offline = false) =>
+      registryChecks(root, {}, `http://127.0.0.1:${server.port}${path}`, DIRECT, offline, 100).then((checks) =>
+        checks.map((one) => `${one.status} ${one.key}`),
+      );
+    expect(await at("/")).toEqual(["ok doctor.registryUp"]);
+    expect(await at("/slow/")).toEqual(["error doctor.registryTimeout"]);
+    expect(await at("/", true)).toEqual(["info doctor.registry", "info doctor.offline"]);
+    const closed = await registryChecks(root, {}, "http://127.0.0.1:1/", DIRECT, false, 1000);
+    expect(closed.map((one) => `${one.status} ${one.key}`)).toEqual(["error doctor.registryDown"]);
+  } finally {
+    server.stop(true);
+  }
 });

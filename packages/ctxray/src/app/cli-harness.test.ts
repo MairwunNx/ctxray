@@ -118,8 +118,7 @@ test("doctor finds the pinned harnesses and the registry", async () => {
   await runIn(dir, ["harness", "add", "codex@0.169.0"], env);
   const before = await runIn(dir, ["doctor"], env);
   expect(before.code).toBe(0);
-  expect(before.stdout).toContain(`✓ npm registry ${registry.url}`);
-  expect(before.stdout).toContain("✓ The registry answers (");
+  expect(before.stdout).toContain(`✓ npm registry ${registry.url} answers (`);
   expect(before.stdout).toContain("! codex 0.169.0 isn't installed yet");
   await runIn(dir, ["harness", "install"], env);
   expect((await runIn(dir, ["doctor"], env)).stdout).toContain("✓ codex 0.169.0 installed");

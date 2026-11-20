@@ -695,8 +695,10 @@ export const ru: Catalog = {
     other: "{count} CA-сертификата из .npmrc",
   },
   "doctor.offline": "Офлайн-режим: ctxray не ходит в registry",
-  "doctor.registryUp": "Registry отвечает ({status})",
-  "doctor.registryDown": "Registry не отвечает: {message}",
+  "doctor.registryUp": "npm registry {registry} отвечает ({status})",
+  "doctor.registryDown": "npm registry {registry} не отвечает: {message}",
+  "doctor.registryTimeout":
+    "npm registry {registry} не ответил за {seconds} с. Если curl до него достаёт, проверьте, не блокирует ли брандмауэр сам ctxray",
   "doctor.cache": {
     one: "Кеш {dir}: {count} сборка, {size} МБ",
     few: "Кеш {dir}: {count} сборки, {size} МБ",

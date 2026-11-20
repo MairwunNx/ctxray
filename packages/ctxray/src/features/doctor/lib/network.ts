@@ -49,26 +49,32 @@ export const caChecks = async (network: NetworkSettings): Promise<DoctorCheck[]>
 };
 
 // The registry harnesses install from, and whether it answers at all: any HTTP status means the network,
-// the proxy, and TLS work, a thrown error means one of them doesn't.
+// the proxy, and TLS work, a thrown error means one of them doesn't. One line says both, so the address never
+// reads as a result of its own. A timeout while curl gets through is most often a firewall that knows ctxray
+// by its binary.
 export const registryChecks = async (
   project: string,
   env: Env,
   configured: string | undefined,
   egress: Egress,
   offline: boolean,
+  timeout = 10_000,
 ): Promise<DoctorCheck[]> => {
   const setup = await readRegistrySetup(project, env, configured);
   const registry = setup.registryOf("@openai/codex");
-  const checks = [check("ok", "doctor.registry", { registry: withoutCredentials(registry) })];
-  if (setup.ca.length > 0) checks.push(check("ok", "doctor.npmrcCa", { count: setup.ca.length }));
-  if (offline) return [...checks, check("info", "doctor.offline")];
+  const shown = withoutCredentials(registry);
+  const ca = setup.ca.length > 0 ? [check("ok", "doctor.npmrcCa", { count: setup.ca.length })] : [];
+  if (offline) return [check("info", "doctor.registry", { registry: shown }), ...ca, check("info", "doctor.offline")];
   const auth = setup.authOf(registry);
   const response = await fetchThrough(
     new URL(registry),
-    { headers: auth ? { authorization: auth } : {}, signal: AbortSignal.timeout(10_000) },
+    { headers: auth ? { authorization: auth } : {}, signal: AbortSignal.timeout(timeout) },
     { ...egress, ca: [...egress.ca, ...setup.ca] },
   ).catch((error: Error) => error);
+  if (response instanceof Error && response.name === "TimeoutError")
+    return [...ca, check("error", "doctor.registryTimeout", { registry: shown, seconds: timeout / 1000 })];
   if (response instanceof Error)
-    return [...checks, check("error", "doctor.registryDown", { message: response.message })];
-  return [...checks, check(response.status < 500 ? "ok" : "warning", "doctor.registryUp", { status: response.status })];
+    return [...ca, check("error", "doctor.registryDown", { registry: shown, message: response.message })];
+  const status = response.status < 500 ? "ok" : "warning";
+  return [...ca, check(status, "doctor.registryUp", { registry: shown, status: response.status })];
 };
