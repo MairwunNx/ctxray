@@ -26,4 +26,5 @@ export { checkSupport, type HarnessProfile, type Requirement, type Support } fro
 export { PROFILES } from "./profiles.ts";
 export { findRoot, openProject, type Project } from "./project.ts";
 export { checkoutRevision, type Revision, staticPieces, UnknownRevision } from "./revision.ts";
+export { rootPieces } from "./root-pieces.ts";
 export type { Scope, StaticLoadout } from "./static-loadout.ts";

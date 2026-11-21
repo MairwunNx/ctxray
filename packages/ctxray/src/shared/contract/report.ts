@@ -76,11 +76,22 @@ export const ReportTest = z.object({
 });
 export type ReportTest = z.infer<typeof ReportTest>;
 
+const Pieces = z.array(z.object({ id: z.string(), tokens: z.number() }));
+
+export const ReportLoadout = z.object({
+  total: z.number(),
+  byComponent: z.partialRecord(Component, z.number()),
+  items: z.object({ system: Pieces, tools: Pieces, rules: Pieces, skills: Pieces, mcp: Pieces, commands: Pieces }),
+});
+
 export const ReportHarness = z.object({
   id: HarnessId,
   title: z.string(),
   modes: z.array(CaptureMode).describe("static is T1, capture T2, observe T3"),
   start: LoadoutSnapshot.optional().describe("The starting context the context check captured"),
+  loadout: ReportLoadout.optional().describe(
+    "What L3 predicts at the project root: `ctxray diff --file` compares with it",
+  ),
 });
 
 export const ReportCoverage = z.object({

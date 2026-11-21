@@ -43,7 +43,7 @@ const render = () => {
     },
   };
   const tabs = tabsOf(app);
-  const tab: Tab = tabs.find((one) => one === prefs.tab) ?? "overview";
+  const tab: Tab = tabs.find((one) => one === prefs.tab) ?? tabs[0] ?? "overview";
   // A search box keeps its focus and caret across renders.
   const focused = document.activeElement instanceof HTMLInputElement ? document.activeElement : undefined;
   const caret = focused?.selectionStart ?? null;

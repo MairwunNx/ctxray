@@ -1,5 +1,6 @@
 import { basename, relative } from "node:path";
 import { PROFILES, ruleOf } from "#entities/harness/index.ts";
+import { toReportDiff } from "#entities/loadout/index.ts";
 import {
   type Layer,
   REPORT_SCHEMA_VERSION,
@@ -135,7 +136,14 @@ export const buildReport = (result: TestRunResult, { version, langs, t, now }: R
     summary: { ...countsOf(kept), byLayer },
     harnesses: result.selection.harnesses.map((id) => {
       const start = kept.find((cell) => cell.check === "context" && cell.harness === id)?.sessions?.[0]?.start;
-      return { id, title: PROFILES[id].title, modes: [...PROFILES[id].modes], ...(start && { start }) };
+      const loadout = result.loadouts[id];
+      return {
+        id,
+        title: PROFILES[id].title,
+        modes: [...PROFILES[id].modes],
+        ...(start && { start }),
+        ...(loadout && { loadout }),
+      };
     }),
     tests: testsOf(result.results, result.root, t),
     broken: result.broken.map(({ file, failure }) => ({
@@ -144,20 +152,7 @@ export const buildReport = (result: TestRunResult, { version, langs, t, now }: R
     })),
     coverage: result.coverage.map((one) => ({ ...one, kinds: one.kinds.map((kind) => ({ ...kind })) })),
     ...(result.base && {
-      base: {
-        ref: result.base.ref,
-        diffs: result.base.diffs.map(({ harness, diff }) => ({
-          harness,
-          total: diff.total,
-          byComponent: diff.byComponent,
-          changes: diff.changes.map((change) => ({
-            component: change.component,
-            id: change.id,
-            ...(change.before !== undefined && { before: change.before }),
-            ...(change.after !== undefined && { after: change.after }),
-          })),
-        })),
-      },
+      base: { ref: result.base.ref, diffs: result.base.diffs.map(({ harness, diff }) => toReportDiff(harness, diff)) },
     }),
     ...(result.baseline && { baseline: result.baseline }),
   };

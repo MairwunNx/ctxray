@@ -69,6 +69,13 @@ const RESULT: TestRunResult = {
   },
   coverage: [],
   base: undefined,
+  loadouts: {
+    "claude-code": {
+      total: 12,
+      byComponent: { rules: 12 },
+      items: { system: [], tools: [], rules: [{ id: "CLAUDE.md", tokens: 12 }], skills: [], mcp: [], commands: [] },
+    },
+  },
   baseline: undefined,
 };
 
@@ -91,5 +98,9 @@ test("the report fits its schema, groups cells by test, and leaves filtered ones
   expect(report.run).toMatchObject({ backend: { kind: "replay", name: "pr" }, layers: ["L3", "L6"], duration: 1235 });
   expect(report.broken).toEqual([
     { file: "tests/b.ctxray.ts", failure: { kind: "error", message: "boom", lines: [] } },
+  ]);
+  expect(report.harnesses.map((one) => [one.id, one.loadout?.total])).toEqual([
+    ["claude-code", 12],
+    ["codex", undefined],
   ]);
 });

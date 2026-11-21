@@ -1,79 +1,92 @@
-import { PROFILES, UnknownRevision } from "#entities/harness/index.ts";
-import { CONFIG_OPTION } from "#entities/user-config/index.ts";
-import type { CommandSpec, Handler } from "#shared/cli/index.ts";
+import { UnknownRevision } from "#entities/harness/index.ts";
+import { CONFIG_OPTION, type Config } from "#entities/user-config/index.ts";
+import type { CommandSpec, Handler, Values } from "#shared/cli/index.ts";
 import { ExitCode, HarnessId } from "#shared/contract/index.ts";
-import type { Translate } from "#shared/i18n/index.ts";
-import { type Renderer, span, type View } from "#shared/render/index.ts";
+import { CATALOGS, type Translate } from "#shared/i18n/index.ts";
+import { type Renderer, span } from "#shared/render/index.ts";
 import type { DiffAction, DiffResult } from "../diff.action.ts";
+import { type DiffFileAction, SavedReportProblem } from "../diff-file.action.ts";
+import type { DiffReportAction } from "../diff-report.action.ts";
+import { diffView } from "./view.ts";
 
 export const diffSpec: CommandSpec = {
   name: "diff",
   summary: "command.diff",
   options: {
     base: { type: "string", summary: "option.base", value: "ref" },
+    file: { type: "string", summary: "option.diffFile", value: "report.json" },
     harness: { type: "string", summary: "option.harness", value: "ids" },
     json: { type: "boolean", summary: "option.json" },
+    "report-dir": { type: "string", summary: "option.reportDir", value: "dir" },
     config: CONFIG_OPTION,
   },
   usesConfig: true,
 };
 
-const signed = (value: number) => (value > 0 ? `+${value}` : value < 0 ? `−${-value}` : "±0");
-// Commands and MCP servers count as one listing, so a single one has no tokens of its own: only the name shows.
-const amount = (component: string, value: number) => (value === 0 ? component : `${component} ${signed(value)}`);
-
-export const diffView = (result: DiffResult, t: Translate): View =>
-  result.diffs.flatMap(({ harness, diff }) => {
-    const delta = diff.total.after - diff.total.before;
-    const head = [
-      span(` ${PROFILES[harness].title}  `, "strong"),
-      span(t("diff.total", { before: diff.total.before, after: diff.total.after })),
-      span(`  ${signed(delta)}`, delta > 0 ? "warning" : delta < 0 ? "success" : "muted"),
-    ];
-    if (diff.changes.length === 0) return [head, [span(`   ${t("diff.same")}`, "muted")], []];
-    return [
-      head,
-      ...diff.changes.map((change) => {
-        if (change.before === undefined)
-          return [
-            span(`   + ${change.id}`, "success"),
-            span(`  ${amount(change.component, change.after ?? 0)}`, "muted"),
-          ];
-        if (change.after === undefined)
-          return [span(`   − ${change.id}`, "failure"), span(`  ${amount(change.component, -change.before)}`, "muted")];
-        return [
-          span(`   ~ ${change.id}`, "warning"),
-          span(`  ${amount(change.component, change.after - change.before)}`, "muted"),
-        ];
-      }),
-      [],
-    ];
-  });
+const text = (value: Values[string]) => (typeof value === "string" && value !== "" ? value : undefined);
+// `2026-11-20 17:53 UTC`: when the saved report's run happened, the same for every reader.
+const when = (iso: string | undefined) => (iso ? `${iso.slice(0, 16).replace("T", " ")} UTC` : "");
 
 export const createDiffCommand =
-  (diff: DiffAction, t: Translate, renderer: Renderer): Handler =>
+  (
+    diff: DiffAction,
+    diffFile: DiffFileAction,
+    diffReport: DiffReportAction,
+    t: Translate,
+    renderer: Renderer,
+    config: Config,
+    settings: { readonly lang: string },
+  ): Handler =>
   async (values) => {
-    const base = typeof values["base"] === "string" && values["base"] !== "" ? values["base"] : "origin/master";
-    const asked =
-      typeof values["harness"] === "string" ? values["harness"].split(",").map((id) => id.trim()) : undefined;
+    const fail = (message: string) => {
+      renderer.print([[span(message, "failure")]]);
+      return ExitCode.usage;
+    };
+    const file = text(values["file"]);
+    if (file !== undefined && text(values["base"]) !== undefined) return fail(t("diff.baseOrFile"));
+    const base = text(values["base"]) ?? "origin/master";
+    const asked = text(values["harness"])
+      ?.split(",")
+      .map((id) => id.trim());
     const harnesses = asked?.filter((id): id is HarnessId => HarnessId.safeParse(id).success);
     let result: DiffResult;
     try {
-      result = await diff({ base, harnesses });
+      result = file === undefined ? await diff({ base, harnesses }) : await diffFile({ file, harnesses });
     } catch (error) {
-      if (!(error instanceof UnknownRevision)) throw error;
-      renderer.print([[span(t("diff.unknownBase", { ref: base }), "failure")]]);
-      return ExitCode.usage;
+      if (error instanceof UnknownRevision) return fail(t("diff.unknownBase", { ref: base }));
+      if (error instanceof SavedReportProblem) return fail(t(error.key, error.params));
+      throw error;
     }
+    const ref =
+      file === undefined ? `${base} (${result.commit?.slice(0, 8)})` : `${result.base}, ${when(result.createdAt)}`;
+    const langs = (config.reportLangs ?? [settings.lang]).filter((lang) => lang in CATALOGS);
+    const written = await diffReport(result, ref, text(values["report-dir"]) ?? config.reportDir, langs);
     if (values["json"] === true) {
       renderer.print([[span(JSON.stringify(result, null, 2))]]);
       return ExitCode.ok;
     }
+    const title =
+      file === undefined
+        ? t("diff.title", { ref: base, commit: result.commit?.slice(0, 8) ?? "" })
+        : t("diff.titleFile", { file: result.base, date: when(result.createdAt) });
     renderer.print([
-      [span(` ${t("diff.title", { ref: base, commit: result.commit.slice(0, 8) })}`, "strong")],
+      [span(` ${title}`, "strong")],
       [],
       ...diffView(result, t),
+      ...(result.missing ?? []).map((harness) => [
+        span(` ! ${t("diff.noSavedLoadout", { file: result.base, harness })}`, "warning"),
+      ]),
+      ...((result.missing?.length ?? 0) > 0 ? [[]] : []),
+      [span(` ${t("diff.written", written)}`, "muted")],
     ]);
     return ExitCode.ok;
   };
-createDiffCommand.inject = ["diffAction", "t", "renderer"] as const;
+createDiffCommand.inject = [
+  "diffAction",
+  "diffFileAction",
+  "diffReportAction",
+  "t",
+  "renderer",
+  "config",
+  "settings",
+] as const;

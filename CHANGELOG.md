@@ -25,6 +25,7 @@ L1 now catches the files a harness silently skips, and the secrets nobody meant 
 - ❓ **`ctxray help`.** `ctxray help` prints the list of commands, and `ctxray help diff` the page of one, the same as `--help`. It used to say “Unknown command”.
 - 🗂️ **`harness remove` and `cache clear`.** `ctxray harness remove codex` unpins a harness from `ctxray.lock` and warns when the config still names it. `ctxray cache clear` lists every build in the cache, pinned ones too, and `--yes` removes them.
 - 🩺 **`ctxray doctor --fix`.** It creates the cache folder and installs the harnesses `ctxray.lock` pins, then lists what it fixed and what's left to you: git, the network, proxies, CA certificates, Node, and keys.
+- 📉 **`ctxray diff --file report.json`.** It compares the loadout with a saved report, from a past run or a CI artifact, instead of a git revision. Every report now keeps the loadout L3 predicts at the root for each harness. `diff` also writes `diff.json` and `diff.html` into the report folder, and the HTML report's diff tab lines its rows up again.
 - 🧹 **No leftovers after a capture.** ctxray ends the harness's whole process group, so Cursor CLI's helpers no longer pile up over hundreds of sessions.
 
 ## 0.1.0

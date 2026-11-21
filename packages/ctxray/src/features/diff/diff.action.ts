@@ -3,8 +3,8 @@ import {
   DEFAULT_HARNESSES,
   findRoot,
   openProject,
+  rootPieces,
   STATIC_ADAPTERS,
-  staticPieces,
 } from "#entities/harness/index.ts";
 import { diffPieces, type LoadoutDiff } from "#entities/loadout/index.ts";
 import type { Config } from "#entities/user-config/index.ts";
@@ -12,28 +12,35 @@ import type { HarnessId } from "#shared/contract/index.ts";
 
 export type DiffRequest = { base: string; harnesses?: readonly HarnessId[] | undefined };
 export type HarnessDiff = { harness: HarnessId; diff: LoadoutDiff };
-export type DiffResult = { base: string; commit: string; diffs: HarnessDiff[] };
+// Against a revision: its commit. Against a saved report: when it ran, and the harnesses it has no loadout of.
+export type DiffResult = {
+  base: string;
+  commit?: string;
+  createdAt?: string;
+  diffs: HarnessDiff[];
+  missing?: HarnessId[];
+};
+
+// The harnesses asked for, the config's, or the default set: those L3 can read.
+export const chooseHarnesses = (config: Config, harnesses: readonly HarnessId[] | undefined) => {
+  const configured = Object.keys(config.harnesses) as HarnessId[];
+  return (harnesses ?? (configured.length > 0 ? configured : DEFAULT_HARNESSES)).filter((id) => STATIC_ADAPTERS[id]);
+};
 
 // What each harness would load at the project root on the base revision and now, as L3 predicts it.
 export const createDiffAction =
   (config: Config, cwd: string) =>
   async ({ base, harnesses }: DiffRequest): Promise<DiffResult> => {
     const { root } = await findRoot(cwd);
-    const configured = Object.keys(config.harnesses) as HarnessId[];
-    const chosen = (harnesses ?? (configured.length > 0 ? configured : DEFAULT_HARNESSES)).filter(
-      (id) => STATIC_ADAPTERS[id],
-    );
     const revision = await checkoutRevision(root, base);
     try {
       const [before, after] = await Promise.all([openProject(revision.dir), openProject(root)]);
       const diffs: HarnessDiff[] = [];
-      for (const harness of chosen) {
+      for (const harness of chooseHarnesses(config, harnesses)) {
         const adapter = STATIC_ADAPTERS[harness];
-        if (!adapter) continue;
-        const scope = { cwd: "", files: [] };
-        const was = adapter.resolve(await adapter.discover(before), scope);
-        const is = adapter.resolve(await adapter.discover(after), scope);
-        diffs.push({ harness, diff: diffPieces(staticPieces(was), staticPieces(is)) });
+        const was = adapter && rootPieces(harness, await adapter.discover(before));
+        const is = adapter && rootPieces(harness, await adapter.discover(after));
+        if (was && is) diffs.push({ harness, diff: diffPieces(was, is) });
       }
       return { base, commit: revision.commit, diffs };
     } finally {

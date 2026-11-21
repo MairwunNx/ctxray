@@ -4,9 +4,13 @@ import { h } from "./dom.ts";
 export const TABS = ["overview", "tests", "context", "evals", "coverage", "diff"] as const;
 export type Tab = (typeof TABS)[number];
 
+// A report `ctxray diff` wrote: no tests, only the diff.
+const diffOnly = (app: App) => app.report.tests.length === 0 && app.report.base !== undefined;
+
 // The tabs this report has something for: evals need a rate, the diff a base.
 export const tabsOf = (app: App): Tab[] =>
   TABS.filter((tab) => {
+    if (diffOnly(app)) return tab === "diff";
     if (tab === "evals") return app.report.tests.some((test) => test.cells.some((cell) => cell.stats?.length));
     if (tab === "diff") return app.report.base !== undefined;
     if (tab === "coverage") return app.report.coverage.length > 0;
@@ -20,6 +24,7 @@ const meta = (app: App) => {
     new Date(report.createdAt),
   );
   const backend = run.backend.name ? `${run.backend.kind} (${run.backend.name})` : run.backend.kind;
+  if (diffOnly(app)) return [`ctxray ${report.ctxray}`, date];
   return [
     `ctxray ${report.ctxray}`,
     date,

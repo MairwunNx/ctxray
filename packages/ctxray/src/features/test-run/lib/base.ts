@@ -1,4 +1,4 @@
-import { checkoutRevision, openProject, STATIC_ADAPTERS, staticPieces } from "#entities/harness/index.ts";
+import { checkoutRevision, openProject, rootPieces, STATIC_ADAPTERS } from "#entities/harness/index.ts";
 import { diffPieces, type LoadoutDiff } from "#entities/loadout/index.ts";
 import type { HarnessId } from "#shared/contract/index.ts";
 
@@ -13,10 +13,9 @@ export const diffAgainst = async (root: string, ref: string, harnesses: readonly
     for (const harness of harnesses) {
       const adapter = STATIC_ADAPTERS[harness];
       if (!adapter) continue;
-      const scope = { cwd: "", files: [] };
-      const was = adapter.resolve(await adapter.discover(before), scope);
-      const is = adapter.resolve(await adapter.discover(after), scope);
-      diffs.push({ harness, diff: diffPieces(staticPieces(was), staticPieces(is)) });
+      const was = rootPieces(harness, await adapter.discover(before));
+      const is = rootPieces(harness, await adapter.discover(after));
+      if (was && is) diffs.push({ harness, diff: diffPieces(was, is) });
     }
     return { ref, diffs };
   } finally {

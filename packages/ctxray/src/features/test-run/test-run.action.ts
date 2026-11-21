@@ -1,9 +1,9 @@
 import { realpath } from "node:fs/promises";
 import { relative, sep } from "node:path";
-import { findRoot } from "#entities/harness/index.ts";
+import { findRoot, rootPieces, STATIC_ADAPTERS } from "#entities/harness/index.ts";
 import type { Progress as CacheProgress } from "#entities/harness-cache/index.ts";
 import { type Config, egressOf, resolveNetwork } from "#entities/user-config/index.ts";
-import type { HarnessId } from "#shared/contract/index.ts";
+import type { HarnessId, LoadoutPieces } from "#shared/contract/index.ts";
 import { type Env, isCi } from "#shared/infra/index.ts";
 import { createRedactor } from "#shared/redact/index.ts";
 import { type Failure, toFailure } from "./lib/attempt.ts";
@@ -50,6 +50,7 @@ export type TestRunResult = {
   selection: Selection;
   coverage: readonly Coverage[];
   base: BaseDiff | undefined;
+  loadouts: Partial<Record<HarnessId, LoadoutPieces>>; // what L3 predicts at the root, for `diff --file`
   baseline: { file: string; known: number } | undefined; // findings the baseline file already holds
   installed: string | undefined; // @mairwunnx/ctxray in the project's node_modules, when it isn't this version
   duration: number;
@@ -139,6 +140,11 @@ export const createTestRunAction =
     // Traces stay on disk when a harness test failed: its failure points at them.
     await capture.stop(results.some((result) => result.status === "failed" && result.layer !== "L3" && result.file));
     const installed = await installedVersion(here);
+    const loadouts: TestRunResult["loadouts"] = {};
+    for (const harness of selection.harnesses) {
+      const pieces = STATIC_ADAPTERS[harness] && rootPieces(harness, await repository.inventoryOf(harness));
+      if (pieces) loadouts[harness] = pieces;
+    }
     return {
       cwd: here,
       files,
@@ -154,6 +160,7 @@ export const createTestRunAction =
       selection,
       coverage: await coverageOf(repository, selection.harnesses, seenBy, results),
       base,
+      loadouts,
       baseline: known ? { file: BASELINE_FILE, known: baselined } : undefined,
       installed: installed === version ? undefined : installed,
       duration: performance.now() - started,
