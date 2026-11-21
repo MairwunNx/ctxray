@@ -15,7 +15,7 @@ import {
 } from "#features/harness-install/index.ts";
 import { createInitAction } from "#features/init/index.ts";
 import { createInspectAction } from "#features/inspect/index.ts";
-import { createMcpCallAction } from "#features/mcp-serve/index.ts";
+import { createMcpAddAction, createMcpCallAction } from "#features/mcp-serve/index.ts";
 import { createSessionAction } from "#features/session/index.ts";
 import { createShowConfigAction } from "#features/show-config/index.ts";
 import { createShowReportAction } from "#features/show-report/index.ts";
@@ -65,6 +65,7 @@ export const createRunInjector = (
     .provideFactory("cacheAction", createCacheAction)
     .provideFactory("sessionAction", createSessionAction)
     .provideFactory("mcpCallAction", createMcpCallAction)
+    .provideFactory("mcpAddAction", createMcpAddAction)
     .provideFactory("doctorAction", createDoctorAction)
     .provideFactory("calibrateAction", createCalibrateAction)
     .provideFactory("genPromptsAction", createGenPromptsAction)

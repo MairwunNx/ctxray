@@ -10,7 +10,7 @@ const record = (value: unknown): Record<string, unknown> =>
 const entries = (value: unknown) => record(value) as Record<string, McpEntry>;
 
 // Where each harness keeps the MCP servers a user added for every project.
-export const userMcpFile = (harness: HarnessId, { home, env }: UserScope): string => {
+export const userMcpFile = (harness: HarnessId, { home, env }: Pick<UserScope, "home" | "env">): string => {
   const xdg = env["XDG_CONFIG_HOME"] || join(home, ".config");
   switch (harness) {
     case "claude-code":

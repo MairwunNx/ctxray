@@ -534,7 +534,21 @@ export const ru: Catalog = {
   },
   "command.mcp": "Отдать inspect, test и diff агенту по MCP через stdin и stdout",
   "mcp.setup": "ctxray mcp — это сервер для вашего агента: он ждёт его на stdin и stdout. Подключите один раз:",
-  "mcp.setupNext": "Дальше агент сам запускает его и получает инструменты inspect, test и diff.",
+  "mcp.setupNext":
+    "Дальше агент сам запускает его и получает инструменты inspect, test и diff. С --project — только в этом проекте.",
+  "mcp.serve": "Отдавать inspect, test и diff по MCP через stdin и stdout: то же, что просто `ctxray mcp`",
+  "mcp.add":
+    "Подключить ctxray к агенту: `add claude-code`, `add codex`, `add gemini-cli`, `add opencode`, `add cursor-cli`",
+  "option.mcpProject": "С add: записать в конфиг проекта, а не в ваш",
+  "mcp.addWhat": "Назовите агента: ctxray mcp add <агент>, один из {agents}",
+  "mcp.already": "У {agent} ctxray уже есть в {file}: ничего не изменилось",
+  "mcp.written": "ctxray добавлен в {agent}: {file}",
+  "mcp.ran": "ctxray подключён к {agent}: {command}",
+  "mcp.noBinary":
+    "{binary} нет в PATH: установите {agent} и повторите, или подключите ctxray к этому проекту через --project",
+  "mcp.failed": "{command} не сработал: {output}",
+  "mcp.comments":
+    "В {file} есть комментарии, которые перезапись потеряла бы, поэтому ctxray его не тронул. Добавьте в «{key}» вручную: {entry}",
   "option.mcpHarness": "Харнессы, на которые смотрит вызов инструмента, если сам их не назвал, например claude-code",
   "command.session": "Восстановить последний запрос сессии Claude Code, для /ctxray плагина",
   "option.session": "Сессия Claude Code, по её id",

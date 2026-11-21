@@ -462,7 +462,21 @@ export const en = {
   },
   "command.mcp": "Serve inspect, test, and diff to an agent over MCP, on stdin and stdout",
   "mcp.setup": "ctxray mcp is a server for your agent: it waits for one on stdin and stdout. Connect it once:",
-  "mcp.setupNext": "Your agent starts it from then on and gets the tools inspect, test, and diff.",
+  "mcp.setupNext":
+    "Your agent starts it from then on and gets the tools inspect, test, and diff. --project connects it in this project only.",
+  "mcp.serve": "Serve inspect, test, and diff over MCP on stdin and stdout: what `ctxray mcp` alone does",
+  "mcp.add":
+    "Connect ctxray to an agent: `add claude-code`, `add codex`, `add gemini-cli`, `add opencode`, `add cursor-cli`",
+  "option.mcpProject": "With add: write the project's config instead of yours",
+  "mcp.addWhat": "Name the agent to connect: ctxray mcp add <agent>, one of {agents}",
+  "mcp.already": "{agent} already has ctxray in {file}: nothing changed",
+  "mcp.written": "Added ctxray to {agent} in {file}",
+  "mcp.ran": "Connected ctxray to {agent}: {command}",
+  "mcp.noBinary":
+    "{binary} isn't on PATH: install {agent} and run this again, or connect ctxray to this project with --project",
+  "mcp.failed": "{command} failed: {output}",
+  "mcp.comments":
+    "{file} has comments that a rewrite would lose, so ctxray left it alone. Add this under “{key}” by hand: {entry}",
   "option.mcpHarness": "Harnesses a tool call looks at when it names none, like claude-code",
   "command.session": "Rebuild a Claude Code session's latest request, for the plugin's /ctxray",
   "option.session": "The Claude Code session, by its id",

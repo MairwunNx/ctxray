@@ -13,6 +13,7 @@ export {
   type SessionResult,
   startSession,
 } from "./capture/session.ts";
+export { parseUserMcp, userMcpFile } from "./capture/user-mcp.ts";
 export type { UserScope } from "./capture/user-scope.ts";
 export { filesOfRequest, readTranscript, type Transcript } from "./claude-code/transcript.ts";
 export type { Command, Instruction, Inventory, McpDeclaration, Problem, Severity, Skill } from "./inventory.ts";
