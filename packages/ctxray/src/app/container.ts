@@ -10,6 +10,7 @@ import {
   createHarnessInstallAction,
   createHarnessListAction,
   createHarnessPackAction,
+  createHarnessRemoveAction,
   createHarnessUpgradeAction,
 } from "#features/harness-install/index.ts";
 import { createInitAction } from "#features/init/index.ts";
@@ -55,6 +56,7 @@ export const createRunInjector = (
     .provideFactory("inspectAction", createInspectAction)
     .provideFactory("testRunAction", createTestRunAction)
     .provideFactory("harnessAddAction", createHarnessAddAction)
+    .provideFactory("harnessRemoveAction", createHarnessRemoveAction)
     .provideFactory("harnessInstallAction", createHarnessInstallAction)
     .provideFactory("harnessListAction", createHarnessListAction)
     .provideFactory("harnessPackAction", createHarnessPackAction)

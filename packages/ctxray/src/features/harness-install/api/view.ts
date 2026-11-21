@@ -3,6 +3,7 @@ import { columns, span, type View } from "#shared/render/index.ts";
 import type { LockChange } from "../add.action.ts";
 import type { InstallOutcome, InstallResult } from "../install.action.ts";
 import type { ListedHarness } from "../list.action.ts";
+import type { Unpinned } from "../remove.action.ts";
 import { bytes, lockedText, seconds } from "./format.ts";
 
 export const addView = (lockPath: string, changes: readonly LockChange[], t: Translate): View => [
@@ -83,6 +84,45 @@ export const listView = (lockPath: string, rows: readonly ListedHarness[], t: Tr
     ),
     [],
     [span(` ${lockPath}`, "muted")],
+  ];
+};
+
+type Removed = {
+  lockPath: string;
+  unpinned: readonly Unpinned[];
+  configured: readonly string[];
+  configFile: string | undefined;
+};
+
+// Each harness and whether ctxray.lock had it, then what remains to do by hand: the config and the cache.
+export const removeView = ({ lockPath, unpinned, configured, configFile }: Removed, t: Translate): View => {
+  const rows = columns(
+    unpinned.map(({ harness, locked }) =>
+      locked === undefined
+        ? [span("·", "muted"), span(harness, "strong"), span(""), span(t("harness.notPinned"), "muted")]
+        : [
+            span("−", "success"),
+            span(harness, "strong"),
+            span(lockedText(locked, t)),
+            span(t("harness.removed"), "muted"),
+          ],
+    ),
+    { indent: 1 },
+  );
+  const written = unpinned.some(({ locked }) => locked !== undefined);
+  return [
+    ...rows,
+    ...configured.map((harness) => [
+      span(" ! ", "warning"),
+      span(t("harness.stillConfigured", { harness, file: configFile ?? "ctxray.config.ts" }), "warning"),
+    ]),
+    [],
+    ...(written
+      ? [
+          [span(` ${t("harness.lockWritten", { file: lockPath })}`, "muted")],
+          [span(` ${t("harness.buildsStay")}`, "muted")],
+        ]
+      : []),
   ];
 };
 

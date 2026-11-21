@@ -1,5 +1,5 @@
 import type { CachedBuild } from "#entities/harness-cache/index.ts";
-import type { Translate } from "#shared/i18n/index.ts";
+import type { MessageKey, Translate } from "#shared/i18n/index.ts";
 import { columns, span, type View } from "#shared/render/index.ts";
 
 const megabytes = (bytes: number, t: Translate) =>
@@ -29,12 +29,26 @@ export const listView = (dirs: readonly string[], builds: readonly CachedBuild[]
   ];
 };
 
-export const prunedView = (removed: readonly CachedBuild[], t: Translate): View => {
-  if (removed.length === 0) return [[span(` ${t("cache.nothingToPrune")}`, "muted")]];
+export const prunedView = (
+  removed: readonly CachedBuild[],
+  t: Translate,
+  none: MessageKey = "cache.nothingToPrune",
+): View => {
+  if (removed.length === 0) return [[span(` ${t(none)}`, "muted")]];
   const freed = removed.reduce((sum, build) => sum + build.size, 0);
   return [
     ...removed.map((build) => [span(" − ", "muted"), span(`${build.harness} ${build.version} ${build.platform}`)]),
     [],
     [span(` ${t("cache.pruned", { count: removed.length, size: megabytes(freed, t) })}`)],
+  ];
+};
+
+export const clearAskView = (builds: readonly CachedBuild[], t: Translate): View => {
+  if (builds.length === 0) return [[span(` ${t("cache.empty")}`, "muted")]];
+  const size = builds.reduce((sum, build) => sum + build.size, 0);
+  return [
+    ...builds.map((build) => [span(" − ", "muted"), span(`${build.harness} ${build.version} ${build.platform}`)]),
+    [],
+    [span(` ${t("cache.clearAsk", { count: builds.length, size: megabytes(size, t) })}`, "warning")],
   ];
 };

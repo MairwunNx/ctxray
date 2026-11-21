@@ -23,6 +23,7 @@ L1 now catches the files a harness silently skips, and the secrets nobody meant 
 - ⚡ **Large repositories open faster.** ctxray asks git for untracked files once and resolves symlinks only for agent files: `inspect` on an 87,000-file monorepo takes 5 s instead of 8, and a quarter of the CPU time.
 - 📁 **`--report-dir` takes an absolute path.** `ctxray test --report-dir /tmp/out` writes to `/tmp/out`, not to `tmp/out` inside the project.
 - ❓ **`ctxray help`.** `ctxray help` prints the list of commands, and `ctxray help diff` the page of one, the same as `--help`. It used to say “Unknown command”.
+- 🗂️ **`harness remove` and `cache clear`.** `ctxray harness remove codex` unpins a harness from `ctxray.lock` and warns when the config still names it. `ctxray cache clear` lists every build in the cache, pinned ones too, and `--yes` removes them.
 - 🧹 **No leftovers after a capture.** ctxray ends the harness's whole process group, so Cursor CLI's helpers no longer pile up over hundreds of sessions.
 
 ## 0.1.0

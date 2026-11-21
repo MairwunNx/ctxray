@@ -86,7 +86,9 @@ test("pack, then install from the archive with the network off", async () => {
 
 test.each<[string[], number, string]>([
   [["harness"], 2, "`ctxray harness` needs a subcommand"],
-  [["harness", "remove"], 2, "Unknown subcommand “remove” of `ctxray harness`"],
+  [["harness", "drop"], 2, "Unknown subcommand “drop” of `ctxray harness`"],
+  [["harness", "remove"], 2, "Name the harnesses to remove"],
+  [["harness", "remove", "cursor"], 2, "Unknown harness “cursor”"],
   [["harness", "add"], 2, "Name the harnesses to add"],
   [["harness", "add", "cursor"], 2, "Unknown harness “cursor”"],
   [["harness", "pack"], 4, "There's no"],
@@ -111,6 +113,37 @@ test("the cache: its folder for CI, its builds, and a prune that keeps what the 
   expect(pruned.stdout).toContain("− codex 0.168.0");
   expect(pruned.stdout).toContain("Removed 1 build");
   expect((await runIn(dir, ["cache", "prune", "--older-than", "soon"], env)).code).toBe(2);
+});
+
+test("remove unpins, keeps the rest, and names the config that still asks for it", async () => {
+  const { dir, env } = project(`{ "harnesses": { "codex": {} } }`);
+  await runIn(dir, ["harness", "add", "codex@0.169.0", "claude-code"], env);
+  const removed = await runIn(dir, ["harness", "remove", "claude-code", "codex", "opencode"], env);
+  expect(removed.code).toBe(0);
+  expect(removed.stdout).toMatch(/− {2}claude-code {2}2\.1\.311 \(stable\) {2}removed/);
+  expect(removed.stdout).toMatch(/· {2}opencode {2,}not in ctxray\.lock/);
+  expect(removed.stdout).toContain("! ctxray.config.jsonc still names codex");
+  expect(await Bun.file(join(dir, "ctxray.lock")).json()).toEqual({ lockfileVersion: 1, harnesses: {} });
+  const again = await runIn(dir, ["harness", "remove", "codex", "--lang", "ru"], env);
+  expect(again.stdout).toMatch(/· {2}codex {2,}нет в ctxray\.lock/);
+  expect(again.stdout).not.toContain("Записан");
+});
+
+test("cache clear shows what would go, and removes pinned builds too only with --yes", async () => {
+  const { dir, env } = project(`{ "harnesses": { "codex": {} } }`);
+  expect(await runIn(dir, ["cache", "clear"], env)).toMatchObject({
+    code: 0,
+    stdout: expect.stringContaining("No harnesses"),
+  });
+  await runIn(dir, ["harness", "add", "codex@0.169.0"], env);
+  await runIn(dir, ["harness", "install"], env);
+  const asked = await runIn(dir, ["cache", "clear"], env);
+  expect(asked.code).toBe(2);
+  expect(asked.stdout).toContain("This removes 1 build");
+  expect((await runIn(dir, ["cache", "ls"], env)).stdout).toContain("1 build");
+  const cleared = await runIn(dir, ["cache", "clear", "-y"], env);
+  expect([cleared.code, cleared.stdout]).toEqual([0, expect.stringContaining("Removed 1 build")]);
+  expect((await runIn(dir, ["cache", "ls"], env)).stdout).toContain("No harnesses in the cache yet");
 });
 
 test("doctor finds the pinned harnesses and the registry", async () => {

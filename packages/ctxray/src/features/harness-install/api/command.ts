@@ -11,9 +11,10 @@ import type { HarnessInstallAction } from "../install.action.ts";
 import { harnessIdOf } from "../lib/context.ts";
 import type { HarnessListAction } from "../list.action.ts";
 import type { HarnessPackAction } from "../pack.action.ts";
+import type { HarnessRemoveAction } from "../remove.action.ts";
 import type { HarnessUpgradeAction } from "../upgrade.action.ts";
 import { upgradesView } from "./upgrade-view.ts";
-import { addView, installView, listView, packView } from "./view.ts";
+import { addView, installView, listView, packView, removeView } from "./view.ts";
 
 export const harnessSpec: CommandSpec = {
   name: "harness",
@@ -23,6 +24,7 @@ export const harnessSpec: CommandSpec = {
     install: "harness.install",
     list: "harness.list",
     pack: "harness.pack",
+    remove: "harness.remove",
     upgrade: "harness.upgrade",
   },
   options: {
@@ -52,6 +54,7 @@ export const createHarnessCommand =
     listed: HarnessListAction,
     pack: HarnessPackAction,
     upgrade: HarnessUpgradeAction,
+    remove: HarnessRemoveAction,
     t: Translate,
     renderer: Renderer,
     cwd: string,
@@ -70,6 +73,12 @@ export const createHarnessCommand =
         if (args.length === 0) return fail("harness.addWhat");
         const { lockPath, changes } = await add(args);
         renderer.print(addView(relative(cwd, lockPath), changes, t));
+        return ExitCode.ok;
+      }
+      if (sub === "remove") {
+        if (args.length === 0) return fail("harness.removeWhat");
+        const result = await remove(args);
+        renderer.print(removeView({ ...result, lockPath: relative(cwd, result.lockPath) }, t));
         return ExitCode.ok;
       }
       if (sub === "install") {
@@ -127,6 +136,7 @@ createHarnessCommand.inject = [
   "harnessListAction",
   "harnessPackAction",
   "harnessUpgradeAction",
+  "harnessRemoveAction",
   "t",
   "renderer",
   "cwd",

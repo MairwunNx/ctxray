@@ -4,15 +4,16 @@ import { ExitCode } from "#shared/contract/index.ts";
 import type { Translate } from "#shared/i18n/index.ts";
 import { type Renderer, span } from "#shared/render/index.ts";
 import type { CacheAction } from "../cache.action.ts";
-import { listView, prunedView } from "./view.ts";
+import { clearAskView, listView, prunedView } from "./view.ts";
 
 export const cacheSpec: CommandSpec = {
   name: "cache",
   summary: "command.cache",
-  subcommands: { dir: "cache.dir", ls: "cache.ls", prune: "cache.prune" },
+  subcommands: { dir: "cache.dir", ls: "cache.ls", prune: "cache.prune", clear: "cache.clear" },
   options: {
     "older-than": { type: "string", summary: "option.olderThan", value: "days" },
     all: { type: "boolean", summary: "option.pruneAll" },
+    yes: { type: "boolean", short: "y", summary: "option.yes" },
     config: CONFIG_OPTION,
   },
   usesConfig: true,
@@ -31,6 +32,16 @@ export const createCacheCommand =
       const dirs = await cache.dirs();
       renderer.print(listView(dirs.all, await cache.list(), t));
       return ExitCode.ok;
+    }
+    if (sub === "clear") {
+      // Without --yes nothing goes: the list of what would, and the command that removes it.
+      if (values["yes"] === true) {
+        renderer.print(prunedView(await cache.clear(), t, "cache.empty"));
+        return ExitCode.ok;
+      }
+      const builds = (await cache.list()).filter((build) => !build.shared);
+      renderer.print(clearAskView(builds, t));
+      return builds.length === 0 ? ExitCode.ok : ExitCode.usage;
     }
     const raw = values["older-than"];
     const days = values["all"] === true ? 0 : typeof raw === "string" ? Number(raw) : 30;
