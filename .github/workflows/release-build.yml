@@ -91,6 +91,8 @@ jobs:
         with:
           name: release-assets
           path: assets
+      # The system picks the port: Windows reserves random port ranges (Hyper-V, WinNAT), and a fixed port
+      # sometimes falls into one, so the server never listens. The step waits until it does.
       - name: Serve the release on localhost
         shell: bash
         run: |
@@ -98,19 +100,27 @@ jobs:
           cp -R assets mirror/latest/download
           cp -R assets "mirror/download/v$VERSION"
           node -e '
-            const { createReadStream } = require("node:fs");
-            require("node:http").createServer((request, response) => {
+            const { createReadStream, renameSync, writeFileSync } = require("node:fs");
+            const server = require("node:http").createServer((request, response) => {
               createReadStream("mirror" + decodeURIComponent(request.url))
                 .on("error", () => { response.statusCode = 404; response.end(); })
                 .pipe(response);
-            }).listen(8765);
-          ' &
-          sleep 2
+            });
+            server.listen(0, "127.0.0.1", () => {
+              writeFileSync("mirror.port.tmp", String(server.address().port));
+              renameSync("mirror.port.tmp", "mirror.port");
+            });
+          ' > mirror.log 2>&1 &
+          for _ in $(seq 30); do [ -s mirror.port ] && break; sleep 1; done
+          [ -s mirror.port ] || { cat mirror.log; exit 1; }
+          url="http://127.0.0.1:$(cat mirror.port)"
+          curl -fsS -o /dev/null "$url/download/v$VERSION/SHA256SUMS"
+          echo "MIRROR=$url" >> "$GITHUB_ENV"
       - if: matrix.mode == 'action'
         uses: ./packaging/action
         with:
           version: ${{ env.VERSION }}
-          download-base: http://127.0.0.1:8765
+          download-base: ${{ env.MIRROR }}
           args: inspect
           working-directory: packages/ctxray/fixtures/static/payments
           cache: "false"
@@ -121,7 +131,7 @@ jobs:
       - if: matrix.mode == 'alpine'
         run: |
           docker run --rm --network host -v "$PWD/packaging/install.sh:/install.sh:ro" \
-            -e CTXRAY_DOWNLOAD_BASE=http://127.0.0.1:8765 alpine:3.22 \
+            -e CTXRAY_DOWNLOAD_BASE="$MIRROR" alpine:3.22 \
             sh -c 'apk add -q libstdc++ libgcc && sh /install.sh && ~/.local/bin/ctxray --version' | tee install.log
           grep -qF "ctxray $VERSION" install.log
       # install.sh picks the baseline build only without AVX2, which runners have: the archive alone, then.
