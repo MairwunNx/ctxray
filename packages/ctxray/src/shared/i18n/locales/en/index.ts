@@ -617,6 +617,17 @@ export const en = {
   "doctor.errors": { one: "{count} error", other: "{count} errors" },
   "doctor.warnings": { one: "{count} warning", other: "{count} warnings" },
   "doctor.healthy": "Everything L4 and up need is in place",
+  "doctor.titleFix": "Fixed by --fix",
+  "doctor.fixedCache": "Created the cache folder {dir}",
+  "doctor.fixedInstall": "Installed {harness} {version} from ctxray.lock",
+  "doctor.fixFailed": "Couldn't install {harness} {version}: {message}",
+  "doctor.nothingFixed": "Nothing to fix: the cache folder exists and every harness ctxray.lock pins is installed",
+  "doctor.leftForYou": {
+    one: "--fix leaves {count} finding above to you: ctxray doesn't change git, the network, proxies, CA certificates, Node, or keys",
+    other:
+      "--fix leaves {count} findings above to you: ctxray doesn't change git, the network, proxies, CA certificates, Node, or keys",
+  },
+  "option.fix": "Fix what's safe: create the cache folder and install the harnesses ctxray.lock pins",
   "harness.upgrade": "Move a pinned harness to its newest version and show how its loadout changes",
   "option.dryRun": "Show the upgrade without writing ctxray.lock",
   "harness.upgradeWhat": "Name the harnesses to upgrade, like `ctxray harness upgrade codex`",

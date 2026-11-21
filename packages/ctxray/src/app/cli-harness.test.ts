@@ -146,6 +146,25 @@ test("cache clear shows what would go, and removes pinned builds too only with -
   expect((await runIn(dir, ["cache", "ls"], env)).stdout).toContain("No harnesses in the cache yet");
 });
 
+test("doctor --fix creates the cache, installs what the lockfile pins, and says what it left", async () => {
+  const { dir, env } = project(`{ "harnesses": { "codex": {} } }`);
+  await runIn(dir, ["harness", "add", "codex@0.169.0"], env);
+  const fixedEnv = { ...env, CTXRAY_CACHE_DIR: join(dir, "fresh-cache") };
+  const fixed = await runIn(dir, ["doctor", "--fix"], fixedEnv);
+  expect(fixed.stdout).toContain(`✓ Created the cache folder ${fixedEnv.CTXRAY_CACHE_DIR}`);
+  expect(fixed.stdout).toContain("✓ Installed codex 0.169.0 from ctxray.lock");
+  expect(fixed.stdout).toContain("✓ codex 0.169.0 installed");
+  const again = await runIn(dir, ["doctor", "--fix", "--lang", "ru"], fixedEnv);
+  expect(again.stdout).toContain("Исправлять нечего");
+  const offline = await runIn(dir, ["doctor", "--fix"], {
+    ...env,
+    CTXRAY_OFFLINE: "1",
+    CTXRAY_CACHE_DIR: join(dir, "c2"),
+  });
+  expect(offline.code).toBe(4);
+  expect(offline.stdout).toMatch(/Fixed by --fix\n {3}✓ Created the cache folder .*\n {3}✗ Offline mode/);
+});
+
 test("doctor finds the pinned harnesses and the registry", async () => {
   const { dir, env } = project(`{ "harnesses": { "codex": {} } }`);
   await runIn(dir, ["harness", "add", "codex@0.169.0"], env);

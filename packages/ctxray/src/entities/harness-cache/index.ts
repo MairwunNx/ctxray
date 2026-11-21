@@ -1,4 +1,4 @@
-export { type CacheDirs, defaultCacheDir, resolveCacheDirs } from "./dirs.ts";
+export { type CacheDirs, cacheCandidates, defaultCacheDir, resolveCacheDirs } from "./dirs.ts";
 export { ProvisionFailure } from "./failure.ts";
 export {
   createHarnessCache,

@@ -30,13 +30,17 @@ const writable = async (dir: string) => {
 
 // A relative folder is taken from where ctxray starts: harnesses launch elsewhere and need absolute paths.
 // The first directory ctxray can write to takes the installs, every one is searched.
-export const resolveCacheDirs = async (env: Env): Promise<CacheDirs> => {
+export const cacheCandidates = (env: Env): string[] => {
   const listed = (present(env["CTXRAY_CACHE_DIRS"]) ?? "")
     .split(delimiter)
     .map((dir) => dir.trim())
     .filter((dir) => dir !== "")
     .map((dir) => resolve(dir));
-  const all = listed.length > 0 ? listed : [defaultCacheDir(env)];
+  return listed.length > 0 ? listed : [defaultCacheDir(env)];
+};
+
+export const resolveCacheDirs = async (env: Env): Promise<CacheDirs> => {
+  const all = cacheCandidates(env);
   for (const dir of all) if (await writable(dir)) return { write: dir, all };
   return { write: undefined, all };
 };
