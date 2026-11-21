@@ -26,6 +26,7 @@ export const ru: Catalog = {
   "command.inspect": "Показать, что загружает каждый ИИ-харнесс и сколько это стоит в токенах",
   "command.init": "Создать ctxray.config.ts и пример теста",
   "command.config": "Показать итоговый конфиг с учётом extends и значений по умолчанию",
+  "command.help": "Показать справку по ctxray или по одной команде: ctxray help inspect",
   "option.lang": "Язык интерфейса: {langs}",
   "option.ci": "Работать как в CI, с построчным выводом",
   "option.plain": "Печатать простые строки вместо живого вывода",

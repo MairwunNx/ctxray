@@ -22,6 +22,7 @@ export const en = {
   "command.inspect": "Show what each harness loads here and how many tokens it costs",
   "command.init": "Create ctxray.config.ts and an example test",
   "command.config": "Show the config after extends and defaults",
+  "command.help": "Show help for ctxray or for one command: ctxray help inspect",
   "option.lang": "Interface language: {langs}",
   "option.ci": "Run as in CI, with plain line output",
   "option.plain": "Print plain lines instead of the live view",

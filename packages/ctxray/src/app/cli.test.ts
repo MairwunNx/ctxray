@@ -38,7 +38,32 @@ describe.each([
 });
 
 test.each([
+  [["help"], ["--help"]],
+  [
+    ["help", "init"],
+    ["init", "--help"],
+  ],
+  [
+    ["help", "harness"],
+    ["harness", "--help"],
+  ],
+  [
+    ["--lang", "ru", "help", "diff"],
+    ["diff", "--help", "--lang", "ru"],
+  ],
+])("%p prints what %p does", async (args, same) => {
+  const [asked, flagged] = await Promise.all([run(args), run(same)]);
+  expect(asked.code).toBe(0);
+  expect(asked).toEqual(flagged);
+});
+
+test("help lists itself among the commands", async () => {
+  expect((await run(["help"])).stdout).toMatch(/^ {3}help {2,}/m);
+});
+
+test.each([
   [["frobnicate"], "Unknown command “frobnicate”"],
+  [["help", "frobnicate"], "Unknown command “frobnicate”"],
   [["--frobnicate"], "Unknown option --frobnicate"],
   [["--lang"], "Option --lang needs a value"],
   [["--ci=yes"], "Option --ci takes no value"],

@@ -22,6 +22,7 @@ L1 now catches the files a harness silently skips, and the secrets nobody meant 
 - 🚦 **One harness session at a time.** L6 and L7 used to run four sessions of a harness side by side, which OpenCode or Cursor CLI turned into 2.5 GB. Now they run one after another, so 1 GB holds any run. `concurrency` in the config, `--concurrency`, or `CTXRAY_CONCURRENCY` lets more go at once, and a harness's own `concurrency` caps it lower.
 - ⚡ **Large repositories open faster.** ctxray asks git for untracked files once and resolves symlinks only for agent files: `inspect` on an 87,000-file monorepo takes 5 s instead of 8, and a quarter of the CPU time.
 - 📁 **`--report-dir` takes an absolute path.** `ctxray test --report-dir /tmp/out` writes to `/tmp/out`, not to `tmp/out` inside the project.
+- ❓ **`ctxray help`.** `ctxray help` prints the list of commands, and `ctxray help diff` the page of one, the same as `--help`. It used to say “Unknown command”.
 - 🧹 **No leftovers after a capture.** ctxray ends the harness's whole process group, so Cursor CLI's helpers no longer pile up over hundreds of sessions.
 
 ## 0.1.0

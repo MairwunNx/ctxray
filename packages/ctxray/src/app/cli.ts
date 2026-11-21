@@ -1,5 +1,5 @@
 import { DEFAULT_CONFIG } from "#entities/user-config/index.ts";
-import { type OptionSpecs, type ParseError, parseFlags } from "#shared/cli/index.ts";
+import { type CommandSpec, type OptionSpecs, type ParseError, parseFlags } from "#shared/cli/index.ts";
 import { ExitCode } from "#shared/contract/index.ts";
 import { CATALOGS, createTranslator, DEFAULT_LANG, type Translate } from "#shared/i18n/index.ts";
 import { type Env, isOn } from "#shared/infra/index.ts";
@@ -20,6 +20,9 @@ export type Io = {
 
 // Flags of every command, so a command's flag before its name (`ctxray --force init`) still parses.
 const ANY_OPTIONS: OptionSpecs = Object.assign({}, GLOBAL_OPTIONS, ...COMMANDS.map((command) => command.spec.options));
+
+// Listed with the commands, handled before them.
+const HELP_SPEC: CommandSpec = { name: "help", summary: "command.help", options: {} };
 
 const parseErrorText = (t: Translate, error: ParseError) => t(`error.${error.kind}`, { name: error.option });
 
@@ -46,7 +49,10 @@ export const runCli = async (args: readonly string[], io: Io, container: Contain
   if (settings.unsupportedLang) say(t("lang.unsupported", { lang: settings.unsupportedLang }));
   if (!probe.ok) return usageError(parseErrorText(t, probe.error));
 
-  const [name, ...rest] = probe.positionals;
+  // `ctxray help init` is `ctxray init --help`, `ctxray help` the overview.
+  const helpCommand = probe.positionals[0] === HELP_SPEC.name;
+  const wantsHelp = helpCommand || values["help"] === true;
+  const [name, ...rest] = helpCommand ? probe.positionals.slice(1) : probe.positionals;
   const command = COMMANDS.find((candidate) => candidate.spec.name === name);
   if (name !== undefined && !command) return usageError(t("error.unknownCommand", { name }));
   const parsed = parseFlags(args, { ...GLOBAL_OPTIONS, ...command?.spec.options });
@@ -54,7 +60,7 @@ export const runCli = async (args: readonly string[], io: Io, container: Contain
   const subcommands = command?.spec.subcommands;
   const [sub] = rest;
   if (!subcommands && sub !== undefined) return usageError(t("error.unexpectedArgument", { value: sub }));
-  if (subcommands && values["help"] !== true) {
+  if (subcommands && !wantsHelp) {
     if (sub === undefined && command.spec.defaultSubcommand === undefined)
       return usageError(t("error.noSubcommand", { command: command.spec.name }));
     if (sub !== undefined && !(sub in subcommands))
@@ -67,7 +73,7 @@ export const runCli = async (args: readonly string[], io: Io, container: Contain
 
   // The config can name the language, so the CLI reads it before it renders anything.
   let config = DEFAULT_CONFIG;
-  if (command?.spec.usesConfig && values["help"] !== true) {
+  if (command?.spec.usesConfig && !wantsHelp) {
     const loaded = await container.resolve("configLoader")(text(parsed.values["config"]), settings.lang);
     if (!loaded.ok) {
       say(t("config.failed"));
@@ -83,7 +89,7 @@ export const runCli = async (args: readonly string[], io: Io, container: Contain
     t = translator(settings.lang);
   }
 
-  const specs = COMMANDS.map((candidate) => candidate.spec).filter((spec) => !spec.hidden);
+  const specs = [...COMMANDS.map((candidate) => candidate.spec).filter((spec) => !spec.hidden), HELP_SPEC];
   // Disposed in reverse on every way out: the run's injector first, then the renderer it prints through.
   await using stack = new AsyncDisposableStack();
   const renderer = stack.adopt(await createRenderer(settings.renderer, io.stdout), (opened) => opened.close());
@@ -91,7 +97,7 @@ export const runCli = async (args: readonly string[], io: Io, container: Contain
     injector.dispose(),
   );
   try {
-    if (!command || values["help"] === true) {
+    if (!command || wantsHelp) {
       renderer.print(helpView(t, specs, GLOBAL_OPTIONS, command?.spec));
       return ExitCode.ok;
     }
