@@ -417,7 +417,7 @@ td {
 .turn {
   font-weight: 600;
 }
-.added {
+code.added {
   color: var(--ink-good);
   display: inline-block;
   margin: 2px 10px 2px 0;
