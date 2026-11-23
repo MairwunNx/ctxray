@@ -45,8 +45,8 @@ describe.each<[HarnessId, string[], string[], string[]]>([
     [
       "app/src/main/kotlin/payments/CLAUDE.md",
       "app/src/main/kotlin/payments/AGENTS.md",
-      ".claude/rules/payments.md",
       ".claude/rules/kotlin.md",
+      ".claude/rules/payments.md",
     ],
   ],
   ["codex", ["AGENTS.md", "app/AGENTS.md"], ["android-build", "payouts", "refunds", "release"], []],
