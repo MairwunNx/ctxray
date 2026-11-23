@@ -1,5 +1,5 @@
 {
-  "version": "1.19.5",
+  "version": "1.19.6",
   "model": "claude-sonnet-5-5",
   "read": "app/src/main/kotlin/payments/Charge.kt",
   "servers": {
@@ -21,7 +21,9 @@
                 "description": "JQL query"
               }
             },
-            "required": ["jql"]
+            "required": [
+              "jql"
+            ]
           }
         }
       ],
@@ -53,7 +55,11 @@
                 "description": "Markdown body"
               }
             },
-            "required": ["repo", "title", "body"]
+            "required": [
+              "repo",
+              "title",
+              "body"
+            ]
           }
         },
         {
@@ -67,7 +73,9 @@
                 "description": "owner/name"
               }
             },
-            "required": ["repo"]
+            "required": [
+              "repo"
+            ]
           }
         }
       ],

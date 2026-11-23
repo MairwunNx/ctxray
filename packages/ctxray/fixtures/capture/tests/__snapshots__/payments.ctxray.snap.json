@@ -197,7 +197,7 @@
     },
     "commands": []
   },
-  "payments › context budget › opencode@1.19.5 claude-sonnet-5-5": {
+  "payments › context budget › opencode@1.19.6 claude-sonnet-5-5": {
     "system": [
       "prompt",
       "tone-and-style",
