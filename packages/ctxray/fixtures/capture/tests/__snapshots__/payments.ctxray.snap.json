@@ -67,7 +67,7 @@
       "changelog"
     ]
   },
-  "payments › context budget › codex@0.169.0 gpt-5.5": {
+  "payments › context budget › codex@0.171.0 gpt-5.5": {
     "system": [
       "prompt",
       "skills-instructions",
