@@ -156,7 +156,7 @@
     },
     "commands": []
   },
-  "payments › context budget › gemini-cli@0.68.0 gemini-2.5-flash": {
+  "payments › context budget › gemini-cli@0.70.0 gemini-2.5-flash": {
     "system": [
       "prompt",
       "core-mandates",
