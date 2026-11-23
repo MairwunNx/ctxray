@@ -82,23 +82,23 @@
     "cursor-cli": {
       "source": "registry",
       "range": "latest",
-      "version": "2026.11.13-eacade1",
+      "version": "2026.11.22-e9042b2",
       "platforms": {
         "darwin-arm64": {
-          "package": "https://downloads.cursor.com/lab/2026.11.13-eacade1/darwin/arm64/agent-cli-local-package.tar.gz",
-          "integrity": "sha256-6UW+AGUVsPO5qgbC0GuXJ74THXRxmDzSW5/XNWqJy54="
+          "package": "https://downloads.cursor.com/lab/2026.11.22-e9042b2/darwin/arm64/agent-cli-local-package.tar.gz",
+          "integrity": "sha256-QJK8ml6A8qapg9CnO8WTzI7WPGSbXEk5xP17BOzvX/I="
         },
         "darwin-x64": {
-          "package": "https://downloads.cursor.com/lab/2026.11.13-eacade1/darwin/x64/agent-cli-local-package.tar.gz",
-          "integrity": "sha256-8KOlat3kByZxwjH5Qt7FmRiSzpuQCSsCKQZmOiAfxP8="
+          "package": "https://downloads.cursor.com/lab/2026.11.22-e9042b2/darwin/x64/agent-cli-local-package.tar.gz",
+          "integrity": "sha256-57EutJZIrM2tnLt4PJ1BH4xNaSdD0+Q1INnZRu84ovE="
         },
         "linux-x64-glibc": {
-          "package": "https://downloads.cursor.com/lab/2026.11.13-eacade1/linux/x64/agent-cli-local-package.tar.gz",
-          "integrity": "sha256-CcTBdzgkM8KjUlcTSSw5t4KkXZ6Z0DT37anKNllw6hg="
+          "package": "https://downloads.cursor.com/lab/2026.11.22-e9042b2/linux/x64/agent-cli-local-package.tar.gz",
+          "integrity": "sha256-BLr96EwGl/SDltZx/uXaAJCyG4OOYUN20kRi3FmHhTQ="
         },
         "linux-arm64-glibc": {
-          "package": "https://downloads.cursor.com/lab/2026.11.13-eacade1/linux/arm64/agent-cli-local-package.tar.gz",
-          "integrity": "sha256-R87BPRqu/wa58n4jQA64hBy/PkSEy0zN83kVpCGmxIY="
+          "package": "https://downloads.cursor.com/lab/2026.11.22-e9042b2/linux/arm64/agent-cli-local-package.tar.gz",
+          "integrity": "sha256-8cCxJq7HyJLx3fNyudMlewS1Cs0e21h6xB5Rn06PFUQ="
         }
       }
     },

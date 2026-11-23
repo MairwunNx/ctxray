@@ -1,11 +1,11 @@
 {
   "seq": 3,
-  "session": "b5017751",
+  "session": "2564ab09",
   "protocol": "chat",
   "path": "/v1/chat/completions",
   "position": 1,
   "retries": 0,
-  "userAgent": "Cursor-CLI/2026.11.13-eacade1 (darwin arm64)",
+  "userAgent": "Cursor-CLI/2026.11.22-e9042b2 (linux x64)",
   "headers": {},
   "body": {
     "model": "claude-sonnet-5-5",
@@ -17,7 +17,7 @@
       },
       {
         "role": "user",
-        "content": "<user_info>\nOS Version: darwin 27.2.0\n\nShell: zsh\n\nWorkspace Path: <work>/app\n\nIs directory a git repo: Unknown (git repository detection still warming)\n\nToday's date: Saturday Nov 14, 2026\n\nTerminals folder: <home>/.cursor-data/projects/<work-slug>/terminals\n</user_info>\n\n<agent_transcripts>\nAgent transcripts (past chats) live in <home>/.cursor-data/projects/<work-slug>/agent-transcripts. They have names like <uuid>.jsonl, Don't cite the file directly to the user.\n</agent_transcripts>\n\n<rules>\nThe rules section has a number of possible rules/memories/context that you should consider. In each subsection, we provide instructions about what information the subsection contains and how you should consider/follow the contents of the subsection.\n\n\n<always_applied_workspace_rules description=\"These are workspace-level rules that the agent must always follow.\">\n<always_applied_workspace_rule name=\"<work>/app/CLAUDE.md\">@AGENTS.md\n\nUse the Android emulator from the Makefile.\n\n⟦ctx:app/CLAUDE.md⟧</always_applied_workspace_rule>\n\n<always_applied_workspace_rule name=\"<work>/app/AGENTS.md\"># App module\n\nKeep Android code in Kotlin.\n\n⟦ctx:app/AGENTS.md⟧</always_applied_workspace_rule>\n\n<always_applied_workspace_rule name=\"<work>/CLAUDE.md\"># Payments app\n\n@AGENTS.md\n\n## Claude Code\n\nRun `./gradlew test` before you commit. The [architecture notes](docs/architecture.md) list the modules.\n\n⟦ctx:CLAUDE.md⟧</always_applied_workspace_rule>\n\n<always_applied_workspace_rule name=\"<work>/AGENTS.md\"># Payments app\n\nBuild with Gradle. Never log card numbers.\n\n⟦ctx:AGENTS.md⟧</always_applied_workspace_rule>\n</always_applied_workspace_rules>\n</rules>\n\n<agent_skills>\nWhen users ask you to perform tasks, check if any of the available skills below can help complete the task more effectively. Skills provide specialized capabilities and domain knowledge. To use a skill, read the skill file at the provided absolute path using the Read tool, then follow the instructions within. When a skill is relevant, read and follow it IMMEDIATELY as your first action. NEVER just announce or mention a skill without actually reading and following it. Only use skills listed below.\n\n\n<available_skills description=\"Skills the agent can use. Use the Read tool with the provided absolute path to fetch full contents.\">\n<agent_skill fullPath=\"<work>/app/.claude/skills/android-build/SKILL.md\">Build and install the debug APK.</agent_skill>\n</available_skills>\n</agent_skills>\n\n<mcp_server_catalog>\nThese were the available MCP servers and tools when this conversation started. Tool availability may have changed since then, so use `GetMcpTools` to check current state before calling `CallMcpTool`.\n\n<mcp_meta_tool_servers>\n<mcp_meta_tool_server name=\"github\" tools=\"create_issue, list_pulls\" serverUseInstructions=\"Use the github tools for issues and pull requests of the payments repositories.\" />\n<mcp_meta_tool_server name=\"jira\" tools=\"search_issues\" serverUseInstructions=\"Use the jira tools to look up tickets of the PAY project.\" />\n</mcp_meta_tool_servers>\n</mcp_server_catalog>"
+        "content": "<user_info>\nOS Version: linux 7.0.0-1020-azure\n\nShell: bash\n\nWorkspace Path: <work>/app\n\nIs directory a git repo: Yes, at <work>\n\nToday's date: Monday Nov 23, 2026\n\nTerminals folder: <home>/.cursor-data/projects/<work-slug>/terminals\n</user_info>\n\n<git_status>\nThis is the git status at the start of the conversation. Note that this status is a snapshot in time, and will not update during the conversation.\n\n\nGit repo: <work>\n\n```\n## master\n```\n</git_status>\n\n<agent_transcripts>\nAgent transcripts (past chats) live in <home>/.cursor-data/projects/<work-slug>/agent-transcripts. They have names like <uuid>.jsonl, Don't cite the file directly to the user.\n</agent_transcripts>\n\n<rules>\nThe rules section has a number of possible rules/memories/context that you should consider. In each subsection, we provide instructions about what information the subsection contains and how you should consider/follow the contents of the subsection.\n\n\n<always_applied_workspace_rules description=\"These are workspace-level rules that the agent must always follow.\">\n<always_applied_workspace_rule name=\"<work>/app/CLAUDE.md\">@AGENTS.md\n\nUse the Android emulator from the Makefile.\n\n⟦ctx:app/CLAUDE.md⟧</always_applied_workspace_rule>\n\n<always_applied_workspace_rule name=\"<work>/app/AGENTS.md\"># App module\n\nKeep Android code in Kotlin.\n\n⟦ctx:app/AGENTS.md⟧</always_applied_workspace_rule>\n\n<always_applied_workspace_rule name=\"<work>/CLAUDE.md\"># Payments app\n\n@AGENTS.md\n\n## Claude Code\n\nRun `./gradlew test` before you commit. The [architecture notes](docs/architecture.md) list the modules.\n\n⟦ctx:CLAUDE.md⟧</always_applied_workspace_rule>\n\n<always_applied_workspace_rule name=\"<work>/AGENTS.md\"># Payments app\n\nBuild with Gradle. Never log card numbers.\n\n⟦ctx:AGENTS.md⟧</always_applied_workspace_rule>\n</always_applied_workspace_rules>\n</rules>\n\n<agent_skills>\nWhen users ask you to perform tasks, check if any of the available skills below can help complete the task more effectively. Skills provide specialized capabilities and domain knowledge. To use a skill, read the skill file at the provided absolute path using the Read tool, then follow the instructions within. When a skill is relevant, read and follow it IMMEDIATELY as your first action. NEVER just announce or mention a skill without actually reading and following it. Only use skills listed below.\n\n\n<available_skills description=\"Skills the agent can use. Use the Read tool with the provided absolute path to fetch full contents.\">\n<agent_skill fullPath=\"<work>/app/.claude/skills/android-build/SKILL.md\">Build and install the debug APK.</agent_skill>\n</available_skills>\n</agent_skills>\n\n<mcp_server_catalog>\nThese were the available MCP servers and tools when this conversation started. Tool availability may have changed since then, so use `GetMcpTools` to check current state before calling `CallMcpTool`.\n\n<mcp_meta_tool_servers>\n<mcp_meta_tool_server name=\"jira\" tools=\"search_issues\" serverUseInstructions=\"Use the jira tools to look up tickets of the PAY project.\" />\n<mcp_meta_tool_server name=\"github\" tools=\"create_issue, list_pulls\" serverUseInstructions=\"Use the github tools for issues and pull requests of the payments repositories.\" />\n</mcp_meta_tool_servers>\n</mcp_server_catalog>"
       },
       {
         "role": "user",
@@ -28,7 +28,7 @@
         "content": "",
         "tool_calls": [
           {
-            "id": "call_fef5ce3dace84dbb8e576e67",
+            "id": "call_544d10bce3ab4f6d8a490939",
             "type": "function",
             "function": {
               "name": "Read",
@@ -39,7 +39,7 @@
       },
       {
         "role": "tool",
-        "tool_call_id": "call_fef5ce3dace84dbb8e576e67",
+        "tool_call_id": "call_544d10bce3ab4f6d8a490939",
         "content": "     1|package payments\n     2|\n     3|class Charge(val amount: Long)\n     4|\n\nThe following cursor rule files are relevant to the files you just read:\n\n- <work>/app/src/main/kotlin/payments/AGENTS.md\n# Payments package\n\nMoney is a Long in minor units.\n\n⟦ctx:app/src/main/kotlin/payments/AGENTS.md⟧\n\n- <work>/app/src/main/kotlin/payments/CLAUDE.md\n# Payments package\n\n@AGENTS.md\n\nMoney is a Long in minor units. Round half to even.\n\n⟦ctx:app/src/main/kotlin/payments/CLAUDE.md⟧\n\nConsider these rules if they affect your changes."
       }
     ],
@@ -84,7 +84,10 @@
                     "description": "Milliseconds that must elapse between notifications. The harness enforces a minimum of 5000ms."
                   }
                 },
-                "required": ["pattern", "reason"],
+                "required": [
+                  "pattern",
+                  "reason"
+                ],
                 "description": "Optional output notification config. Each terminal output which matches the pattern will notify you. ONLY set this when the user explicitly requests monitoring."
               },
               "request_smart_mode_approval": {
@@ -96,7 +99,9 @@
                 "description": "Provide the exact block reason returned by Auto-review in the prior rejection. Required when request_smart_mode_approval is true so the approval card shows the original classifier reason without re-running the classifier."
               }
             },
-            "required": ["command"]
+            "required": [
+              "command"
+            ]
           }
         }
       },
@@ -117,7 +122,9 @@
                 "description": "The glob pattern to match files against.\nPatterns not starting with \"**/\" are automatically prepended with \"**/\" to enable recursive searching.\n\nExamples:\n\t- \"*.js\" (becomes \"**/*.js\") - find all .js files\n\t- \"**/node_modules/**\" - find all node_modules directories\n\t- \"**/test/**/test_*.ts\" - find all test_*.ts files in any test directory"
               }
             },
-            "required": ["glob_pattern"]
+            "required": [
+              "glob_pattern"
+            ]
           }
         }
       },
@@ -143,7 +150,11 @@
               },
               "output_mode": {
                 "type": "string",
-                "enum": ["content", "files_with_matches", "count"],
+                "enum": [
+                  "content",
+                  "files_with_matches",
+                  "count"
+                ],
                 "description": "Output mode: \"content\" shows matching lines (supports -A/-B/-C context, -n line numbers, head_limit), \"files_with_matches\" shows file paths (supports head_limit), \"count\" shows match counts (supports head_limit). Defaults to \"content\"."
               },
               "-B": {
@@ -181,7 +192,9 @@
                 "description": "Enable multiline mode where . matches newlines and patterns can span lines (rg -U --multiline-dotall). Default: false."
               }
             },
-            "required": ["pattern"]
+            "required": [
+              "pattern"
+            ]
           }
         }
       },
@@ -231,7 +244,9 @@
                 "description": "The number of lines to read. Only provide if the file is too large to read at once."
               }
             },
-            "required": ["path"]
+            "required": [
+              "path"
+            ]
           }
         }
       },
@@ -248,7 +263,9 @@
                 "description": "The absolute path of the file to delete"
               }
             },
-            "required": ["path"]
+            "required": [
+              "path"
+            ]
           }
         }
       },
@@ -277,7 +294,11 @@
                 "description": "Replace all occurrences of old_string (default false)"
               }
             },
-            "required": ["path", "old_string", "new_string"]
+            "required": [
+              "path",
+              "old_string",
+              "new_string"
+            ]
           }
         }
       },
@@ -298,7 +319,10 @@
                 "description": "The contents to write to the file"
               }
             },
-            "required": ["path", "contents"]
+            "required": [
+              "path",
+              "contents"
+            ]
           }
         }
       },
@@ -335,7 +359,14 @@
                 "description": "The edited text to replace the old_string or the content for the new cell."
               }
             },
-            "required": ["target_notebook", "cell_idx", "is_new_cell", "cell_language", "old_string", "new_string"]
+            "required": [
+              "target_notebook",
+              "cell_idx",
+              "is_new_cell",
+              "cell_language",
+              "old_string",
+              "new_string"
+            ]
           }
         }
       },
@@ -362,11 +393,20 @@
                     },
                     "status": {
                       "type": "string",
-                      "enum": ["pending", "in_progress", "completed", "cancelled"],
+                      "enum": [
+                        "pending",
+                        "in_progress",
+                        "completed",
+                        "cancelled"
+                      ],
                       "description": "The current status of the TODO item"
                     }
                   },
-                  "required": ["id", "content", "status"]
+                  "required": [
+                    "id",
+                    "content",
+                    "status"
+                  ]
                 },
                 "minItems": 2,
                 "description": "Array of TODO items to update or create"
@@ -376,7 +416,10 @@
                 "description": "Whether to merge the todos with the existing todos. If true, the todos will be merged into the existing todos based on the id field. You can leave unchanged properties undefined. If false, the new todos will replace the existing todos."
               }
             },
-            "required": ["todos", "merge"]
+            "required": [
+              "todos",
+              "merge"
+            ]
           }
         }
       },
@@ -405,11 +448,19 @@
               },
               "aspect_ratio": {
                 "type": "string",
-                "enum": ["1:1", "4:3", "3:4", "16:9", "9:16"],
+                "enum": [
+                  "1:1",
+                  "4:3",
+                  "3:4",
+                  "16:9",
+                  "9:16"
+                ],
                 "description": "Optional aspect ratio for the generated image. Supported values are \"1:1\", \"4:3\", \"3:4\", \"16:9\", and \"9:16\"."
               }
             },
-            "required": ["description"]
+            "required": [
+              "description"
+            ]
           }
         }
       },
@@ -452,7 +503,10 @@
                             "description": "Display text for this option"
                           }
                         },
-                        "required": ["id", "label"]
+                        "required": [
+                          "id",
+                          "label"
+                        ]
                       },
                       "minItems": 2,
                       "description": "Array of answer options (minimum 2 required)"
@@ -462,13 +516,19 @@
                       "description": "If true, user can select multiple options. Defaults to false."
                     }
                   },
-                  "required": ["id", "prompt", "options"]
+                  "required": [
+                    "id",
+                    "prompt",
+                    "options"
+                  ]
                 },
                 "minItems": 1,
                 "description": "Array of questions to present to the user (minimum 1 required)"
               }
             },
-            "required": ["questions"]
+            "required": [
+              "questions"
+            ]
           }
         }
       },
@@ -498,7 +558,12 @@
               },
               "subagent_type": {
                 "type": "string",
-                "enum": ["generalPurpose", "explore", "cursor-guide", "best-of-n-runner"],
+                "enum": [
+                  "generalPurpose",
+                  "explore",
+                  "cursor-guide",
+                  "best-of-n-runner"
+                ],
                 "description": "Subagent type to use for this task. Must be one of: generalPurpose, explore, cursor-guide, best-of-n-runner."
               },
               "file_attachments": {
@@ -513,7 +578,10 @@
                 "description": "Run the agent in the background (returns output_file path to check later). If this is false, you will be blocked until the agent completes."
               }
             },
-            "required": ["description", "prompt"]
+            "required": [
+              "description",
+              "prompt"
+            ]
           }
         }
       },
@@ -570,7 +638,10 @@
                 "description": "Provide the exact block reason returned by Auto-review in the prior rejection. Required when requestSmartModeApproval is true so the approval card shows the original classifier reason without re-running the classifier."
               }
             },
-            "required": ["server", "uri"]
+            "required": [
+              "server",
+              "uri"
+            ]
           }
         }
       },
@@ -591,7 +662,9 @@
                 "description": "Optional explanation for why the mode switch is requested. This helps the user understand why you're switching modes."
               }
             },
-            "required": ["target_mode_id"]
+            "required": [
+              "target_mode_id"
+            ]
           }
         }
       },
@@ -628,7 +701,10 @@
                 "description": "Arguments to pass to the MCP tool, as described in the tool descriptor."
               }
             },
-            "required": ["server", "toolName"]
+            "required": [
+              "server",
+              "toolName"
+            ]
           }
         }
       }
