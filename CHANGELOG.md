@@ -27,6 +27,7 @@ L1 now catches the files a harness silently skips, and the secrets nobody meant 
 - 🩺 **`ctxray doctor --fix`.** It creates the cache folder and installs the harnesses `ctxray.lock` pins, then lists what it fixed and what's left to you: git, the network, proxies, CA certificates, Node, and keys.
 - 📉 **`ctxray diff --file report.json`.** It compares the loadout with a saved report, from a past run or a CI artifact, instead of a git revision. Every report now keeps the loadout L3 predicts at the root for each harness. `diff` also writes `diff.json` and `diff.html` into the report folder, and the HTML report's diff tab lines its rows up again.
 - 🧹 **No leftovers after a capture.** ctxray ends the harness's whole process group, so Cursor CLI's helpers no longer pile up over hundreds of sessions.
+- 🍞 **Bun 1.4.5.** The binaries and the images are built with Bun 1.4.5, and the npm package needs it.
 
 ## 0.1.0
 
